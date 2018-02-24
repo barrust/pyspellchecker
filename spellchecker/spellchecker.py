@@ -1,8 +1,11 @@
+from __future__ import absolute_import
+
 import os
 import re
 from collections import Counter
 
 import spellchecker.info as base  # to get a relative file path!
+
 
 class SpellChecker(object):
 
