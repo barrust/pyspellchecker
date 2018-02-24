@@ -43,7 +43,7 @@ class SpellChecker(object):
                 self.known(self.edit_distance_2(word)) or [word])
 
     def known(self, words):
-        "The subset of `words` that appear in the dictionary of WORDS."
+        "The subset of `words` that appear in the dictionary of words."
         return set(w for w in words if w in self.word_frequency.dictionary)
 
     def unknown(self, words):
