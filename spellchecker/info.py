@@ -1,4 +1,4 @@
-''' Information '''
+''' SpellChecker Information '''
 
 
 __author__ = 'Tyler Barrus'
