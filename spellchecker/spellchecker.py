@@ -19,21 +19,19 @@ class SpellChecker(object):
         # Should allow passing in a different file
         dirpath = os.path.dirname(base.__file__)
         full_filename = os.path.join(dirpath, 'resources', 'old_books.txt')
-        self.dictionary = Counter()
-        with open(full_filename) as fobj:
-            self.dictionary.update(self.words(fobj.read()))
-        self.total_words = sum(self.dictionary.values())
+        self.word_frequency = WordFrequency()
+        self.word_frequency.load_text_file(full_filename)
 
     @staticmethod
     def words(text):
-        ''' Parse the text into words; currently removes punctuation '''
-        return re.findall(r'\w+', text.lower())
+        ''' split text into individual `words` '''
+        return _words(text)
 
     def word_probability(self, word, total_words=None):
         "Probability of `word` being the desired word"
         if total_words is None:
-            total_words = self.total_words
-        return self.dictionary[word] / total_words
+            total_words = self.word_frequency.total_words
+        return self.word_frequency.dictionary[word] / total_words
 
     def correction(self, word):
         "Most probable spelling correction for word."
@@ -46,11 +44,11 @@ class SpellChecker(object):
 
     def known(self, words):
         "The subset of `words` that appear in the dictionary of WORDS."
-        return set(w for w in words if w in self.dictionary)
+        return set(w for w in words if w in self.word_frequency.dictionary)
 
     def unknown(self, words):
         ''' The subset of `words` that do not appear in the dictionary'''
-        return set(w for w in words if w not in self.dictionary)
+        return set(w for w in words if w not in self.word_frequency.dictionary)
 
     @staticmethod
     def edit_distance_1(word):
@@ -67,3 +65,33 @@ class SpellChecker(object):
         "All edits that are two edits away from `word`."
         return (e2 for e1 in self.edit_distance_1(word)
                 for e2 in self.edit_distance_1(e1))
+
+
+class WordFrequency(object):
+    ''' Private-like class to store the `dictionary` allowing for different
+        methods to load the data and update over time '''
+
+    def __init__(self):
+        self.dictionary = Counter()
+        self.total_words = 0
+
+    def load_text_file(self, filename):
+        ''' Load a text file to calculate the word frequencies '''
+        with open(filename) as fobj:
+            self.dictionary.update(_words(fobj.read()))
+        self.total_words = sum(self.dictionary.values())
+
+    def load_text(self, text):
+        ''' Load text to calculate the word frequencies '''
+        self.dictionary.update(_words(text))
+        self.total_words = sum(self.dictionary.values())
+
+    def load_words(self, words):
+        ''' Load a list of words to calculate word frequencies '''
+        self.dictionary.update(words)
+        self.total_words = sum(self.dictionary.values())
+
+
+def _words(text):
+    ''' Parse the text into words; currently removes punctuation '''
+    return re.findall(r'\w+', text.lower())
