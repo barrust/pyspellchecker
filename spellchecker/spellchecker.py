@@ -28,7 +28,7 @@ class SpellChecker(object):
 
     def correction(self, word):
         "Most probable spelling correction for word."
-        return max(self.candidates(word), key=P)
+        return max(self.candidates(word), key=self.P)
 
     def candidates(self, word):
         "Generate possible spelling corrections for word."
