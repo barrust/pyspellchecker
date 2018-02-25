@@ -5,6 +5,9 @@ python:
     - "3.5"
     - "3.6"
 
+install:
+  - pip install -r requirements/requirements-dev.txt
+
 script:
     - coverage run --source=spellchecker setup.py test
 
