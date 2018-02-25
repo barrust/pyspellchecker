@@ -1,5 +1,8 @@
 # pyspellchecker
 
+[![Build Status](https://travis-ci.org/barrust/pyspellchecker.svg?branch=master)](https://travis-ci.org/barrust/pyspellchecker)
+[![Coverage Status](https://coveralls.io/repos/github/barrust/pyspellchecker/badge.svg?branch=master)](https://coveralls.io/github/barrust/pyspellchecker?branch=master)
+
 Pure Python Spell Checking based on
 [Peter Norvig's](https://norvig.com/spell-correct.html) blog post on setting up
 a simple spell checking algorithm.
