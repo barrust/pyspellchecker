@@ -1,0 +1,13 @@
+language: python
+python:
+    - "2.7"
+    - "3.4"
+    - "3.5"
+    - "3.6"
+
+script:
+    - coverage run --source=spellchecker setup.py test
+
+# commands to run after the tests successfully complete
+after_success:
+  - coveralls
