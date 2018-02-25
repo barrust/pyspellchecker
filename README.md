@@ -50,3 +50,43 @@ for word in misspelled:
     # Get a list of `likely` options
     print(spell.candidates(word))
 ```
+
+If the Word Frequency list is not to your liking, you can add additional text
+to generate a more appropriate list for your use case.
+
+``` python
+from spellChecker import SpellChecker
+
+spell = SpellChecker()  # loads default word frequency list
+spell.word_frequency.load_text_file('./my_free_text_doc.txt')
+
+# if I just want to make sure some words are not flagged as misspelled
+spell.word_frequency.load_words(['microsoft', 'apple', 'google'])
+spell.known(['microsoft', 'google'])  # will return both now!
+```
+
+More work in storing and loading word frequency lists is planned; stay tuned. 
+
+## Additional Methods
+On-line documentation is in the future; until then you can find SpellChecker
+here:
+
+`correction(word)`: Returns the most probable result for the misspelled word
+
+`candidates(word)`: Returns a set of possible candidates for the misspelled
+word
+
+`known([words])`: Returns those words that are in the word frequency list
+
+`unknown([words])`: Returns those words that are not in the frequency list
+
+`word_probability(word)`: The frequency of the given word out of all words in
+the frequency list
+
+#### The following are less likely to be needed by the user but are available:
+
+`edit_distance_1(word)`: Returns a set of all strings at a Levenshtein Distance
+of one
+
+`edit_distance_2(word)`: Returns a set of all strings at a Levenshtein Distance
+of two
