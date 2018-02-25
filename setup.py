@@ -26,7 +26,7 @@ setup(
     install_requires = [],
     packages=find_packages(exclude=['tests']),
     package_data={'spellchecker': ['resources/*.txt']},
-    long_description = read_file('README.md'),
+    long_description = read_file('README.rst'),
     classifiers = [
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
