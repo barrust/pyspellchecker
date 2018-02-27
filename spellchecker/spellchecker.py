@@ -5,6 +5,7 @@ from __future__ import absolute_import, division
 import os
 import re
 import string
+import json
 from collections import Counter
 
 import spellchecker.info as base
@@ -15,12 +16,19 @@ class SpellChecker(object):
         simple spell checking algorithm. It is based on the work by
         Peter Norvig (https://norvig.com/spell-correct.html) '''
 
-    def __init__(self):
+    def __init__(self, dictionary='en', local_dictionary=None):
         # Should allow passing in a different file
         dirpath = os.path.dirname(base.__file__)
-        full_filename = os.path.join(dirpath, 'resources', 'old_books.txt')
+
         self.word_frequency = WordFrequency()
-        self.word_frequency.load_text_file(full_filename)
+        if local_dictionary:
+            self.word_frequency.load_dictionary(local_dictionary)
+        if dictionary:
+            filename = '{}.json'.format(dictionary)
+            full_filename = os.path.join(dirpath, 'resources', filename)
+            if not os.path.exists(full_filename):
+                raise ValueError('The provided dictionary language does not exist!')
+            self.word_frequency.load_dictionary(full_filename)
 
     @staticmethod
     def words(text):
@@ -53,7 +61,7 @@ class SpellChecker(object):
     @staticmethod
     def edit_distance_1(word):
         "All edits that are one edit away from `word`."
-        letters = string.ascii_lowercase
+        letters = 'abcdefghijklmnopqrstuvwxyz '  # we want to know if a missing space!
         splits = [(word[:i], word[i:]) for i in range(len(word) + 1)]
         deletes = [L + R[1:] for L, R in splits if R]
         transposes = [L + R[1] + R[0] + R[2:] for L, R in splits if len(R) > 1]
@@ -74,22 +82,36 @@ class WordFrequency(object):
     def __init__(self):
         self.dictionary = Counter()
         self.total_words = 0
+        self.unique_words = 0
+
+    def __getitem__(cls, x):
+        return cls.dictionary[x]
+
+    def load_dictionary(self, filename):
+        ''' load in a pre-built dictionary '''
+        with open(filename, 'r') as fobj:
+            self.dictionary.update(json.load(fobj))
+        self.total_words = sum(self.dictionary.values())
+        self.unique_words = len(self.dictionary.keys())
 
     def load_text_file(self, filename):
         ''' Load a text file to calculate the word frequencies '''
-        with open(filename) as fobj:
+        with open(filename, 'r') as fobj:
             self.dictionary.update(_words(fobj.read()))
         self.total_words = sum(self.dictionary.values())
+        self.unique_words = len(self.dictionary.keys())
 
     def load_text(self, text):
         ''' Load text to calculate the word frequencies '''
         self.dictionary.update(_words(text))
         self.total_words = sum(self.dictionary.values())
+        self.unique_words = len(self.dictionary.keys())
 
     def load_words(self, words):
         ''' Load a list of words to calculate word frequencies '''
         self.dictionary.update(words)
         self.total_words = sum(self.dictionary.values())
+        self.unique_words = len(self.dictionary.keys())
 
 
 def _words(text):
