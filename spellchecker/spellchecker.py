@@ -108,8 +108,7 @@ class WordFrequency(object):
     def load_text_file(self, filename):
         ''' Load a text file to calculate the word frequencies '''
         with open(filename, 'r') as fobj:
-            self.dictionary.update(_words(fobj.read()))
-        self._update_dictionary()
+            self.load_text(fobj.read())
 
     def load_text(self, text):
         ''' Load text to calculate the word frequencies '''

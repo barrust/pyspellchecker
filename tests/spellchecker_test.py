@@ -2,6 +2,7 @@
 from __future__ import division
 
 import unittest
+import os
 
 from spellchecker import SpellChecker
 
@@ -101,3 +102,30 @@ class TestSpellChecker(unittest.TestCase):
         except ValueError as ex:
             msg = 'The provided dictionary language (no) does not exist!'
             self.assertEqual(str(ex), msg)
+
+    def test_load_external_dictionary(self):
+        ''' test loading a local dictionary '''
+        here = os.path.dirname(__file__)
+        filepath = '{}/resources/small_dictionary.json'.format(here)
+        spell = SpellChecker(language=None, local_dictionary=filepath)
+        self.assertEqual(spell['a'], 1)
+        self.assertTrue('apple' in spell)
+
+    def test_edit_distance_two(self):
+        ''' test a case where edit distance must be two '''
+        here = os.path.dirname(__file__)
+        filepath = '{}/resources/small_dictionary.json'.format(here)
+        spell = SpellChecker(language=None, local_dictionary=filepath)
+        self.assertEqual(spell.candidates('ale'), {'a', 'apple'})
+
+    def test_load_text_file(self):
+        ''' test loading a text file '''
+        here = os.path.dirname(__file__)
+        filepath = '{}/resources/small_doc.txt'.format(here)
+        spell = SpellChecker(language=None)  # just from this doc!
+        spell.word_frequency.load_text_file(filepath)
+        self.assertEqual(spell['a'], 3)
+        self.assertEqual(spell['storm'], 2)
+        self.assertFalse('awesome' in spell)
+        self.assertTrue(spell['whale'])
+        self.assertTrue('waves' in spell)
