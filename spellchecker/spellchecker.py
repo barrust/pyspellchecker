@@ -1,6 +1,6 @@
 ''' SpellChecker Module; simple, intuitive spell checker based on the post by
     Peter Norvig. See: https://norvig.com/spell-correct.html '''
-from __future__ import absolute_import, division
+from __future__ import absolute_import, division, unicode_literals
 
 import os
 import re
@@ -100,39 +100,33 @@ class WordFrequency(object):
         try:
             with gzip.open(filename, 'rt') as fobj:
                 data = fobj.read()
-                # self.dictionary.update(json.load(fobj))
         except OSError:
             with open(filename, 'r') as fobj:
                 data = fobj.read()
-                # self.dictionary.update(json.load(fobj))
         self.dictionary.update(json.loads(data, encoding='utf8'))
-        self.total_words = sum(self.dictionary.values())
-        self.unique_words = len(self.dictionary.keys())
-        for key in self.dictionary:
-            self.letters.update(key)
+        self._update_dictionary()
 
     def load_text_file(self, filename):
         ''' Load a text file to calculate the word frequencies '''
         with open(filename, 'r') as fobj:
             self.dictionary.update(_words(fobj.read()))
-        self.total_words = sum(self.dictionary.values())
-        self.unique_words = len(self.dictionary.keys())
-        for key in self.dictionary:
-            self.letters.update(key)
+        self._update_dictionary()
 
     def load_text(self, text):
         ''' Load text to calculate the word frequencies '''
         self.dictionary.update(_words(text))
-        self.total_words = sum(self.dictionary.values())
-        self.unique_words = len(self.dictionary.keys())
-        for key in self.dictionary:
-            self.letters.update(key)
+        self._update_dictionary()
 
     def load_words(self, words):
         ''' Load a list of words to calculate word frequencies '''
         self.dictionary.update(words)
+        self._update_dictionary()
+
+    def _update_dictionary(self):
+        ''' standard things to update the word frequency object '''
         self.total_words = sum(self.dictionary.values())
         self.unique_words = len(self.dictionary.keys())
+        self.letters = set()
         for key in self.dictionary:
             self.letters.update(key)
 

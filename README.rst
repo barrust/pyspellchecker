@@ -18,6 +18,9 @@ replacements, and transpositions) to known words in a word frequency
 list. Those words that are found more often in the frequency list are
 ``more likely`` the correct results.
 
+``pyspellchecker`` supports **Python 3**. If may work for Python 2.7 but it is not
+guaranteed!
+
 Installation
 ------------
 
@@ -42,7 +45,7 @@ dependencies!
 Quickstart
 ----------
 
-After installation, using pyspellchecker should be fairly straight
+After installation, using ``pyspellchecker`` should be fairly straight
 forward:
 
 .. code:: python
@@ -105,7 +108,7 @@ The following are less likely to be needed by the user but are available:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ``edit_distance_1(word)``: Returns a set of all strings at a Levenshtein
-Distance of one
+Distance of one based on the alphabet of the selected language
 
 ``edit_distance_2(word)``: Returns a set of all strings at a Levenshtein
-Distance of two
+Distance of two based on the alphabet of the selected language
