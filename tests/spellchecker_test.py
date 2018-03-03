@@ -85,7 +85,7 @@ class TestSpellChecker(unittest.TestCase):
 
     def test_spanish_dict(self):
         ''' test loading in the spanish dictionary '''
-        spell = SpellChecker(dictionary='es')
+        spell = SpellChecker(language='es')
         res = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
                'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
                'ª', 'º', 'à', 'á', 'â', 'ã', 'ä', 'å', 'ç', 'è', 'é', 'ê', 'ë',
@@ -94,3 +94,10 @@ class TestSpellChecker(unittest.TestCase):
         self.assertEqual(sorted(list(spell.word_frequency.letters)), res)
         self.assertTrue('mañana' in spell)
         self.assertEqual(spell['que'], 12131641)
+
+    def test_missing_dictionary(self):
+        try:
+            spell = SpellChecker(language='no')
+        except ValueError as ex:
+            msg = 'The provided dictionary language (no) does not exist!'
+            self.assertEqual(str(ex), msg)

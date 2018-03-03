@@ -14,16 +14,17 @@ class SpellChecker(object):
         simple spell checking algorithm. It is based on the work by
         Peter Norvig (https://norvig.com/spell-correct.html) '''
 
-    def __init__(self, dictionary='en', local_dictionary=None):
+    def __init__(self, language='en', local_dictionary=None):
         self.word_frequency = WordFrequency()
         if local_dictionary:
             self.word_frequency.load_dictionary(local_dictionary)
-        if dictionary:
-            filename = '{}.json.gz'.format(dictionary)
+        if language:
+            filename = '{}.json.gz'.format(language)
             here = os.path.dirname(__file__)
             full_filename = os.path.join(here, 'resources', filename)
             if not os.path.exists(full_filename):
-                msg = 'The provided dictionary language does not exist!'
+                msg = ('The provided dictionary language ({}) does not '
+                       'exist!').format(language)
                 raise ValueError(msg)
             self.word_frequency.load_dictionary(full_filename)
 

@@ -1,5 +1,5 @@
 pyspellchecker
-==============
+===============================================================================
 
 .. image:: https://travis-ci.org/barrust/pyspellchecker.svg?branch=master
     :target: https://travis-ci.org/barrust/pyspellchecker
@@ -16,13 +16,17 @@ algorithm to find permutations within an edit distance of 2 from the
 original word. It then compares all permutations (insertions, deletions,
 replacements, and transpositions) to known words in a word frequency
 list. Those words that are found more often in the frequency list are
-``more likely`` the correct results.
+***more likely*** the correct results.
+
+``pyspellchecker`` supports multiple languages including English, Spanish,
+German, and French. Dictionaries were generated using the `WordFrequency project <https://github.com/hermitdave/FrequencyWords>`__ on GitHub.
 
 ``pyspellchecker`` supports **Python 3**. If may work for Python 2.7 but it is not
-guaranteed!
+guaranteed (especially for Non-English dictionaries)!
+
 
 Installation
-------------
+-------------------------------------------------------------------------------
 
 The easiest method to install is using pip:
 
@@ -42,8 +46,9 @@ As always, I highly recommend using the
 `Pipenv <https://github.com/pypa/pipenv>`__ package to help manage
 dependencies!
 
+
 Quickstart
-----------
+-------------------------------------------------------------------------------
 
 After installation, using ``pyspellchecker`` should be fairly straight
 forward:
@@ -80,11 +85,15 @@ text to generate a more appropriate list for your use case.
     spell.word_frequency.load_words(['microsoft', 'apple', 'google'])
     spell.known(['microsoft', 'google'])  # will return both now!
 
+
+
+
 More work in storing and loading word frequency lists is planned; stay
 tuned.
 
+
 Additional Methods
-------------------
+-------------------------------------------------------------------------------
 
 On-line documentation is in the future; until then you can find more
 information on SpellChecker here:
@@ -112,3 +121,12 @@ Distance of one based on the alphabet of the selected language
 
 ``edit_distance_2(word)``: Returns a set of all strings at a Levenshtein
 Distance of two based on the alphabet of the selected language
+
+
+Credits
+-------------------------------------------------------------------------------
+- `Peter Norvig <https://norvig.com/spell-correct.html>`__ blog post on setting
+up a simple spell checking algorithm
+
+- `hermetdave's WordFrequency project <https://github.com/hermitdave/FrequencyWords>`__
+for providing the basis for Non-English dictionaries
