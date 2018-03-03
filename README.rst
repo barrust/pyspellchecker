@@ -98,6 +98,7 @@ Additional Methods
 On-line documentation is in the future; until then you can find more
 information on SpellChecker here:
 
+
 ``correction(word)``: Returns the most probable result for the
 misspelled word
 
@@ -125,8 +126,7 @@ Distance of two based on the alphabet of the selected language
 
 Credits
 -------------------------------------------------------------------------------
-- `Peter Norvig <https://norvig.com/spell-correct.html>`__ blog post on setting
-up a simple spell checking algorithm
 
-- `hermetdave's WordFrequency project <https://github.com/hermitdave/FrequencyWords>`__
-for providing the basis for Non-English dictionaries
+* `Peter Norvig <https://norvig.com/spell-correct.html>`__ blog post on setting up a simple spell checking algorithm
+
+* `hermetdave's WordFrequency project <https://github.com/hermitdave/FrequencyWords>`__ for providing the basis for Non-English dictionaries

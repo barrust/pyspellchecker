@@ -29,41 +29,90 @@ class SpellChecker(object):
             self.word_frequency.load_dictionary(full_filename)
 
     def __contains__(self, key):
+        ''' setup easier known checks '''
         return key in self.word_frequency
 
     def __getitem__(self, key):
+        ''' setup easier frequency checks '''
         return self.word_frequency[key]
 
     @staticmethod
     def words(text):
-        ''' split text into individual `words` '''
+        ''' Split text into individual `words` using a simple whitespace regex
+
+            Args:
+                text (str): The text to split into individual words
+            Returns:
+                list(str): A listing of all words in the provided text '''
         return _words(text)
 
     def word_probability(self, word, total_words=None):
-        "Probability of `word` being the desired word"
+        ''' Calculate the probability of the `word` being the desired, correct
+            word
+
+            Args:
+                word (str): The word for which the word probability is \
+                calculated
+                total_words (int): The total number of words to use in the \
+                calculation; use the default for using the whole word \
+                frequency
+            Returns:
+                float: The probability that the word is the correct word '''
         if total_words is None:
             total_words = self.word_frequency.total_words
         return self.word_frequency.dictionary[word] / total_words
 
     def correction(self, word):
-        "Most probable spelling correction for word."
+        ''' The most probable correct spelling for the word
+
+            Args:
+                word (str): The word to correct
+            Returns:
+                str: The most likely candidate '''
         return max(self.candidates(word), key=self.word_probability)
 
     def candidates(self, word):
-        "Generate possible spelling corrections for word."
+        ''' Generate possible spelling corrections for the provided word up to
+            an edit distance of two, if and only when needed
+
+            Args:
+                word (str): The word for which to calculate candidate spellings
+            Returns:
+                set: The set of words that are possible candidates '''
         return (self.known([word]) or self.known(self.edit_distance_1(word)) or
                 self.known(self.edit_distance_2(word)) or [word])
 
     def known(self, words):
-        "The subset of `words` that appear in the dictionary of words."
+        ''' The subset of `words` that appear in the dictionary of words
+
+            Args:
+                words (list): List of words to determine which are in the \
+                corpus
+            Returns:
+                set: The set of those words from the input that are in the \
+                corpus '''
         return set(w for w in words if w in self.word_frequency.dictionary)
 
     def unknown(self, words):
-        ''' The subset of `words` that do not appear in the dictionary'''
+        ''' The subset of `words` that do not appear in the dictionary
+
+            Args:
+                words (list): List of words to determine which are not in the \
+                corpus
+            Returns:
+                set: The set of those words from the input that are not in \
+                the corpus '''
         return set(w for w in words if w not in self.word_frequency.dictionary)
 
     def edit_distance_1(self, word):
-        "All edits that are one edit away from `word`."
+        ''' Compute all strings that are one edit away from `word` using only
+            the letters in the corpus
+
+            Args:
+                word (str): The word for which to calculate the edit distance
+            Returns:
+                set: The set of strings that are edit distance two from the \
+                provided word '''
         letters = self.word_frequency.letters
         splits = [(word[:i], word[i:]) for i in range(len(word) + 1)]
         deletes = [L + R[1:] for L, R in splits if R]
@@ -73,14 +122,21 @@ class SpellChecker(object):
         return set(deletes + transposes + replaces + inserts)
 
     def edit_distance_2(self, word):
-        "All edits that are two edits away from `word`."
+        ''' Compute all strings that are two edits away from `word` using only
+            the letters in the corpus
+
+            Args:
+                word (str): The word for which to calculate the edit distance
+            Returns:
+                set: The set of strings that are edit distance one from the \
+                provided word '''
         return (e2 for e1 in self.edit_distance_1(word)
                 for e2 in self.edit_distance_1(e1))
 
 
 class WordFrequency(object):
-    ''' Private-like class to store the `dictionary` allowing for different
-        methods to load the data and update over time '''
+    ''' Store the `dictionary` as a word frequency list while allowing for
+        different methods to load the data and update over time '''
 
     def __init__(self):
         self.dictionary = Counter()
@@ -89,39 +145,54 @@ class WordFrequency(object):
         self.letters = set()
 
     def __contains__(self, key):
+        ''' turn on contains '''
         return key in self.dictionary
 
     def __getitem__(self, key):
+        ''' turn on getitem '''
         return self.dictionary[key]
 
     def load_dictionary(self, filename):
-        ''' load in a pre-built dictionary '''
+        ''' Load in a pre-built word frequency list
+
+            Args:
+                filename (str): The filepath to the json (optionally gzipped) \
+                file to be loaded '''
         try:
             with gzip.open(filename, 'rt') as fobj:
-                data = fobj.read()
+                data = fobj.read().lower()
         except OSError:
             with open(filename, 'r') as fobj:
-                data = fobj.read()
+                data = fobj.read().lower()
         self.dictionary.update(json.loads(data, encoding='utf8'))
         self._update_dictionary()
 
     def load_text_file(self, filename):
-        ''' Load a text file to calculate the word frequencies '''
+        ''' Load in a text file from which to generate a word frequency list
+
+            Args:
+                filename (str): The filepath to the text file to be loaded '''
         with open(filename, 'r') as fobj:
             self.load_text(fobj.read())
 
     def load_text(self, text):
-        ''' Load text to calculate the word frequencies '''
+        ''' Load text from which to generate a word frequency list
+
+            Args:
+                text (str): The text to be loaded '''
         self.dictionary.update(_words(text))
         self._update_dictionary()
 
     def load_words(self, words):
-        ''' Load a list of words to calculate word frequencies '''
-        self.dictionary.update(words)
+        ''' Load a list of words from which to generate a word frequency list
+
+            Args:
+                text (list): The list of words to be loaded '''
+        self.dictionary.update([word.lower() for word in words])
         self._update_dictionary()
 
     def _update_dictionary(self):
-        ''' standard things to update the word frequency object '''
+        ''' Update the word frequency object '''
         self.total_words = sum(self.dictionary.values())
         self.unique_words = len(self.dictionary.keys())
         self.letters = set()
