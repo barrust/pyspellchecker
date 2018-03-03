@@ -4,7 +4,6 @@ from __future__ import absolute_import, division, unicode_literals
 
 import os
 import re
-import string
 import json
 import gzip
 from collections import Counter
@@ -16,24 +15,23 @@ class SpellChecker(object):
         Peter Norvig (https://norvig.com/spell-correct.html) '''
 
     def __init__(self, dictionary='en', local_dictionary=None):
-        # Should allow passing in a different file
-        dirpath = os.path.dirname(__file__)
-
         self.word_frequency = WordFrequency()
         if local_dictionary:
             self.word_frequency.load_dictionary(local_dictionary)
         if dictionary:
             filename = '{}.json.gz'.format(dictionary)
-            full_filename = os.path.join(dirpath, 'resources', filename)
+            here = os.path.dirname(__file__)
+            full_filename = os.path.join(here, 'resources', filename)
             if not os.path.exists(full_filename):
-                raise ValueError('The provided dictionary language does not exist!')
+                msg = 'The provided dictionary language does not exist!'
+                raise ValueError(msg)
             self.word_frequency.load_dictionary(full_filename)
 
     def __contains__(self, key):
-        return key in self.word_frequency.dictionary
+        return key in self.word_frequency
 
     def __getitem__(self, key):
-        return self.word_frequency.dictionary[key]
+        return self.word_frequency[key]
 
     @staticmethod
     def words(text):
