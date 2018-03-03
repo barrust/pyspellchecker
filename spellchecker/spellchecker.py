@@ -6,9 +6,8 @@ import os
 import re
 import string
 import json
+import gzip
 from collections import Counter
-
-import spellchecker.info as base
 
 
 class SpellChecker(object):
@@ -18,17 +17,23 @@ class SpellChecker(object):
 
     def __init__(self, dictionary='en', local_dictionary=None):
         # Should allow passing in a different file
-        dirpath = os.path.dirname(base.__file__)
+        dirpath = os.path.dirname(__file__)
 
         self.word_frequency = WordFrequency()
         if local_dictionary:
             self.word_frequency.load_dictionary(local_dictionary)
         if dictionary:
-            filename = '{}.json'.format(dictionary)
+            filename = '{}.json.gz'.format(dictionary)
             full_filename = os.path.join(dirpath, 'resources', filename)
             if not os.path.exists(full_filename):
                 raise ValueError('The provided dictionary language does not exist!')
             self.word_frequency.load_dictionary(full_filename)
+
+    def __contains__(self, key):
+        return key in self.word_frequency.dictionary
+
+    def __getitem__(self, key):
+        return self.word_frequency.dictionary[key]
 
     @staticmethod
     def words(text):
@@ -58,10 +63,9 @@ class SpellChecker(object):
         ''' The subset of `words` that do not appear in the dictionary'''
         return set(w for w in words if w not in self.word_frequency.dictionary)
 
-    @staticmethod
-    def edit_distance_1(word):
+    def edit_distance_1(self, word):
         "All edits that are one edit away from `word`."
-        letters = 'abcdefghijklmnopqrstuvwxyz '  # we want to know if a missing space!
+        letters = self.word_frequency.letters
         splits = [(word[:i], word[i:]) for i in range(len(word) + 1)]
         deletes = [L + R[1:] for L, R in splits if R]
         transposes = [L + R[1] + R[0] + R[2:] for L, R in splits if len(R) > 1]
@@ -83,16 +87,29 @@ class WordFrequency(object):
         self.dictionary = Counter()
         self.total_words = 0
         self.unique_words = 0
+        self.letters = set()
 
-    def __getitem__(cls, x):
-        return cls.dictionary[x]
+    def __contains__(self, key):
+        return key in self.dictionary
+
+    def __getitem__(self, key):
+        return self.dictionary[key]
 
     def load_dictionary(self, filename):
         ''' load in a pre-built dictionary '''
-        with open(filename, 'r') as fobj:
-            self.dictionary.update(json.load(fobj))
+        try:
+            with gzip.open(filename, 'rt') as fobj:
+                data = fobj.read()
+                # self.dictionary.update(json.load(fobj))
+        except OSError:
+            with open(filename, 'r') as fobj:
+                data = fobj.read()
+                # self.dictionary.update(json.load(fobj))
+        self.dictionary.update(json.loads(data, encoding='utf8'))
         self.total_words = sum(self.dictionary.values())
         self.unique_words = len(self.dictionary.keys())
+        for key in self.dictionary:
+            self.letters.update(key)
 
     def load_text_file(self, filename):
         ''' Load a text file to calculate the word frequencies '''
@@ -100,18 +117,24 @@ class WordFrequency(object):
             self.dictionary.update(_words(fobj.read()))
         self.total_words = sum(self.dictionary.values())
         self.unique_words = len(self.dictionary.keys())
+        for key in self.dictionary:
+            self.letters.update(key)
 
     def load_text(self, text):
         ''' Load text to calculate the word frequencies '''
         self.dictionary.update(_words(text))
         self.total_words = sum(self.dictionary.values())
         self.unique_words = len(self.dictionary.keys())
+        for key in self.dictionary:
+            self.letters.update(key)
 
     def load_words(self, words):
         ''' Load a list of words to calculate word frequencies '''
         self.dictionary.update(words)
         self.total_words = sum(self.dictionary.values())
         self.unique_words = len(self.dictionary.keys())
+        for key in self.dictionary:
+            self.letters.update(key)
 
 
 def _words(text):

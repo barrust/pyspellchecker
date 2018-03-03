@@ -19,11 +19,11 @@ class TestSpellChecker(unittest.TestCase):
     def test_candidates(self):
         ''' test spell checker candidates '''
         spell = SpellChecker()
-        cands = {'chs', 'thu', 'tes', 'lhs', 'hs', 'tho', 'tcs', 'this',
-                 'tha', 'ahs', 'tss', 'vhs', 'tas', 'ts', 'ghs', 'tls', 'thus',
-                 'tbs', 'tds', 'ehs', 'thes', 'tps', 'th', 'tis', 'bhs', 'dhs',
-                 'thos', 'thi', 'the', 'whs', 'tvs', 'thf', 'nhs', 'rhs',
-                 'thy', 'thr'}
+        cands = {'tes', 'tps', 'th', 'thi', 'tvs', 'tds', 'tbs', 'bhs', 'thf',
+                 'chs', 'tis', 'thes', 'tls', 'tho', 'thu', 'thr', 'dhs',
+                 "th'", 'thus', 'ts', 'ehs', 'tas', 'ahs', 'thos', 'thy',
+                 'tcs', 'nhs', 'the', 'tss', 'hs', 'lhs', 'vhs', "t's", 'tha',
+                 'whs', 'ghs', 'rhs', 'this'}
         self.assertEqual(spell.candidates('ths'), cands)
         self.assertEqual(spell.candidates('the'), {'the'})
 
