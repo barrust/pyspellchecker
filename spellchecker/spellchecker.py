@@ -12,12 +12,19 @@ from collections import Counter
 class SpellChecker(object):
     ''' The SpellChecker class encapsulates the basics needed to accomplish a
         simple spell checking algorithm. It is based on the work by
-        Peter Norvig (https://norvig.com/spell-correct.html) '''
+        Peter Norvig (https://norvig.com/spell-correct.html)
+
+        Args:
+            language (str): The language of the dictionary to load or None \
+            for no dictionary. Supported languages are `en`, `es`, `de`, and \
+            `fr`. Defaults to `en`
+            local_dictionary (str): The path to a locally stored word \
+            frequency dictionary '''
 
     def __init__(self, language='en', local_dictionary=None):
-        self.word_frequency = WordFrequency()
+        self._word_frequency = WordFrequency()
         if local_dictionary:
-            self.word_frequency.load_dictionary(local_dictionary)
+            self._word_frequency.load_dictionary(local_dictionary)
         if language:
             filename = '{}.json.gz'.format(language)
             here = os.path.dirname(__file__)
@@ -26,15 +33,23 @@ class SpellChecker(object):
                 msg = ('The provided dictionary language ({}) does not '
                        'exist!').format(language)
                 raise ValueError(msg)
-            self.word_frequency.load_dictionary(full_filename)
+            self._word_frequency.load_dictionary(full_filename)
 
     def __contains__(self, key):
         ''' setup easier known checks '''
-        return key in self.word_frequency
+        return key in self._word_frequency
 
     def __getitem__(self, key):
         ''' setup easier frequency checks '''
-        return self.word_frequency[key]
+        return self._word_frequency[key]
+
+    @property
+    def word_frequency(self):
+        ''' WordFrequency: An encapsulation of the word frequency `dictionary`
+
+            Note:
+                Not settable '''
+        return self._word_frequency
 
     @staticmethod
     def words(text):
@@ -59,8 +74,8 @@ class SpellChecker(object):
             Returns:
                 float: The probability that the word is the correct word '''
         if total_words is None:
-            total_words = self.word_frequency.total_words
-        return self.word_frequency.dictionary[word] / total_words
+            total_words = self._word_frequency.total_words
+        return self._word_frequency.dictionary[word] / total_words
 
     def correction(self, word):
         ''' The most probable correct spelling for the word
@@ -91,7 +106,7 @@ class SpellChecker(object):
             Returns:
                 set: The set of those words from the input that are in the \
                 corpus '''
-        return set(w for w in words if w in self.word_frequency.dictionary)
+        return set(w for w in words if w in self._word_frequency.dictionary)
 
     def unknown(self, words):
         ''' The subset of `words` that do not appear in the dictionary
@@ -102,7 +117,7 @@ class SpellChecker(object):
             Returns:
                 set: The set of those words from the input that are not in \
                 the corpus '''
-        return set(w for w in words if w not in self.word_frequency.dictionary)
+        return set(w for w in words if w not in self._word_frequency.dictionary)
 
     def edit_distance_1(self, word):
         ''' Compute all strings that are one edit away from `word` using only
@@ -113,7 +128,7 @@ class SpellChecker(object):
             Returns:
                 set: The set of strings that are edit distance two from the \
                 provided word '''
-        letters = self.word_frequency.letters
+        letters = self._word_frequency.letters
         splits = [(word[:i], word[i:]) for i in range(len(word) + 1)]
         deletes = [L + R[1:] for L, R in splits if R]
         transposes = [L + R[1] + R[0] + R[2:] for L, R in splits if len(R) > 1]
@@ -139,18 +154,52 @@ class WordFrequency(object):
         different methods to load the data and update over time '''
 
     def __init__(self):
-        self.dictionary = Counter()
-        self.total_words = 0
-        self.unique_words = 0
-        self.letters = set()
+        self._dictionary = Counter()
+        self._total_words = 0
+        self._unique_words = 0
+        self._letters = set()
 
     def __contains__(self, key):
         ''' turn on contains '''
-        return key in self.dictionary
+        return key in self._dictionary
 
     def __getitem__(self, key):
         ''' turn on getitem '''
-        return self.dictionary[key]
+        return self._dictionary[key]
+
+    @property
+    def dictionary(self):
+        ''' Counter: A counting dictionary of all words in the corpus and the \
+            number of times each has been seen
+
+            Note:
+                Not settable '''
+        return self._dictionary
+
+    @property
+    def total_words(self):
+        ''' int: The sum of all word occurances in the word frequency \
+                 dictionary
+
+            Note:
+                Not settable '''
+        return self._total_words
+
+    @property
+    def unique_words(self):
+        ''' int: The total number of unique words in the word frequency list
+
+            Note:
+                Not settable '''
+        return self._unique_words
+
+    @property
+    def letters(self):
+        ''' str: The listing of all letters found within the corpus
+
+            Note:
+                Not settable '''
+        return self._letters
 
     def load_dictionary(self, filename):
         ''' Load in a pre-built word frequency list
@@ -164,7 +213,7 @@ class WordFrequency(object):
         except OSError:
             with open(filename, 'r') as fobj:
                 data = fobj.read().lower()
-        self.dictionary.update(json.loads(data, encoding='utf8'))
+        self._dictionary.update(json.loads(data, encoding='utf8'))
         self._update_dictionary()
 
     def load_text_file(self, filename):
@@ -180,7 +229,7 @@ class WordFrequency(object):
 
             Args:
                 text (str): The text to be loaded '''
-        self.dictionary.update(_words(text))
+        self._dictionary.update(_words(text))
         self._update_dictionary()
 
     def load_words(self, words):
@@ -188,16 +237,16 @@ class WordFrequency(object):
 
             Args:
                 text (list): The list of words to be loaded '''
-        self.dictionary.update([word.lower() for word in words])
+        self._dictionary.update([word.lower() for word in words])
         self._update_dictionary()
 
     def _update_dictionary(self):
         ''' Update the word frequency object '''
-        self.total_words = sum(self.dictionary.values())
-        self.unique_words = len(self.dictionary.keys())
-        self.letters = set()
-        for key in self.dictionary:
-            self.letters.update(key)
+        self._total_words = sum(self._dictionary.values())
+        self._unique_words = len(self._dictionary.keys())
+        self._letters = set()
+        for key in self._dictionary:
+            self._letters.update(key)
 
 
 def _words(text):

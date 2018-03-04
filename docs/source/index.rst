@@ -1,19 +1,20 @@
 .. _home:
 .. include:: ../../README.rst
 
+
+Table of contents
+-------------------------------------------------------------------------------
+
 .. toctree::
-    :maxdepth: 3
 
     self
     quickstart
     code
 
 
-Read More
+Additional Information
 -------------------------------------------------------------------------------
 
-* :ref:`api`
-* :ref:`quickstart`
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
