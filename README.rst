@@ -95,8 +95,7 @@ tuned.
 Additional Methods
 -------------------------------------------------------------------------------
 
-On-line documentation is in the future; until then you can find more
-information on SpellChecker here:
+`On-line documentation <http://pyspellchecker.readthedocs.io/en/latest/>`__ is available; below contains the cliff-notes version of some of the available functions:
 
 
 ``correction(word)``: Returns the most probable result for the
