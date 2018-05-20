@@ -25,7 +25,8 @@ setup(
     bugtrack_url = __bugtrack_url__,
     install_requires = [],
     packages=find_packages(exclude=['tests']),
-    package_data={'spellchecker': ['resources/*.txt']},
+    package_data={'spellchecker': ['resources/*']},
+    include_package_data = True,
     long_description = read_file('README.rst'),
     classifiers = [
         'Development Status :: 3 - Alpha',
