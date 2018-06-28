@@ -76,7 +76,7 @@ text to generate a more appropriate list for your use case.
 
 .. code:: python
 
-    from spellChecker import SpellChecker
+    from spellchecker import SpellChecker
 
     spell = SpellChecker()  # loads default word frequency list
     spell.word_frequency.load_text_file('./my_free_text_doc.txt')
