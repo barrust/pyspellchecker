@@ -6,6 +6,7 @@ import os
 import re
 import json
 import gzip
+import string
 from collections import Counter
 
 
@@ -95,7 +96,7 @@ class SpellChecker(object):
             Returns:
                 set: The set of words that are possible candidates '''
         return (self.known([word]) or self.known(self.edit_distance_1(word)) or
-                self.known(self.edit_distance_2(word)) or [word])
+                self.known(self.edit_distance_2(word)) or {word})
 
     def known(self, words):
         ''' The subset of `words` that appear in the dictionary of words
@@ -106,7 +107,8 @@ class SpellChecker(object):
             Returns:
                 set: The set of those words from the input that are in the \
                 corpus '''
-        return set(w for w in words if w in self._word_frequency.dictionary)
+        return set(w for w in words if w in self._word_frequency.dictionary or
+                   not self._check_if_should_check(w))
 
     def unknown(self, words):
         ''' The subset of `words` that do not appear in the dictionary
@@ -117,7 +119,8 @@ class SpellChecker(object):
             Returns:
                 set: The set of those words from the input that are not in \
                 the corpus '''
-        return set(w for w in words if w not in self._word_frequency.dictionary)
+        tmp = [w for w in words if self._check_if_should_check(w)]
+        return set(w for w in tmp if w not in self._word_frequency.dictionary)
 
     def edit_distance_1(self, word):
         ''' Compute all strings that are one edit away from `word` using only
@@ -128,6 +131,8 @@ class SpellChecker(object):
             Returns:
                 set: The set of strings that are edit distance two from the \
                 provided word '''
+        if self._check_if_should_check(word) is False:
+            return {word}
         letters = self._word_frequency.letters
         splits = [(word[:i], word[i:]) for i in range(len(word) + 1)]
         deletes = [L + R[1:] for L, R in splits if R]
@@ -148,6 +153,17 @@ class SpellChecker(object):
         return (e2 for e1 in self.edit_distance_1(word)
                 for e2 in self.edit_distance_1(e1))
 
+    @staticmethod
+    def _check_if_should_check(word):
+        if len(word) == 1 and word in string.punctuation:
+            return False
+        try:  # check if it is a number (int, float, etc)
+            float(word)
+            return False
+        except ValueError:
+            pass
+
+        return True
 
 class WordFrequency(object):
     ''' Store the `dictionary` as a word frequency list while allowing for

@@ -17,6 +17,9 @@ class TestSpellChecker(unittest.TestCase):
         self.assertEqual(spell.correction('ergo'), 'ergo')
         self.assertEqual(spell.correction('alot'), 'a lot')
         self.assertEqual(spell.correction('this'), 'this')
+        self.assertEqual(spell.correction('-'), '-')
+        self.assertEqual(spell.correction('1213'), '1213')
+        self.assertEqual(spell.correction('1213.9'), '1213.9')
 
     def test_candidates(self):
         ''' test spell checker candidates '''
@@ -28,6 +31,7 @@ class TestSpellChecker(unittest.TestCase):
                  'whs', 'ghs', 'rhs', 'this'}
         self.assertEqual(spell.candidates('ths'), cands)
         self.assertEqual(spell.candidates('the'), {'the'})
+        self.assertEqual(spell.candidates('-'), {'-'})
 
     def test_words(self):
         ''' rest the parsing of words '''
@@ -56,6 +60,7 @@ class TestSpellChecker(unittest.TestCase):
         self.assertEqual(spell.known(['sherlock']), {'sherlock'})
         self.assertEqual(spell.known(['holmes']), {'holmes'})
         self.assertEqual(spell.known(['known']), {'known'})
+        self.assertEqual(spell.known(['-']), {'-'})
 
         self.assertEqual(spell.known(['foobar']), set())
         self.assertEqual(spell.known(['ths']), set())
@@ -68,6 +73,7 @@ class TestSpellChecker(unittest.TestCase):
         self.assertEqual(spell.unknown(['sherlock']), set())
         self.assertEqual(spell.unknown(['holmes']), set())
         self.assertEqual(spell.unknown(['known']), set())
+        self.assertEqual(spell.unknown(['-']), set())
 
         self.assertEqual(spell.unknown(['foobar']), {'foobar'})
         self.assertEqual(spell.unknown(['ths']), {'ths'})

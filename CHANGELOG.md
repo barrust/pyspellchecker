@@ -1,5 +1,8 @@
 # pyspellchecker
 
+## Version 0.1.3
+* Better handle punctuation and numbers as the word to check
+
 ## Version 0.1.1
 * Add support for language dictionaries
     * English, Spanish, French, and German
