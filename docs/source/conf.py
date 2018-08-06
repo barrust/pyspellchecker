@@ -94,7 +94,7 @@ todo_include_todos = False
 # a list of builtin themes.
 #
 # html_theme = 'alabaster'
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'custom_theme'
 html_theme_path = ['_themes']
 
 # Theme options are theme-specific and customize the look and feel of a theme
