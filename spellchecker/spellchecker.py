@@ -14,7 +14,8 @@ entire wordnet dictionary. '''
 from nltk.corpus import wordnet as wn
 from nltk.corpus import stopwords
 stopwords=set(stopwords.words('english'))
-modals = ['can', 'could', 'may', 'might', 'must', 'will', 'would', 'should']
+modals = ['can', 'could', 'may', 'might', 'must', 'will', 'would', 'should', \
+          'shall']
 WORDS = Counter(set(wn.words()).union(stopwords).union(set(modals)))
 
 class SpellChecker(object):
