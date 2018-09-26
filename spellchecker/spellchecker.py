@@ -106,7 +106,7 @@ class SpellChecker(object):
                 self.known(self.edit_distance_2(word)) or {word})
 
     def known(self, words):
-        ''' The subset of `words` that appear in the dictionary of words
+        ''' The subset of `words` that appear in the corpus of words
 
             Args:
                 words (list): List of words to determine which are in the \
