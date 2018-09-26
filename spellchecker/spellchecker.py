@@ -9,8 +9,7 @@ import gzip
 import string
 from collections import Counter
 
-''' WORDS corpus includes stopwords, modals and \
-entire wordnet dictionary. '''
+''' WORDS corpus includes stopwords and wordnet from nltk as well as modals'''
 from nltk.corpus import wordnet as wn
 from nltk.corpus import stopwords
 stopwords=set(stopwords.words('english'))
