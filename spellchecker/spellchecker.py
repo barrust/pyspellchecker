@@ -9,6 +9,13 @@ import gzip
 import string
 from collections import Counter
 
+''' WORDS corpus includes stopwords, modals and \
+entire wordnet dictionary. '''
+from nltk.corpus import wordnet as wn
+from nltk.corpus import stopwords
+stopwords=set(stopwords.words('english'))
+modals = ['can', 'could', 'may', 'might', 'must', 'will', 'would', 'should']
+WORDS = Counter(set(wn.words()).union(stopwords).union(set(modals)))
 
 class SpellChecker(object):
     ''' The SpellChecker class encapsulates the basics needed to accomplish a
@@ -107,7 +114,7 @@ class SpellChecker(object):
             Returns:
                 set: The set of those words from the input that are in the \
                 corpus '''
-        return set(w for w in words if w in self._word_frequency.dictionary or
+        return set(w for w in words if w in WORDS or
                    not self._check_if_should_check(w))
 
     def unknown(self, words):
