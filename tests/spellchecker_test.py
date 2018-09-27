@@ -135,3 +135,24 @@ class TestSpellChecker(unittest.TestCase):
         self.assertFalse('awesome' in spell)
         self.assertTrue(spell['whale'])
         self.assertTrue('waves' in spell)
+
+    def test_remove_words(self):
+        ''' test is a word is removed '''
+        spell = SpellChecker()
+        self.assertEqual(spell['the'], 6187925)
+        spell.word_frequency.remove_words(['the'])
+        self.assertEqual(spell['the'], 0)
+
+    def test_remove_word(self):
+        ''' test a single word removed '''
+        spell = SpellChecker()
+        self.assertEqual(spell['teh'], 6)
+        spell.word_frequency.remove('teh')
+        self.assertEqual(spell['teh'], 0)
+
+    def test_add_word(self):
+        ''' test adding a word '''
+        spell = SpellChecker()
+        self.assertEqual(spell['meh'], 0)
+        spell.word_frequency.add('meh')
+        self.assertEqual(spell['meh'], 1)
