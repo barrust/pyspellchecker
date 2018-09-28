@@ -160,7 +160,7 @@ Removing words is as simple as adding words:
     from spellchecker import SpellChecker
 
     spell = SpellChecker()
-    spell.word_frequency.remove(['Text', 'to', 'be','removed', 'from', 'the', 'system'])
+    spell.word_frequency.remove_words(['Text', 'to', 'be','removed', 'from', 'the', 'system'])
 
     # or remove a single word
     spell.remove('meh')
