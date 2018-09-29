@@ -16,7 +16,7 @@ algorithm to find permutations within an edit distance of 2 from the
 original word. It then compares all permutations (insertions, deletions,
 replacements, and transpositions) to known words in a word frequency
 list. Those words that are found more often in the frequency list are
-***more likely*** the correct results.
+**more likely** the correct results.
 
 ``pyspellchecker`` supports multiple languages including English, Spanish,
 German, and French. Dictionaries were generated using the `WordFrequency project <https://github.com/hermitdave/FrequencyWords>`__ on GitHub.

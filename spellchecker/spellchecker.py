@@ -129,7 +129,7 @@ class SpellChecker(object):
             Args:
                 word (str): The word for which to calculate the edit distance
             Returns:
-                set: The set of strings that are edit distance two from the \
+                set: The set of strings that are edit distance one from the \
                 provided word '''
         if self._check_if_should_check(word) is False:
             return {word}
@@ -148,7 +148,7 @@ class SpellChecker(object):
             Args:
                 word (str): The word for which to calculate the edit distance
             Returns:
-                set: The set of strings that are edit distance one from the \
+                set: The set of strings that are edit distance two from the \
                 provided word '''
         return (e2 for e1 in self.edit_distance_1(word)
                 for e2 in self.edit_distance_1(e1))

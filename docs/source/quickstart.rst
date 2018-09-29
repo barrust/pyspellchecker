@@ -163,4 +163,4 @@ Removing words is as simple as adding words:
     spell.word_frequency.remove_words(['Text', 'to', 'be','removed', 'from', 'the', 'system'])
 
     # or remove a single word
-    spell.remove('meh')
+    spell.word_frequency.remove('meh')
