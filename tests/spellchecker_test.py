@@ -6,7 +6,6 @@ import os
 
 from spellchecker import SpellChecker
 
-
 class TestSpellChecker(unittest.TestCase):
     ''' test the spell checker class '''
 
@@ -116,6 +115,13 @@ class TestSpellChecker(unittest.TestCase):
         spell = SpellChecker(language=None, local_dictionary=filepath)
         self.assertEqual(spell['a'], 1)
         self.assertTrue('apple' in spell)
+
+    def test_edit_distance_one(self):
+        ''' test a case where edit distance must be one '''
+        here = os.path.dirname(__file__)
+        filepath = '{}/resources/small_dictionary.json'.format(here)
+        spell = SpellChecker(language=None, local_dictionary=filepath, distance=1)
+        self.assertEqual(spell.candidates('hike'), {'bike'})
 
     def test_edit_distance_two(self):
         ''' test a case where edit distance must be two '''
