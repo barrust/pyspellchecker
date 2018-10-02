@@ -23,7 +23,7 @@ setup(
     url = __url__,
     download_url = '{0}/tarball/v{1}'.format(__url__, __version__),
     bugtrack_url = __bugtrack_url__,
-    install_requires = ['nltk>=3.1'],
+    install_requires = [],
     packages=find_packages(exclude=['tests']),
     package_data={'spellchecker': ['resources/*']},
     include_package_data = True,
