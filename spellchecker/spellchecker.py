@@ -9,14 +9,6 @@ import gzip
 import string
 from collections import Counter
 
-''' WORDS corpus includes stopwords and wordnet from nltk as well as modals'''
-from nltk.corpus import wordnet as wn
-from nltk.corpus import stopwords
-stopwords=set(stopwords.words('english'))
-modals = ['can', 'could', 'may', 'might', 'must', 'will', 'would', 'should', \
-          'shall']
-WORDS = Counter(set(wn.words()).union(stopwords).union(set(modals)))
-
 class SpellChecker(object):
     ''' The SpellChecker class encapsulates the basics needed to accomplish a
         simple spell checking algorithm. It is based on the work by
@@ -106,15 +98,14 @@ class SpellChecker(object):
                 self.known(self.edit_distance_2(word)) or {word})
 
     def known(self, words):
-        ''' The subset of `words` that appear in the corpus of words
-
+        ''' The subset of `words` that appear in the dictionary of words
             Args:
                 words (list): List of words to determine which are in the \
                 corpus
             Returns:
                 set: The set of those words from the input that are in the \
                 corpus '''
-        return set(w for w in words if w in WORDS or
+        return set(w for w in words if w in self._word_frequency.dictionary or
                    not self._check_if_should_check(w))
 
     def unknown(self, words):
