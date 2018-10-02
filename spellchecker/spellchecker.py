@@ -136,7 +136,7 @@ class SpellChecker(object):
             Args:
                 word (str): The word for which to calculate the edit distance
             Returns:
-                set: The set of strings that are edit distance two from the \
+                set: The set of strings that are edit distance one from the \
                 provided word '''
         if self._check_if_should_check(word) is False:
             return {word}
@@ -155,7 +155,7 @@ class SpellChecker(object):
             Args:
                 word (str): The word for which to calculate the edit distance
             Returns:
-                set: The set of strings that are edit distance one from the \
+                set: The set of strings that are edit distance two from the \
                 provided word '''
         return (e2 for e1 in self.edit_distance_1(word)
                 for e2 in self.edit_distance_1(e1))
@@ -259,8 +259,32 @@ class WordFrequency(object):
         ''' Load a list of words from which to generate a word frequency list
 
             Args:
-                text (list): The list of words to be loaded '''
+                words (list): The list of words to be loaded '''
         self._dictionary.update([word.lower() for word in words])
+        self._update_dictionary()
+
+    def add(self, word):
+        ''' Add a word to the word frequency list
+
+            Args:
+                word (str): The word to add '''
+        self.load_words([word.lower()])
+
+    def remove_words(self, words):
+        ''' Remove a list of words from the word frequency list
+
+            Args:
+                words (list): The list of words to remove '''
+        for word in words:
+            self._dictionary.pop(word.lower())
+        self._update_dictionary()
+
+    def remove(self, word):
+        ''' Remove a word from the word frequency list
+
+            Args:
+                word (str): The word to remove '''
+        self._dictionary.pop(word.lower())
         self._update_dictionary()
 
     def _update_dictionary(self):

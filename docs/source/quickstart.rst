@@ -94,7 +94,7 @@ parameter on initialization.
     print(spell['mañana'])
 
 
-Adding Terms to a Dictionary
+Adding and Removing Terms from a Dictionary
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 There are several ways to add additional terms to your word frequency dictionary
@@ -141,3 +141,26 @@ Or update using a list of words:
 
     spell = SpellChecker()
     spell.word_frequency.load_words(['Text', 'to', 'be','added', 'to', 'the', 'system'])
+
+
+Or add a single word:
+
+.. code:: python
+
+    from spellchecker import SpellChecker
+
+    spell = SpellChecker()
+    spell.word_frequency.add('Text')
+
+
+Removing words is as simple as adding words:
+
+.. code:: python
+
+    from spellchecker import SpellChecker
+
+    spell = SpellChecker()
+    spell.word_frequency.remove_words(['Text', 'to', 'be','removed', 'from', 'the', 'system'])
+
+    # or remove a single word
+    spell.word_frequency.remove('meh')
