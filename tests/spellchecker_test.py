@@ -150,6 +150,21 @@ class TestSpellChecker(unittest.TestCase):
         spell.word_frequency.remove('teh')
         self.assertEqual(spell['teh'], 0)
 
+    def test_remove_by_threshold(self):
+        ''' test removing everything below a certain threshold '''
+        spell = SpellChecker()
+        cnt = 0
+        for key in spell.word_frequency.keys():
+            if spell.word_frequency[key] < 7:
+                cnt += 1
+        self.assertGreater(cnt, 0)
+        spell.word_frequency.remove_by_threshold(7)
+        cnt = 0
+        for key in spell.word_frequency.keys():
+            if spell.word_frequency[key] < 7:
+                cnt += 1
+        self.assertEqual(cnt, 0)
+
     def test_add_word(self):
         ''' test adding a word '''
         spell = SpellChecker()

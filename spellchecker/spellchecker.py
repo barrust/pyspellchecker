@@ -165,6 +165,7 @@ class SpellChecker(object):
 
         return True
 
+
 class WordFrequency(object):
     ''' Store the `dictionary` as a word frequency list while allowing for
         different methods to load the data and update over time '''
@@ -216,6 +217,26 @@ class WordFrequency(object):
             Note:
                 Not settable '''
         return self._letters
+
+    def keys(self):
+        ''' Iterator over the key of the dictionary
+
+            Yields:
+                str: The next key in the dictionary
+            Note:
+                This is the same as `spellchecker.words()` '''
+        for key in self._dictionary.keys():
+            yield key
+
+    def words(self):
+        ''' Iterator over the words in the dictionary
+
+            Yields:
+                str: The next word in the dictionary
+            Note:
+                This is the same as `spellchecker.keys()` '''
+        for word in self._dictionary.keys():
+            yield word
 
     def load_dictionary(self, filename):
         ''' Load in a pre-built word frequency list
@@ -278,6 +299,18 @@ class WordFrequency(object):
             Args:
                 word (str): The word to remove '''
         self._dictionary.pop(word.lower())
+        self._update_dictionary()
+
+    def remove_by_threshold(self, threshold=5):
+        ''' Remove all words at, or below, the provided threshold
+
+            Args:
+                threshold (int): The threshold at which a word is to be \
+                removed '''
+        keys = [x.lower() for x in self._dictionary.keys()]
+        for key in keys:
+            if self._dictionary[key] <= threshold:
+                self._dictionary.pop(key)
         self._update_dictionary()
 
     def _update_dictionary(self):
