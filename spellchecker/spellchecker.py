@@ -9,6 +9,7 @@ import gzip
 import string
 from collections import Counter
 
+
 class SpellChecker(object):
     ''' The SpellChecker class encapsulates the basics needed to accomplish a
         simple spell checking algorithm. It is based on the work by
@@ -99,6 +100,7 @@ class SpellChecker(object):
 
     def known(self, words):
         ''' The subset of `words` that appear in the dictionary of words
+        
             Args:
                 words (list): List of words to determine which are in the \
                 corpus
