@@ -104,7 +104,7 @@ class SpellChecker(object):
 
     def known(self, words):
         ''' The subset of `words` that appear in the dictionary of words
-
+        
             Args:
                 words (list): List of words to determine which are in the \
                 corpus
@@ -295,6 +295,17 @@ class WordFrequency(object):
                 words (list): The list of words to remove '''
         for word in words:
             self._dictionary.pop(word.lower())
+        self._update_dictionary()
+    
+    def remove_by_threshold(self, min_freq=0):
+        ''' Remove a list of words from the word frequency list
+            
+            Args:
+                min_freq (int): Remove word occurences fewer  
+                than threshold '''
+        for key, value in self._dictionary.copy().items():
+            if value <= min_freq:
+                del self._dictionary[key]
         self._update_dictionary()
 
     def remove(self, word):
