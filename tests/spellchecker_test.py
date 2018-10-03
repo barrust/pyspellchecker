@@ -160,7 +160,7 @@ class TestSpellChecker(unittest.TestCase):
         self.assertGreater(cnt, 0)
         spell.word_frequency.remove_by_threshold(7)
         cnt = 0
-        for key in spell.word_frequency.keys():
+        for key in spell.word_frequency.words():  # synonym for keys
             if spell.word_frequency[key] < 7:
                 cnt += 1
         self.assertEqual(cnt, 0)
@@ -171,3 +171,13 @@ class TestSpellChecker(unittest.TestCase):
         self.assertEqual(spell['meh'], 0)
         spell.word_frequency.add('meh')
         self.assertEqual(spell['meh'], 1)
+
+    def test_checking_odd_word(self):
+        ''' test checking a word that is really a number '''
+        spell = SpellChecker()
+        self.assertEqual(spell.edit_distance_1('12345'), {'12345'})
+
+    def test_unique_words(self):
+        ''' test the unique word count '''
+        spell = SpellChecker()
+        self.assertEqual(spell.word_frequency.unique_words, len(list(spell.word_frequency.keys())))
