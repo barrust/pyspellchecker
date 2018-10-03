@@ -20,9 +20,12 @@ class SpellChecker(object):
             for no dictionary. Supported languages are `en`, `es`, `de`, and \
             `fr`. Defaults to `en`
             local_dictionary (str): The path to a locally stored word \
-            frequency dictionary '''
+            frequency dictionary
+            distance (int): The edit distance to use. Defaults to 2'''
 
-    def __init__(self, language='en', local_dictionary=None):
+
+    def __init__(self, language='en', local_dictionary=None, distance=2):
+        self._distance = distance
         self._word_frequency = WordFrequency()
         if local_dictionary:
             self._word_frequency.load_dictionary(local_dictionary)
@@ -95,8 +98,9 @@ class SpellChecker(object):
                 word (str): The word for which to calculate candidate spellings
             Returns:
                 set: The set of words that are possible candidates '''
+
         return (self.known([word]) or self.known(self.edit_distance_1(word)) or
-                self.known(self.edit_distance_2(word)) or {word})
+                (self._distance == 2 and self.known(self.edit_distance_2(word))) or {word})
 
     def known(self, words):
         ''' The subset of `words` that appear in the dictionary of words
