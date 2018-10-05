@@ -20,16 +20,16 @@ class SpellChecker(object):
             for no dictionary. Supported languages are `en`, `es`, `de`, and \
             `fr`. Defaults to `en`
             local_dictionary (str): The path to a locally stored word \
-            frequency dictionary
+            frequency dictionary; if provided, no language will be loaded
             distance (int): The edit distance to use. Defaults to 2'''
 
-
     def __init__(self, language='en', local_dictionary=None, distance=2):
-        self._distance = distance
+        self._distance = None
+        self.distance = distance  # use the setter value check
         self._word_frequency = WordFrequency()
         if local_dictionary:
             self._word_frequency.load_dictionary(local_dictionary)
-        if language:
+        elif language:
             filename = '{}.json.gz'.format(language)
             here = os.path.dirname(__file__)
             full_filename = os.path.join(here, 'resources', filename)
@@ -55,6 +55,27 @@ class SpellChecker(object):
                 Not settable '''
         return self._word_frequency
 
+    @property
+    def distance(self):
+        ''' int: The maximum edit distance to calculate
+
+            Note:
+                Valid values are 1 or 2; if an invalid value is passed, \
+                defaults to 2 '''
+        return self._distance
+
+    @distance.setter
+    def distance(self, val):
+        ''' set the distance parameter '''
+        tmp = 2
+        try:
+            int(val)
+            if val > 0 and val <= 2:
+                tmp = val
+        except (ValueError, TypeError):
+            pass
+        self._distance = tmp
+
     @staticmethod
     def words(text):
         ''' Split text into individual `words` using a simple whitespace regex
@@ -64,6 +85,20 @@ class SpellChecker(object):
             Returns:
                 list(str): A listing of all words in the provided text '''
         return _words(text)
+
+    def export(self, filepath, gzipped=True):
+        ''' Export the word frequency list for import in the future
+
+             Args:
+                filepath (str): The filepath to the exported dictionary
+                gzipped (bool): Whether to gzip the dictionary or not '''
+        data = json.dumps(self.word_frequency.dictionary, sort_keys=True)
+        if gzipped:
+            with gzip.open(filepath, 'wt') as fobj:
+                fobj.write(data)
+        else:
+            with open(filepath, 'w') as fobj:
+                fobj.write(data)
 
     def word_probability(self, word, total_words=None):
         ''' Calculate the probability of the `word` being the desired, correct
@@ -100,7 +135,8 @@ class SpellChecker(object):
                 set: The set of words that are possible candidates '''
 
         return (self.known([word]) or self.known(self.edit_distance_1(word)) or
-                (self._distance == 2 and self.known(self.edit_distance_2(word))) or {word})
+                (self._distance == 2 and
+                 self.known(self.edit_distance_2(word))) or {word})
 
     def known(self, words):
         ''' The subset of `words` that appear in the dictionary of words
