@@ -1,6 +1,6 @@
 # pyspellchecker
 
-## Version 0.1.5 (unreleased)
+## Version 0.1.5
 * Remove words based on threshold
 * Add ability to iterate over words (keys) in the dictionary
 * Add setting to to reduce the edit distance check
