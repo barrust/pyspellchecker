@@ -24,6 +24,10 @@ German, and French. Dictionaries were generated using the `WordFrequency project
 ``pyspellchecker`` supports **Python 3**. If may work for Python 2.7 but it is not
 guaranteed (especially for Non-English dictionaries)!
 
+``pyspellchecker`` allows for the setting of the Levenshtein Distance to check.
+For longer words, it is highly recommended to use a distance of 1 and not the
+default 2. See the quickstart to find how one can change the distance parameter.
+
 
 Installation
 -------------------------------------------------------------------------------
@@ -86,10 +90,20 @@ text to generate a more appropriate list for your use case.
     spell.known(['microsoft', 'google'])  # will return both now!
 
 
+If the words that you wish to check are long, it is recommended to reduce the
+`distance` to 1. This can be accomplished either when initializing the spell
+check class or after the fact.
 
+.. code:: python
 
-More work in storing and loading word frequency lists is planned; stay
-tuned.
+    from spellchecker import SpellChecker
+
+    spell = SpellChecker(distance=1)  # set at initialization
+
+    # do some work on longer words
+
+    spell.distance = 2  # set the distance parameter back to the default
+
 
 
 Additional Methods

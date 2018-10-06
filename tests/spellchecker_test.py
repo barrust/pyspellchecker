@@ -123,6 +123,22 @@ class TestSpellChecker(unittest.TestCase):
         spell = SpellChecker(language=None, local_dictionary=filepath, distance=1)
         self.assertEqual(spell.candidates('hike'), {'bike'})
 
+    def test_edit_distance_one_property(self):
+        ''' check the property setting of the distance property '''
+        spell = SpellChecker(distance=1)
+        self.assertEqual(spell.distance, 1)
+        spell.distance = 2
+        self.assertEqual(spell.distance, 2)
+
+    def test_edit_distance_invalud(self):
+        ''' check the property setting of the distance property on invalid inputs '''
+        spell = SpellChecker(distance=None)
+        self.assertEqual(spell.distance, 2)
+        spell.distance = 1
+        self.assertEqual(spell.distance, 1)
+        spell.distance = 'string'
+        self.assertEqual(spell.distance, 2)
+
     def test_edit_distance_two(self):
         ''' test a case where edit distance must be two '''
         here = os.path.dirname(__file__)
@@ -187,3 +203,35 @@ class TestSpellChecker(unittest.TestCase):
         ''' test the unique word count '''
         spell = SpellChecker()
         self.assertEqual(spell.word_frequency.unique_words, len(list(spell.word_frequency.keys())))
+
+    def test_import_export_json(self):
+        ''' test the export functionality as json '''
+        here = os.path.dirname(__file__)
+        filepath = '{}/resources/small_dictionary.json'.format(here)
+
+        spell = SpellChecker(language=None, local_dictionary=filepath)
+        spell.word_frequency.add('meh')
+        new_filepath = '{}/resources/small_dictionary_new.json'.format(here)
+        spell.export(new_filepath, gzipped=False)
+
+        sp = SpellChecker(language=None, local_dictionary=new_filepath)
+        self.assertTrue('meh' in sp)
+        self.assertFalse('bananna' in sp)
+
+        os.remove(new_filepath)
+
+    def test_import_export_gzip(self):
+        ''' test the export functionality as gzip '''
+        here = os.path.dirname(__file__)
+        filepath = '{}/resources/small_dictionary.json'.format(here)
+
+        spell = SpellChecker(language=None, local_dictionary=filepath)
+        spell.word_frequency.add('meh')
+        new_filepath = '{}/resources/small_dictionary_new.json.gz'.format(here)
+        spell.export(new_filepath, gzipped=True)
+
+        sp = SpellChecker(language=None, local_dictionary=new_filepath)
+        self.assertTrue('meh' in sp)
+        self.assertFalse('bananna' in sp)
+
+        os.remove(new_filepath)

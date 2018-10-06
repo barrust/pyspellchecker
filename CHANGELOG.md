@@ -1,10 +1,14 @@
 # pyspellchecker
 
-## Version 0.1.5 (unreleased)
+## Version 0.1.5
 * Remove words based on threshold
 * Add ability to iterate over words (keys) in the dictionary
 * Add setting to to reduce the edit distance check
-[see PR #17](https://github.com/barrust/pyspellchecker/pull/17) Thanks [@mrjamesriley](https://github.com/mrjamesriley) 
+[see PR #17](https://github.com/barrust/pyspellchecker/pull/17) Thanks [@mrjamesriley](https://github.com/mrjamesriley)
+* Added Export functionality:
+   * json
+   * gzip
+* Updated logic for loading dictionaries to be either language or local_dictionary
 
 ## Version 0.1.4
 * Ability to easily remove words
