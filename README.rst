@@ -1,6 +1,8 @@
 pyspellchecker
 ===============================================================================
 
+.. image:: https://badge.fury.io/py/pyspellchecker.svg
+    :target: https://badge.fury.io/py/pyspellchecker
 .. image:: https://travis-ci.org/barrust/pyspellchecker.svg?branch=master
     :target: https://travis-ci.org/barrust/pyspellchecker
 .. image:: https://coveralls.io/repos/github/barrust/pyspellchecker/badge.svg?branch=master
