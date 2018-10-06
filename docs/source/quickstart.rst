@@ -66,6 +66,13 @@ Once a word is identified as misspelled, you can find the likeliest replacement:
         spell.correction(word)  # 'happening'
 
 
+.. code:: python
+
+    from spellchecker import SpellChecker
+
+    spell = SpellChecker(distance=1)  # set the Levenshtein Distance parameter
+
+
 Or if the word identified as the likeliest is not correct, a list of candidates
 can also be pulled:
 
