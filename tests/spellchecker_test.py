@@ -36,7 +36,7 @@ class TestSpellChecker(unittest.TestCase):
         ''' rest the parsing of words '''
         spell = SpellChecker()
         res = ['this', 'is', 'a', 'test', 'of', 'this']
-        self.assertEqual(spell.words('This is a test of this'), res)
+        self.assertEqual(spell.split_words('This is a test of this'), res)
 
     def test_word_frequency(self):
         ''' test word frequency '''

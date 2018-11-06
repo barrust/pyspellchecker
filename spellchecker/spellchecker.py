@@ -17,11 +17,13 @@ class SpellChecker(object):
 
         Args:
             language (str): The language of the dictionary to load or None \
-            for no dictionary. Supported languages are `en`, `es`, `de`, and \
-            `fr`. Defaults to `en`
+            for no dictionary. Supported languages are `en`, `es`, `de`, fr` \
+            and `pt`. Defaults to `en`
             local_dictionary (str): The path to a locally stored word \
             frequency dictionary; if provided, no language will be loaded
-            distance (int): The edit distance to use. Defaults to 2'''
+            distance (int): The edit distance to use. Defaults to 2 '''
+
+    __slots__ = ['_distance', '_word_frequency']
 
     def __init__(self, language='en', local_dictionary=None, distance=2):
         self._distance = None
@@ -77,7 +79,7 @@ class SpellChecker(object):
         self._distance = tmp
 
     @staticmethod
-    def words(text):
+    def split_words(text):
         ''' Split text into individual `words` using a simple whitespace regex
 
             Args:
@@ -86,18 +88,19 @@ class SpellChecker(object):
                 list(str): A listing of all words in the provided text '''
         return _words(text)
 
-    def export(self, filepath, gzipped=True):
+    def export(self, filepath, encoding='utf-8', gzipped=True):
         ''' Export the word frequency list for import in the future
 
              Args:
                 filepath (str): The filepath to the exported dictionary
+                encoding (str): The encoding of the resulting output
                 gzipped (bool): Whether to gzip the dictionary or not '''
         data = json.dumps(self.word_frequency.dictionary, sort_keys=True)
         if gzipped:
-            with gzip.open(filepath, 'wt') as fobj:
+            with gzip.open(filepath, 'wt', encoding=encoding) as fobj:
                 fobj.write(data)
         else:
-            with open(filepath, 'w') as fobj:
+            with open(filepath, 'w', encoding=encoding) as fobj:
                 fobj.write(data)
 
     def word_probability(self, word, total_words=None):
@@ -210,6 +213,7 @@ class WordFrequency(object):
     ''' Store the `dictionary` as a word frequency list while allowing for
         different methods to load the data and update over time '''
 
+    __slots__ = ['_dictionary', '_total_words', '_unique_words', '_letters']
     def __init__(self):
         self._dictionary = Counter()
         self._total_words = 0
@@ -278,27 +282,29 @@ class WordFrequency(object):
         for word in self._dictionary.keys():
             yield word
 
-    def load_dictionary(self, filename):
+    def load_dictionary(self, filename, encoding='utf-8'):
         ''' Load in a pre-built word frequency list
 
             Args:
                 filename (str): The filepath to the json (optionally gzipped) \
-                file to be loaded '''
+                file to be loaded
+                encoding (str): The encoding of the dictionary '''
         try:
-            with gzip.open(filename, 'rt') as fobj:
+            with gzip.open(filename, mode='rt', encoding=encoding) as fobj:
                 data = fobj.read().lower()
         except OSError:
-            with open(filename, 'r') as fobj:
+            with open(filename, mode='r', encoding=encoding) as fobj:
                 data = fobj.read().lower()
-        self._dictionary.update(json.loads(data, encoding='utf8'))
+        self._dictionary.update(json.loads(data, encoding=encoding))
         self._update_dictionary()
 
-    def load_text_file(self, filename):
+    def load_text_file(self, filename, encoding='utf-8'):
         ''' Load in a text file from which to generate a word frequency list
 
             Args:
-                filename (str): The filepath to the text file to be loaded '''
-        with open(filename, 'r') as fobj:
+                filename (str): The filepath to the text file to be loaded
+                encoding (str): The encoding of the text file '''
+        with open(filename, 'r', encoding=encoding) as fobj:
             self.load_text(fobj.read())
 
     def load_text(self, text):

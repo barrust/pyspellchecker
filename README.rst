@@ -21,7 +21,8 @@ list. Those words that are found more often in the frequency list are
 **more likely** the correct results.
 
 ``pyspellchecker`` supports multiple languages including English, Spanish,
-German, and French. Dictionaries were generated using the `WordFrequency project <https://github.com/hermitdave/FrequencyWords>`__ on GitHub.
+German, French, and Portuguese. Dictionaries were generated using
+the `WordFrequency project <https://github.com/hermitdave/FrequencyWords>`__ on GitHub.
 
 ``pyspellchecker`` supports **Python 3**. If may work for Python 2.7 but it is not
 guaranteed (especially for Non-English dictionaries)!

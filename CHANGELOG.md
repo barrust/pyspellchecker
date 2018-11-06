@@ -1,5 +1,11 @@
 # pyspellchecker
 
+## Version 0.2.0
+* Changed `words` function to `split_words` to differentiate with the `word_frequency.words` function
+* Added ***Portuguese*** dictionary: `pt`
+* Add encoding argument to `gzip.open` and `open` dictionary loading and exporting
+* Use of __slots__ for class objects
+
 ## Version 0.1.5
 * Remove words based on threshold
 * Add ability to iterate over words (keys) in the dictionary
