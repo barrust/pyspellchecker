@@ -32,12 +32,12 @@ class SpellChecker(object):
         if local_dictionary:
             self._word_frequency.load_dictionary(local_dictionary)
         elif language:
-            filename = '{}.json.gz'.format(language)
+            filename = '{}.json.gz'.format(language.lower())
             here = os.path.dirname(__file__)
             full_filename = os.path.join(here, 'resources', filename)
             if not os.path.exists(full_filename):
                 msg = ('The provided dictionary language ({}) does not '
-                       'exist!').format(language)
+                       'exist!').format(language.lower())
                 raise ValueError(msg)
             self._word_frequency.load_dictionary(full_filename)
 
