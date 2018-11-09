@@ -1,5 +1,8 @@
 # pyspellchecker
 
+## Version 0.2.1
+* Ignore case for language identifiers
+
 ## Version 0.2.0
 * Changed `words` function to `split_words` to differentiate with the `word_frequency.words` function
 * Added ***Portuguese*** dictionary: `pt`
