@@ -17,6 +17,7 @@ KEYWORDS = ['python', 'spelling', 'typo', 'checker']
 
 
 def get_dictionaries():
+    ''' pull dictionaries for use in the tar.gz build '''
     return ["spellchecker/resources/{}".format(x)
             for x in os.listdir('./spellchecker/resources')
             if x.endswith('.gz')]
