@@ -16,13 +16,6 @@ def read_file(filepath):
 KEYWORDS = ['python', 'spelling', 'typo', 'checker']
 
 
-def get_dictionaries():
-    ''' pull dictionaries for use in the tar.gz build '''
-    return ["spellchecker/resources/{}".format(x)
-            for x in os.listdir('./spellchecker/resources')
-            if x.endswith('.gz')]
-
-
 setup(
     name = 'pyspellchecker',
     version = __version__,
@@ -37,7 +30,6 @@ setup(
     install_requires = [],
     packages=find_packages(exclude=['tests']),
     package_data={'spellchecker': ['resources/*']},
-    data_files=[('resources', get_dictionaries())],
     include_package_data = True,
     long_description = read_file('README.rst'),
     classifiers = [
