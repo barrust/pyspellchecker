@@ -1,8 +1,10 @@
 ''' Module Installation script '''
 from setuptools import (setup, find_packages)
 import io
+import os
 from spellchecker import (__version__, __url__, __author__, __email__,
-                       __license__, __bugtrack_url__)
+                          __license__, __bugtrack_url__)
+
 
 def read_file(filepath):
     ''' read the file '''
@@ -10,7 +12,15 @@ def read_file(filepath):
         res = filepointer.read()
     return res
 
+
 KEYWORDS = ['python', 'spelling', 'typo', 'checker']
+
+
+def get_dictionaries():
+    return ["spellchecker/resources/{}".format(x)
+            for x in os.listdir('./spellchecker/resources')
+            if x.endswith('.gz')]
+
 
 setup(
     name = 'pyspellchecker',
@@ -26,6 +36,7 @@ setup(
     install_requires = [],
     packages=find_packages(exclude=['tests']),
     package_data={'spellchecker': ['resources/*']},
+    data_files=[('resources', get_dictionaries())],
     include_package_data = True,
     long_description = read_file('README.rst'),
     classifiers = [
