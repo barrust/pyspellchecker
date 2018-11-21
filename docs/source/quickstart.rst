@@ -178,6 +178,33 @@ Removing words is as simple as adding words:
     spell.word_frequency.remove('meh')
 
 
+How to Build a New Dictionary
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Building a custom or new language dictionary is relatively straight forward. To
+begin, you will need to have either a word frequency list or text files that
+represent the usage of the terms. Since `pyspellchecker` uses word frequency, it
+is better to have the most common words have higher frequencies!
+
+Once you have the corpus, code similar to the following should build out the
+dictionary:
+
+.. code:: python
+
+    from spellchecker import SpellChecker
+
+    spell = SpellChecker(language=None)  # turn off loading a built language dictionary
+
+    # if you have a dictionary...
+    spell.word_frequency.load_dictionary('./path-to-my-json-dictionary.json')
+
+    # or... if you have text
+    spell.word_frequency.load_text('./path-to-my-text-doc.txt')
+
+    # export it out for later use!
+    spell.export('my_custom_dictionary.gz', gzipped=True)
+
+
 A quick, command line spell checking program
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
