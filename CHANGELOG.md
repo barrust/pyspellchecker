@@ -1,5 +1,8 @@
 # pyspellchecker
 
+## Version 0.2.2
+* Minor package fix for non-wheel deployments
+
 ## Version 0.2.1
 * Ignore case for language identifiers
 
