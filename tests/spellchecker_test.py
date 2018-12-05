@@ -235,3 +235,23 @@ class TestSpellChecker(unittest.TestCase):
         self.assertFalse('bananna' in sp)
 
         os.remove(new_filepath)
+
+    def test_capitalization(self):
+        ''' test that capitalization doesn't affect in comparisons '''
+        spell = SpellChecker(language=None)
+        spell.word_frequency.add('Bob')
+        spell.word_frequency.add('Bob')
+        spell.word_frequency.add('Bab')
+        self.assertEqual('Bob' in spell, True)
+        self.assertEqual('BOb' in spell, True)
+        self.assertEqual('BOB' in spell, True)
+        self.assertEqual('bob' in spell, True)
+
+        words = ['Bb', 'bb', 'BB']
+        self.assertEqual(spell.unknown(words), {'bb'})
+
+        known_words = ['BOB', 'bOb']
+        self.assertEqual(spell.known(known_words), {'bob'})
+
+        self.assertEqual(spell.candidates('BB'), {'bob', 'bab'})
+        self.assertEqual(spell.correction('BB'), 'bob')

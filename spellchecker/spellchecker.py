@@ -150,7 +150,8 @@ class SpellChecker(object):
             Returns:
                 set: The set of those words from the input that are in the \
                 corpus '''
-        return set(w for w in words if w in self._word_frequency.dictionary or
+        tmp = [w.lower() for w in words]
+        return set(w for w in tmp if w in self._word_frequency.dictionary or
                    not self._check_if_should_check(w))
 
     def unknown(self, words):
@@ -162,7 +163,7 @@ class SpellChecker(object):
             Returns:
                 set: The set of those words from the input that are not in \
                 the corpus '''
-        tmp = [w for w in words if self._check_if_should_check(w)]
+        tmp = [w.lower() for w in words if self._check_if_should_check(w)]
         return set(w for w in tmp if w not in self._word_frequency.dictionary)
 
     def edit_distance_1(self, word):
@@ -222,11 +223,11 @@ class WordFrequency(object):
 
     def __contains__(self, key):
         ''' turn on contains '''
-        return key in self._dictionary
+        return key.lower() in self._dictionary
 
     def __getitem__(self, key):
         ''' turn on getitem '''
-        return self._dictionary[key]
+        return self._dictionary[key.lower()]
 
     @property
     def dictionary(self):
@@ -328,7 +329,7 @@ class WordFrequency(object):
 
             Args:
                 word (str): The word to add '''
-        self.load_words([word.lower()])
+        self.load_words([word])
 
     def remove_words(self, words):
         ''' Remove a list of words from the word frequency list
