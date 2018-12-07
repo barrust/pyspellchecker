@@ -136,10 +136,19 @@ class SpellChecker(object):
                 word (str): The word for which to calculate candidate spellings
             Returns:
                 set: The set of words that are possible candidates '''
-
-        return (self.known([word]) or self.known(self.edit_distance_1(word)) or
-                (self._distance == 2 and
-                 self.known(self.edit_distance_2(word))) or {word})
+        if self.known([word]):  # short-cut if word is correct already
+            return {word}
+        # get edit distance 1...
+        res = [x for x in self.edit_distance_1(word)]
+        tmp = self.known(res)
+        if tmp:
+            return tmp
+        # if still not found, use the edit distance 1 to calc edit distance 2
+        if self._distance == 2:
+            tmp = self.known([x for x in self.edit_distance_2(word)])
+            if tmp:
+                return tmp
+        return {word}
 
     def known(self, words):
         ''' The subset of `words` that appear in the dictionary of words
@@ -175,6 +184,7 @@ class SpellChecker(object):
             Returns:
                 set: The set of strings that are edit distance one from the \
                 provided word '''
+        word = word.lower()
         if self._check_if_should_check(word) is False:
             return {word}
         letters = self._word_frequency.letters
@@ -194,8 +204,21 @@ class SpellChecker(object):
             Returns:
                 set: The set of strings that are edit distance two from the \
                 provided word '''
-        return (e2 for e1 in self.edit_distance_1(word)
-                for e2 in self.edit_distance_1(e1))
+        word = word.lower()
+        return [e2 for e1 in self.edit_distance_1(word)
+                for e2 in self.edit_distance_1(e1)]
+
+    def __edit_distance_alt(self, words):
+        ''' Compute all strings that are 1 edits away from all the words using
+            only the letters in the corpus
+
+            Args:
+                words (list): The words for which to calculate the edit distance
+            Returns:
+                set: The set of strings that are edit distance two from the \
+                provided words '''
+        words = [x.lower() for x in words]
+        return [e2 for e1 in words for e2 in self.edit_distance_1(e1)]
 
     @staticmethod
     def _check_if_should_check(word):
@@ -215,6 +238,7 @@ class WordFrequency(object):
         different methods to load the data and update over time '''
 
     __slots__ = ['_dictionary', '_total_words', '_unique_words', '_letters']
+
     def __init__(self):
         self._dictionary = Counter()
         self._total_words = 0
@@ -228,6 +252,15 @@ class WordFrequency(object):
     def __getitem__(self, key):
         ''' turn on getitem '''
         return self._dictionary[key.lower()]
+
+    def pop(self, key, default=None):
+        ''' Remove the key and return the associated value or default if not
+            found
+
+            Args:
+                key (str): The key to remove
+                default (obj): The value to return if key is not present '''
+        return self._dictionary.pop(key.lower(), default)
 
     @property
     def dictionary(self):
@@ -354,7 +387,7 @@ class WordFrequency(object):
             Args:
                 threshold (int): The threshold at which a word is to be \
                 removed '''
-        keys = [x.lower() for x in self._dictionary.keys()]
+        keys = [x for x in self._dictionary.keys()]
         for key in keys:
             if self._dictionary[key] <= threshold:
                 self._dictionary.pop(key)
