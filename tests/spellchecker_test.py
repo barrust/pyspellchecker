@@ -255,3 +255,16 @@ class TestSpellChecker(unittest.TestCase):
 
         self.assertEqual(spell.candidates('BB'), {'bob', 'bab'})
         self.assertEqual(spell.correction('BB'), 'bob')
+
+    def test_pop(self):
+        ''' test the popping of a word '''
+        spell = SpellChecker()
+        self.assertEqual('apple' in spell, True)
+        self.assertGreater(spell.word_frequency.pop('apple'), 1)
+        self.assertEqual('apple' in spell, False)
+
+    def test_pop_default(self):
+        ''' test the default value being set for popping a word '''
+        spell = SpellChecker()
+        self.assertEqual('appleies' in spell, False)
+        self.assertEqual(spell.word_frequency.pop('appleies', False), False)
