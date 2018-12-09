@@ -145,7 +145,7 @@ class SpellChecker(object):
             return tmp
         # if still not found, use the edit distance 1 to calc edit distance 2
         if self._distance == 2:
-            tmp = self.known([x for x in self.edit_distance_2(word)])
+            tmp = self.known([x for x in self.__edit_distance_alt(res)])
             if tmp:
                 return tmp
         return {word}
