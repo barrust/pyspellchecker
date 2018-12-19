@@ -1,5 +1,9 @@
 # pyspellchecker
 
+## Version 0.3.0
+* Ensure all checks against the word frequency are lower case
+* Slightly better performance on edit distance of 2
+
 ## Version 0.2.2
 * Minor package fix for non-wheel deployments
 
