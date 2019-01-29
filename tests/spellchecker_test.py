@@ -1,5 +1,6 @@
+#coding=UTF-8
 ''' Unittest class '''
-from __future__ import division
+from __future__ import division, unicode_literals
 
 import unittest
 import os
@@ -268,3 +269,18 @@ class TestSpellChecker(unittest.TestCase):
         spell = SpellChecker()
         self.assertEqual('appleies' in spell, False)
         self.assertEqual(spell.word_frequency.pop('appleies', False), False)
+
+    def test_adding_unicode(self):
+        ''' test adding a unicode word to the dictionary '''
+        spell = SpellChecker()
+        spell.word_frequency.load_words(['mañana'])
+        self.assertEqual('ñ' in spell.word_frequency.letters, True)
+
+        here = os.path.dirname(__file__)
+        new_filepath = '{}/resources/small_dictionary_new.json.gz'.format(here)
+        spell.export(new_filepath, gzipped=True)
+
+        spell2 = SpellChecker(language=None, local_dictionary=new_filepath)
+        self.assertEqual("mañana" in spell2, True)
+
+        os.remove(new_filepath)
