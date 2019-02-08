@@ -24,8 +24,8 @@ list. Those words that are found more often in the frequency list are
 German, French, and Portuguese. Dictionaries were generated using
 the `WordFrequency project <https://github.com/hermitdave/FrequencyWords>`__ on GitHub.
 
-``pyspellchecker`` supports **Python 3**. If may work for Python 2.7 but it is not
-guaranteed (especially for Non-English dictionaries)!
+``pyspellchecker`` supports **Python 3** and Python 2.7 but, as always, Python 3
+is the preferred version!
 
 ``pyspellchecker`` allows for the setting of the Levenshtein Distance to check.
 For longer words, it is highly recommended to use a distance of 1 and not the

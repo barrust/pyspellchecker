@@ -3,11 +3,11 @@
 from __future__ import absolute_import, division, unicode_literals
 
 import os
-import re
 import json
-import gzip
 import string
 from collections import Counter
+
+from .utils import load_file, write_file, _parse_into_words
 
 
 class SpellChecker(object):
@@ -87,7 +87,7 @@ class SpellChecker(object):
                 text (str): The text to split into individual words
             Returns:
                 list(str): A listing of all words in the provided text """
-        return _words(text)
+        return _parse_into_words(text)
 
     def export(self, filepath, encoding="utf-8", gzipped=True):
         """ Export the word frequency list for import in the future
@@ -97,12 +97,7 @@ class SpellChecker(object):
                 encoding (str): The encoding of the resulting output
                 gzipped (bool): Whether to gzip the dictionary or not """
         data = json.dumps(self.word_frequency.dictionary, sort_keys=True)
-        if gzipped:
-            with gzip.open(filepath, "wt", encoding=encoding) as fobj:
-                fobj.write(data)
-        else:
-            with open(filepath, "w", encoding=encoding) as fobj:
-                fobj.write(data)
+        write_file(filepath, encoding, gzipped, data)
 
     def word_probability(self, word, total_words=None):
         """ Calculate the probability of the `word` being the desired, correct
@@ -329,14 +324,9 @@ class WordFrequency(object):
                 filename (str): The filepath to the json (optionally gzipped) \
                 file to be loaded
                 encoding (str): The encoding of the dictionary """
-        try:
-            with gzip.open(filename, mode="rt", encoding=encoding) as fobj:
-                data = fobj.read().lower()
-        except OSError:
-            with open(filename, mode="r", encoding=encoding) as fobj:
-                data = fobj.read().lower()
-        self._dictionary.update(json.loads(data, encoding=encoding))
-        self._update_dictionary()
+        with load_file(filename, encoding) as data:
+            self._dictionary.update(json.loads(data.lower(), encoding=encoding))
+            self._update_dictionary()
 
     def load_text_file(self, filename, encoding="utf-8"):
         """ Load in a text file from which to generate a word frequency list
@@ -344,15 +334,15 @@ class WordFrequency(object):
             Args:
                 filename (str): The filepath to the text file to be loaded
                 encoding (str): The encoding of the text file """
-        with open(filename, "r", encoding=encoding) as fobj:
-            self.load_text(fobj.read())
+        with load_file(filename, encoding=encoding) as data:
+            self.load_text(data)
 
     def load_text(self, text):
         """ Load text from which to generate a word frequency list
 
             Args:
                 text (str): The text to be loaded """
-        self._dictionary.update(_words(text))
+        self._dictionary.update(_parse_into_words(text))
         self._update_dictionary()
 
     def load_words(self, words):
@@ -406,8 +396,3 @@ class WordFrequency(object):
         self._letters = set()
         for key in self._dictionary:
             self._letters.update(key)
-
-
-def _words(text):
-    """ Parse the text into words; currently removes punctuation """
-    return re.findall(r"\w+", text.lower())
