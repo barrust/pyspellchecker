@@ -1,5 +1,8 @@
 # pyspellchecker
 
+## Version 0.3.1
+* Add full python 2.7 support for foreign dictionaries
+
 ## Version 0.3.0
 * Ensure all checks against the word frequency are lower case
 * Slightly better performance on edit distance of 2
