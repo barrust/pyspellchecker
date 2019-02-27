@@ -7,6 +7,9 @@ pyspellchecker
     :target: https://travis-ci.org/barrust/pyspellchecker
 .. image:: https://coveralls.io/repos/github/barrust/pyspellchecker/badge.svg?branch=master
     :target: https://coveralls.io/github/barrust/pyspellchecker?branch=master
+.. image:: http://pepy.tech/badge/pyspellchecker
+    :target: http://pepy.tech/count/pyspellchecker
+    :alt: Downloads
 
 
 Pure Python Spell Checking based on `Peter
