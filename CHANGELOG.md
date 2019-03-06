@@ -1,5 +1,8 @@
 # pyspellchecker
 
+## Version 0.4.0
+* Add support for a tokenizer for splitting words into tokens
+
 ## Version 0.3.1
 * Add full python 2.7 support for foreign dictionaries
 

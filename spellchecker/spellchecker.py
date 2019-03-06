@@ -333,7 +333,9 @@ class WordFrequency(object):
 
             Args:
                 filename (str): The filepath to the text file to be loaded
-                encoding (str): The encoding of the text file """
+                encoding (str): The encoding of the text file
+                tokenizer (function): The function to use to tokenize a string
+        """
         with load_file(filename, encoding=encoding) as data:
             self.load_text(data, tokenizer)
 
@@ -341,7 +343,9 @@ class WordFrequency(object):
         """ Load text from which to generate a word frequency list
 
             Args:
-                text (str): The text to be loaded """
+                text (str): The text to be loaded
+                tokenizer (function): The function to use to tokenize a string
+        """
         if tokenizer:
             words = tokenizer(text)
         else:
