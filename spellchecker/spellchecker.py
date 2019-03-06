@@ -328,21 +328,26 @@ class WordFrequency(object):
             self._dictionary.update(json.loads(data.lower(), encoding=encoding))
             self._update_dictionary()
 
-    def load_text_file(self, filename, encoding="utf-8"):
+    def load_text_file(self, filename, encoding="utf-8", tokenizer=None):
         """ Load in a text file from which to generate a word frequency list
 
             Args:
                 filename (str): The filepath to the text file to be loaded
                 encoding (str): The encoding of the text file """
         with load_file(filename, encoding=encoding) as data:
-            self.load_text(data)
+            self.load_text(data, tokenizer)
 
-    def load_text(self, text):
+    def load_text(self, text, tokenizer=None):
         """ Load text from which to generate a word frequency list
 
             Args:
                 text (str): The text to be loaded """
-        self._dictionary.update(_parse_into_words(text))
+        if tokenizer:
+            words = tokenizer(text)
+        else:
+            words = _parse_into_words(text)
+
+        self._dictionary.update(words)
         self._update_dictionary()
 
     def load_words(self, words):
