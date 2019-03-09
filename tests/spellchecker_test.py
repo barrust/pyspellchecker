@@ -32,6 +32,8 @@ class TestSpellChecker(unittest.TestCase):
         self.assertEqual(spell.candidates('ths'), cands)
         self.assertEqual(spell.candidates('the'), {'the'})
         self.assertEqual(spell.candidates('-'), {'-'})
+        # something that cannot exist... should return just the same element...
+        self.assertEqual(spell.candidates('manasaeds'), {'manasaeds'})
 
     def test_words(self):
         ''' rest the parsing of words '''
