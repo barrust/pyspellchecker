@@ -32,6 +32,8 @@ class TestSpellChecker(unittest.TestCase):
         self.assertEqual(spell.candidates('ths'), cands)
         self.assertEqual(spell.candidates('the'), {'the'})
         self.assertEqual(spell.candidates('-'), {'-'})
+        # something that cannot exist... should return just the same element...
+        self.assertEqual(spell.candidates('manasaeds'), {'manasaeds'})
 
     def test_words(self):
         ''' rest the parsing of words '''
@@ -129,6 +131,13 @@ class TestSpellChecker(unittest.TestCase):
         filepath = '{}/resources/small_dictionary.json'.format(here)
         spell = SpellChecker(language=None, local_dictionary=filepath, distance=1)
         self.assertEqual(spell.candidates('hike'), {'bike'})
+
+    def test_edit_distance_two(self):
+        ''' test a case where edit_distance_2 is called '''
+        here = os.path.dirname(__file__)
+        filepath = '{}/resources/small_dictionary.json'.format(here)
+        spell = SpellChecker(language=None, local_dictionary=filepath)
+        self.assertEqual(spell.edit_distance_2('hie'), ['bike'])
 
     def test_edit_distance_one_property(self):
         ''' check the property setting of the distance property '''
@@ -290,3 +299,20 @@ class TestSpellChecker(unittest.TestCase):
         self.assertEqual("mañana" in spell2, True)
 
         os.remove(new_filepath)
+
+    def test_tokenizer_file(self):
+        """ def using a custom tokenizer for file loading """
+        def tokens(txt):
+            for x in txt.split():
+                yield x
+
+        here = os.path.dirname(__file__)
+        filepath = '{}/resources/small_doc.txt'.format(here)
+        spell = SpellChecker(language=None)  # just from this doc!
+        spell.word_frequency.load_text_file(filepath, tokenizer=tokens)
+        self.assertEqual(spell['a'], 3)
+        self.assertEqual(spell['storm'], 1)
+        self.assertEqual(spell['storm.'], 1)
+        self.assertFalse('awesome' in spell)
+        self.assertTrue(spell['whale'])
+        self.assertTrue('sea.' in spell)

@@ -347,7 +347,7 @@ class WordFrequency(object):
                 tokenizer (function): The function to use to tokenize a string
         """
         if tokenizer:
-            words = tokenizer(text)
+            words = [x.lower() for x in tokenizer(text)]
         else:
             words = _parse_into_words(text)
 
