@@ -132,6 +132,13 @@ class TestSpellChecker(unittest.TestCase):
         spell = SpellChecker(language=None, local_dictionary=filepath, distance=1)
         self.assertEqual(spell.candidates('hike'), {'bike'})
 
+    def test_edit_distance_two(self):
+        ''' test a case where edit_distance_2 is called '''
+        here = os.path.dirname(__file__)
+        filepath = '{}/resources/small_dictionary.json'.format(here)
+        spell = SpellChecker(language=None, local_dictionary=filepath)
+        self.assertEqual(spell.edit_distance_2('hie'), ['bike'])
+
     def test_edit_distance_one_property(self):
         ''' check the property setting of the distance property '''
         spell = SpellChecker(distance=1)
