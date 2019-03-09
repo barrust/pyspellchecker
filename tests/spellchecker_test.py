@@ -290,3 +290,20 @@ class TestSpellChecker(unittest.TestCase):
         self.assertEqual("mañana" in spell2, True)
 
         os.remove(new_filepath)
+
+    def test_tokenizer_file(self):
+        """ def using a custom tokenizer for file loading """
+        def tokens(txt):
+            for x in txt.split():
+                yield x
+
+        here = os.path.dirname(__file__)
+        filepath = '{}/resources/small_doc.txt'.format(here)
+        spell = SpellChecker(language=None)  # just from this doc!
+        spell.word_frequency.load_text_file(filepath, tokenizer=tokens)
+        self.assertEqual(spell['a'], 3)
+        self.assertEqual(spell['storm'], 1)
+        self.assertEqual(spell['storm.'], 1)
+        self.assertFalse('awesome' in spell)
+        self.assertTrue(spell['whale'])
+        self.assertTrue('sea.' in spell)
