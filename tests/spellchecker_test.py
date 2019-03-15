@@ -203,6 +203,22 @@ class TestSpellChecker(unittest.TestCase):
                 cnt += 1
         self.assertEqual(cnt, 0)
 
+
+    def test_remove_by_threshold_using_items(self):
+        ''' test removing everything below a certain threshold; using items to test '''
+        spell = SpellChecker()
+        cnt = 0
+        for key, val in spell.word_frequency.items():
+            if val < 7:
+                cnt += 1
+        self.assertGreater(cnt, 0)
+        spell.word_frequency.remove_by_threshold(7)
+        cnt = 0
+        for key, val in spell.word_frequency.items():  # synonym for keys
+            if val < 7:
+                cnt += 1
+        self.assertEqual(cnt, 0)
+
     def test_add_word(self):
         ''' test adding a word '''
         spell = SpellChecker()
@@ -310,6 +326,23 @@ class TestSpellChecker(unittest.TestCase):
         filepath = '{}/resources/small_doc.txt'.format(here)
         spell = SpellChecker(language=None)  # just from this doc!
         spell.word_frequency.load_text_file(filepath, tokenizer=tokens)
+        self.assertEqual(spell['a'], 3)
+        self.assertEqual(spell['storm'], 1)
+        self.assertEqual(spell['storm.'], 1)
+        self.assertFalse('awesome' in spell)
+        self.assertTrue(spell['whale'])
+        self.assertTrue('sea.' in spell)
+
+    def test_tokenizer_provided(self):
+        """ Test passing in a tokenizer """
+        def tokens(txt):
+            for x in txt.split():
+                yield x
+
+        here = os.path.dirname(__file__)
+        filepath = '{}/resources/small_doc.txt'.format(here)
+        spell = SpellChecker(language=None, tokenizer=tokens)  # just from this doc!
+        spell.word_frequency.load_text_file(filepath)
         self.assertEqual(spell['a'], 3)
         self.assertEqual(spell['storm'], 1)
         self.assertEqual(spell['storm.'], 1)
