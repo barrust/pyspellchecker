@@ -208,13 +208,13 @@ class TestSpellChecker(unittest.TestCase):
         ''' test removing everything below a certain threshold; using items to test '''
         spell = SpellChecker()
         cnt = 0
-        for key, val in spell.word_frequency.items():
+        for _, val in spell.word_frequency.items():
             if val < 7:
                 cnt += 1
         self.assertGreater(cnt, 0)
         spell.word_frequency.remove_by_threshold(7)
         cnt = 0
-        for key, val in spell.word_frequency.items():  # synonym for keys
+        for _, val in spell.word_frequency.items():  # synonym for keys
             if val < 7:
                 cnt += 1
         self.assertEqual(cnt, 0)
