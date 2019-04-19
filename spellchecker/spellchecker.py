@@ -23,12 +23,20 @@ class SpellChecker(object):
             frequency dictionary; if provided, no language will be loaded
             distance (int): The edit distance to use. Defaults to 2 """
 
-    __slots__ = ["_distance", "_word_frequency"]
+    __slots__ = ["_distance", "_word_frequency", "_tokenizer"]
 
-    def __init__(self, language="en", local_dictionary=None, distance=2):
+    def __init__(
+        self, language="en", local_dictionary=None, distance=2, tokenizer=None
+    ):
         self._distance = None
         self.distance = distance  # use the setter value check
-        self._word_frequency = WordFrequency()
+
+        self._tokenizer = _parse_into_words
+        if tokenizer is not None:
+            self._tokenizer = tokenizer
+
+        self._word_frequency = WordFrequency(self._tokenizer)
+
         if local_dictionary:
             self._word_frequency.load_dictionary(local_dictionary)
         elif language:
@@ -79,15 +87,15 @@ class SpellChecker(object):
             pass
         self._distance = tmp
 
-    @staticmethod
-    def split_words(text):
-        """ Split text into individual `words` using a simple whitespace regex
+    def split_words(self, text):
+        """ Split text into individual `words` using either a simple whitespace
+            regex or the passed in tokenizer
 
             Args:
                 text (str): The text to split into individual words
             Returns:
                 list(str): A listing of all words in the provided text """
-        return _parse_into_words(text)
+        return self._tokenizer(text)
 
     def export(self, filepath, encoding="utf-8", gzipped=True):
         """ Export the word frequency list for import in the future
@@ -238,13 +246,23 @@ class WordFrequency(object):
     """ Store the `dictionary` as a word frequency list while allowing for
         different methods to load the data and update over time """
 
-    __slots__ = ["_dictionary", "_total_words", "_unique_words", "_letters"]
+    __slots__ = [
+        "_dictionary",
+        "_total_words",
+        "_unique_words",
+        "_letters",
+        "_tokenizer",
+    ]
 
-    def __init__(self):
+    def __init__(self, tokenizer=None):
         self._dictionary = Counter()
         self._total_words = 0
         self._unique_words = 0
         self._letters = set()
+
+        self._tokenizer = _parse_into_words
+        if tokenizer is not None:
+            self._tokenizer = tokenizer
 
     def __contains__(self, key):
         """ turn on contains """
@@ -297,6 +315,18 @@ class WordFrequency(object):
                 Not settable """
         return self._letters
 
+    def tokenize(self, text):
+        """ Tokenize the provided string object into individual words
+
+            Args:
+                text (str): The string object to tokenize
+            Yields:
+                str: The next `word` in the tokenized string
+            Note:
+                This is the same as the `spellchecker.split_words()` """
+        for x in self._tokenizer(text):
+            yield x.lower()
+
     def keys(self):
         """ Iterator over the key of the dictionary
 
@@ -316,6 +346,17 @@ class WordFrequency(object):
                 This is the same as `spellchecker.keys()` """
         for word in self._dictionary.keys():
             yield word
+
+    def items(self):
+        """ Iterator over the words in the dictionary
+
+            Yields:
+                str: The next word in the dictionary
+                int: The number of instances in the dictionary
+            Note:
+                This is the same as `dict.items()` """
+        for word in self._dictionary.keys():
+            yield word, self._dictionary[word]
 
     def load_dictionary(self, filename, encoding="utf-8"):
         """ Load in a pre-built word frequency list
@@ -349,7 +390,7 @@ class WordFrequency(object):
         if tokenizer:
             words = [x.lower() for x in tokenizer(text)]
         else:
-            words = _parse_into_words(text)
+            words = self.tokenize(text)
 
         self._dictionary.update(words)
         self._update_dictionary()
