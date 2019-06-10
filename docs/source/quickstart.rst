@@ -199,7 +199,7 @@ dictionary:
     spell.word_frequency.load_dictionary('./path-to-my-json-dictionary.json')
 
     # or... if you have text
-    spell.word_frequency.load_text('./path-to-my-text-doc.txt')
+    spell.word_frequency.load_text_file('./path-to-my-text-doc.txt')
 
     # export it out for later use!
     spell.export('my_custom_dictionary.gz', gzipped=True)
