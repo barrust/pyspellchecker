@@ -133,11 +133,11 @@ class TestSpellChecker(unittest.TestCase):
         self.assertEqual(spell.candidates('hike'), {'bike'})
 
     def test_edit_distance_two(self):
-        ''' test a case where edit_distance_2 is called '''
+        ''' test a case where edit distance must be two '''
         here = os.path.dirname(__file__)
         filepath = '{}/resources/small_dictionary.json'.format(here)
         spell = SpellChecker(language=None, local_dictionary=filepath)
-        self.assertEqual(spell.edit_distance_2('hie'), ['bike'])
+        self.assertEqual(spell.candidates('ale'), {'a', 'apple'})
 
     def test_edit_distance_one_property(self):
         ''' check the property setting of the distance property '''
@@ -154,13 +154,6 @@ class TestSpellChecker(unittest.TestCase):
         self.assertEqual(spell.distance, 1)
         spell.distance = 'string'
         self.assertEqual(spell.distance, 2)
-
-    def test_edit_distance_two(self):
-        ''' test a case where edit distance must be two '''
-        here = os.path.dirname(__file__)
-        filepath = '{}/resources/small_dictionary.json'.format(here)
-        spell = SpellChecker(language=None, local_dictionary=filepath)
-        self.assertEqual(spell.candidates('ale'), {'a', 'apple'})
 
     def test_load_text_file(self):
         ''' test loading a text file '''
@@ -268,7 +261,7 @@ class TestSpellChecker(unittest.TestCase):
 
         os.remove(new_filepath)
 
-    def test_capitalization(self):
+    def test_capitalization_when_case_sensitive_defaults_to_false(self):
         ''' test that capitalization doesn't affect in comparisons '''
         spell = SpellChecker(language=None)
         spell.word_frequency.add('Bob')
@@ -287,6 +280,33 @@ class TestSpellChecker(unittest.TestCase):
 
         self.assertEqual(spell.candidates('BB'), {'bob', 'bab'})
         self.assertEqual(spell.correction('BB'), 'bob')
+
+    def test_capitalization_when_case_sensitive_true(self):
+        ''' test that capitalization affects comparisons '''
+        spell = SpellChecker(language=None, case_sensitive=True)
+        spell.word_frequency.add('Bob')
+        self.assertEqual('Bob' in spell, True)
+        self.assertEqual('BOb' in spell, False)
+        self.assertEqual('BOB' in spell, False)
+        self.assertEqual('bob' in spell, False)
+
+        words = ['Bb', 'bb', 'BB']
+        self.assertEqual(spell.unknown(words), {'Bb', 'bb', 'BB'})
+
+        case_variant_words = ['BOB', 'bOb']
+        self.assertEqual(spell.known(case_variant_words), set())
+
+        self.assertEqual(spell.candidates('Bb'), {'Bob'})
+        self.assertEqual(spell.candidates('bob'), {'Bob'})
+        self.assertEqual(spell.correction('Bb'), 'Bob')
+        self.assertEqual(spell.correction('bob'), 'Bob')
+        self.assertEqual(spell.unknown(['bob']), {'bob'})
+
+    def test_capitalization_when_language_set(self):
+        ''' test that capitalization doesn't affect comparisons when language not None'''
+        spell = SpellChecker(language="en")
+        self.assertEqual(spell.known(['Bike']), {'bike'})
+        
 
     def test_pop(self):
         ''' test the popping of a word '''

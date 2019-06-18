@@ -21,12 +21,13 @@ class SpellChecker(object):
             and `pt`. Defaults to `en`
             local_dictionary (str): The path to a locally stored word \
             frequency dictionary; if provided, no language will be loaded
-            distance (int): The edit distance to use. Defaults to 2 """
+            distance (int): The edit distance to use. Defaults to 2.
+            case_sensitive (bool): Flag to use a case sensitive dictionary or not."""
 
-    __slots__ = ["_distance", "_word_frequency", "_tokenizer"]
+    __slots__ = ["_distance", "_word_frequency", "_tokenizer", "_case_sensitive"]
 
     def __init__(
-        self, language="en", local_dictionary=None, distance=2, tokenizer=None
+        self, language="en", local_dictionary=None, distance=2, tokenizer=None, case_sensitive=False,
     ):
         self._distance = None
         self.distance = distance  # use the setter value check
@@ -35,7 +36,8 @@ class SpellChecker(object):
         if tokenizer is not None:
             self._tokenizer = tokenizer
 
-        self._word_frequency = WordFrequency(self._tokenizer)
+        self._case_sensitive = case_sensitive if not language else False
+        self._word_frequency = WordFrequency(self._tokenizer, self._case_sensitive)
 
         if local_dictionary:
             self._word_frequency.load_dictionary(local_dictionary)
@@ -163,7 +165,7 @@ class SpellChecker(object):
             Returns:
                 set: The set of those words from the input that are in the \
                 corpus """
-        tmp = [w.lower() for w in words]
+        tmp = [w if self._case_sensitive else w.lower() for w in words]
         return set(
             w
             for w in tmp
@@ -180,7 +182,7 @@ class SpellChecker(object):
             Returns:
                 set: The set of those words from the input that are not in \
                 the corpus """
-        tmp = [w.lower() for w in words if self._check_if_should_check(w)]
+        tmp = [w if self._case_sensitive else w.lower() for w in words if self._check_if_should_check(w)]
         return set(w for w in tmp if w not in self._word_frequency.dictionary)
 
     def edit_distance_1(self, word):
@@ -252,13 +254,15 @@ class WordFrequency(object):
         "_unique_words",
         "_letters",
         "_tokenizer",
+        "_case_sensitive",
     ]
 
-    def __init__(self, tokenizer=None):
+    def __init__(self, tokenizer=None, case_sensitive=False):
         self._dictionary = Counter()
         self._total_words = 0
         self._unique_words = 0
         self._letters = set()
+        self._case_sensitive = case_sensitive
 
         self._tokenizer = _parse_into_words
         if tokenizer is not None:
@@ -266,11 +270,13 @@ class WordFrequency(object):
 
     def __contains__(self, key):
         """ turn on contains """
-        return key.lower() in self._dictionary
+        key = key if self._case_sensitive else key.lower()
+        return key in self._dictionary
 
     def __getitem__(self, key):
         """ turn on getitem """
-        return self._dictionary[key.lower()]
+        key = key if self._case_sensitive else key.lower()
+        return self._dictionary[key]
 
     def pop(self, key, default=None):
         """ Remove the key and return the associated value or default if not
@@ -279,7 +285,8 @@ class WordFrequency(object):
             Args:
                 key (str): The key to remove
                 default (obj): The value to return if key is not present """
-        return self._dictionary.pop(key.lower(), default)
+        key = key if self._case_sensitive else key.lower()
+        return self._dictionary.pop(key, default)
 
     @property
     def dictionary(self):
@@ -325,7 +332,7 @@ class WordFrequency(object):
             Note:
                 This is the same as the `spellchecker.split_words()` """
         for x in self._tokenizer(text):
-            yield x.lower()
+            yield x if self._case_sensitive else x.lower()
 
     def keys(self):
         """ Iterator over the key of the dictionary
@@ -366,7 +373,8 @@ class WordFrequency(object):
                 file to be loaded
                 encoding (str): The encoding of the dictionary """
         with load_file(filename, encoding) as data:
-            self._dictionary.update(json.loads(data.lower(), encoding=encoding))
+            data = data if self._case_sensitive else data.lower()
+            self._dictionary.update(json.loads(data, encoding=encoding))
             self._update_dictionary()
 
     def load_text_file(self, filename, encoding="utf-8", tokenizer=None):
@@ -388,7 +396,7 @@ class WordFrequency(object):
                 tokenizer (function): The function to use to tokenize a string
         """
         if tokenizer:
-            words = [x.lower() for x in tokenizer(text)]
+            words = [x if self._case_sensitive else x.lower() for x in tokenizer(text)]
         else:
             words = self.tokenize(text)
 
@@ -400,7 +408,7 @@ class WordFrequency(object):
 
             Args:
                 words (list): The list of words to be loaded """
-        self._dictionary.update([word.lower() for word in words])
+        self._dictionary.update([word if self._case_sensitive else word.lower() for word in words])
         self._update_dictionary()
 
     def add(self, word):
@@ -416,7 +424,7 @@ class WordFrequency(object):
             Args:
                 words (list): The list of words to remove """
         for word in words:
-            self._dictionary.pop(word.lower())
+            self._dictionary.pop(word if self._case_sensitive else word.lower())
         self._update_dictionary()
 
     def remove(self, word):
@@ -424,7 +432,7 @@ class WordFrequency(object):
 
             Args:
                 word (str): The word to remove """
-        self._dictionary.pop(word.lower())
+        self._dictionary.pop(word if self._case_sensitive else word.lower())
         self._update_dictionary()
 
     def remove_by_threshold(self, threshold=5):
