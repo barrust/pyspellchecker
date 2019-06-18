@@ -27,7 +27,8 @@ class SpellChecker(object):
     __slots__ = ["_distance", "_word_frequency", "_tokenizer", "_case_sensitive"]
 
     def __init__(
-        self, language="en", local_dictionary=None, distance=2, tokenizer=None, case_sensitive=False,
+        self, language="en", local_dictionary=None, distance=2, tokenizer=None, \
+        case_sensitive=False,
     ):
         self._distance = None
         self.distance = distance  # use the setter value check

@@ -306,7 +306,6 @@ class TestSpellChecker(unittest.TestCase):
         ''' test that capitalization doesn't affect comparisons when language not None'''
         spell = SpellChecker(language="en")
         self.assertEqual(spell.known(['Bike']), {'bike'})
-        
 
     def test_pop(self):
         ''' test the popping of a word '''
