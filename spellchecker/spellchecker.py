@@ -22,12 +22,19 @@ class SpellChecker(object):
             local_dictionary (str): The path to a locally stored word \
             frequency dictionary; if provided, no language will be loaded
             distance (int): The edit distance to use. Defaults to 2.
-            case_sensitive (bool): Flag to use a case sensitive dictionary or not."""
+            case_sensitive (bool): Flag to use a case sensitive dictionary or \
+            not, only available when not using a language dictionary.
+        Note:
+            Using a case sensitive dictionary can be slow to correct words."""
 
     __slots__ = ["_distance", "_word_frequency", "_tokenizer", "_case_sensitive"]
 
     def __init__(
-        self, language="en", local_dictionary=None, distance=2, tokenizer=None, \
+        self,
+        language="en",
+        local_dictionary=None,
+        distance=2,
+        tokenizer=None,
         case_sensitive=False,
     ):
         self._distance = None
@@ -183,7 +190,11 @@ class SpellChecker(object):
             Returns:
                 set: The set of those words from the input that are not in \
                 the corpus """
-        tmp = [w if self._case_sensitive else w.lower() for w in words if self._check_if_should_check(w)]
+        tmp = [
+            w if self._case_sensitive else w.lower()
+            for w in words
+            if self._check_if_should_check(w)
+        ]
         return set(w for w in tmp if w not in self._word_frequency.dictionary)
 
     def edit_distance_1(self, word):
@@ -332,8 +343,8 @@ class WordFrequency(object):
                 str: The next `word` in the tokenized string
             Note:
                 This is the same as the `spellchecker.split_words()` """
-        for x in self._tokenizer(text):
-            yield x if self._case_sensitive else x.lower()
+        for word in self._tokenizer(text):
+            yield word if self._case_sensitive else word.lower()
 
     def keys(self):
         """ Iterator over the key of the dictionary
@@ -409,7 +420,9 @@ class WordFrequency(object):
 
             Args:
                 words (list): The list of words to be loaded """
-        self._dictionary.update([word if self._case_sensitive else word.lower() for word in words])
+        self._dictionary.update(
+            [word if self._case_sensitive else word.lower() for word in words]
+        )
         self._update_dictionary()
 
     def add(self, word):

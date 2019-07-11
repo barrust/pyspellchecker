@@ -193,7 +193,8 @@ dictionary:
 
     from spellchecker import SpellChecker
 
-    spell = SpellChecker(language=None)  # turn off loading a built language dictionary
+    # turn off loading a built language dictionary, case sensitive on (if desired)
+    spell = SpellChecker(language=None, case_sensitive=True)
 
     # if you have a dictionary...
     spell.word_frequency.load_dictionary('./path-to-my-json-dictionary.json')
