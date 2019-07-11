@@ -1,5 +1,11 @@
 # pyspellchecker
 
+## Version 0.5.0
+* Add tokenizer to the Spell object
+* Add Support for local dictionaries to be case sensitive
+[see PR #44](https://github.com/barrust/pyspellchecker/pull/44) Thanks [@davido-brainlabs ](https://github.com/davido-brainlabs)
+* Better python 2.7 support for reading gzipped files
+
 ## Version 0.4.0
 * Add support for a tokenizer for splitting words into tokens
 
