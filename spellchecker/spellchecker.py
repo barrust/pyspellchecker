@@ -22,7 +22,10 @@ class SpellChecker(object):
             local_dictionary (str): The path to a locally stored word \
             frequency dictionary; if provided, no language will be loaded
             distance (int): The edit distance to use. Defaults to 2.
-            case_sensitive (bool): Flag to use a case sensitive dictionary or not."""
+            case_sensitive (bool): Flag to use a case sensitive dictionary or \
+            not, only available when not using a language dictionary.
+        Note:
+            Using a case sensitive dictionary can be slow to correct words."""
 
     __slots__ = ["_distance", "_word_frequency", "_tokenizer", "_case_sensitive"]
 
