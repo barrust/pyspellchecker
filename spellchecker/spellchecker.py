@@ -140,7 +140,8 @@ class SpellChecker(object):
                 word (str): The word to correct
             Returns:
                 str: The most likely candidate """
-        return max(self.candidates(word), key=self.word_probability)
+        candidates = list(self.candidates(word))
+        return max(sorted(candidates), key=self.word_probability)
 
     def candidates(self, word):
         """ Generate possible spelling corrections for the provided word up to
