@@ -14,6 +14,14 @@ else:
     WRITEMODE = 'wt'
     OPEN = open
 
+@contextlib.contextmanager
+def __gzip_read(filename, mode='rb', encoding='UTF-8'):
+    if sys.version_info < (3, 0):
+        with gzip.open(filename, mode=READMODE) as fobj:
+            yield fobj.read().decode(encoding)
+    else:
+        with gzip.open(filename, mode=READMODE, encoding=encoding) as fobj:
+            yield fobj.read()
 
 @contextlib.contextmanager
 def load_file(filename, encoding):
@@ -27,8 +35,8 @@ def load_file(filename, encoding):
             str: The string data from the file read
     """
     try:
-        with gzip.open(filename, mode=READMODE) as fobj:
-            yield fobj.read()
+        with __gzip_read(filename, mode=READMODE, encoding=encoding) as data:
+            yield data
     except (OSError, IOError):
         with OPEN(filename, mode="r", encoding=encoding) as fobj:
             yield fobj.read()
