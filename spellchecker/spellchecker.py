@@ -240,7 +240,7 @@ class SpellChecker(object):
             Returns:
                 set: The set of strings that are edit distance two from the \
                 provided words """
-        words = [x.lower() for x in words]
+        words = [word.lower() for word in words]
         return [e2 for e1 in words for e2 in self.edit_distance_1(e1)]
 
     @staticmethod
