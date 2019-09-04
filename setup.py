@@ -1,7 +1,6 @@
 ''' Module Installation script '''
 from setuptools import (setup, find_packages)
 import io
-import os
 from spellchecker import (__version__, __url__, __author__, __email__,
                           __license__, __bugtrack_url__)
 
