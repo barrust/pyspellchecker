@@ -112,7 +112,7 @@ class TestSpellChecker(unittest.TestCase):
 
     def test_missing_dictionary(self):
         try:
-            spell = SpellChecker(language='no')
+            SpellChecker(language='no')
         except ValueError as ex:
             msg = 'The provided dictionary language (no) does not exist!'
             self.assertEqual(str(ex), msg)
