@@ -9,10 +9,19 @@ if sys.version_info < (3, 0):
     READMODE = 'rb'
     WRITEMODE = 'wb'
     OPEN = io.open  # hijack this
+
+    def ENSURE_UNICODE(s):
+        if isinstance(s, str):
+            return s.decode('utf-8')
+        return s
+
 else:
     READMODE = 'rt'
     WRITEMODE = 'wt'
     OPEN = open
+
+    def ENSURE_UNICODE(s):
+        return s
 
 
 @contextlib.contextmanager
