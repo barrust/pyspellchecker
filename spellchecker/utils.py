@@ -21,6 +21,8 @@ else:
     OPEN = open
 
     def ENSURE_UNICODE(s):
+        if isinstance(s, bytes):
+            return s.decode('utf-8')
         return s
 
 
