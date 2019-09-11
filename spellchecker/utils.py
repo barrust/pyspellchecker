@@ -10,9 +10,9 @@ if sys.version_info < (3, 0):
     WRITEMODE = 'wb'
     OPEN = io.open  # hijack this
 
-    def ENSURE_UNICODE(s):
+    def ENSURE_UNICODE(s, encoding='utf-8'):
         if isinstance(s, str):
-            return s.decode('utf-8')
+            return s.decode(encoding)
         return s
 
 else:
@@ -20,9 +20,9 @@ else:
     WRITEMODE = 'wt'
     OPEN = open
 
-    def ENSURE_UNICODE(s):
+    def ENSURE_UNICODE(s, encoding='utf-8'):
         if isinstance(s, bytes):
-            return s.decode('utf-8')
+            return s.decode(encoding)
         return s
 
 
