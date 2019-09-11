@@ -4,7 +4,6 @@ from __future__ import division, unicode_literals
 
 import unittest
 import os
-import sys
 
 from spellchecker import SpellChecker
 
