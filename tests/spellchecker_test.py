@@ -36,13 +36,13 @@ class TestSpellChecker(unittest.TestCase):
         self.assertEqual(spell.candidates('manasaeds'), {'manasaeds'})
 
     def test_words(self):
-        ''' rest the parsing of words '''
+        ''' test the parsing of words '''
         spell = SpellChecker()
         res = ['this', 'is', 'a', 'test', 'of', 'this']
         self.assertEqual(spell.split_words('This is a test of this'), res)
 
     def test_words_more_complete(self):
-        ''' rest the parsing of words '''
+        ''' test the parsing of words '''
         spell = SpellChecker()
         res = ['this', 'is', 'a', 'test', 'of', 'the', 'word', 'parser', 'it', 'should', 'work', 'correctly']
         self.assertEqual(spell.split_words('This is a test of the word parser. It should work correctly!!!'), res)
@@ -368,3 +368,15 @@ class TestSpellChecker(unittest.TestCase):
         self.assertFalse('awesome' in spell)
         self.assertTrue(spell['whale'])
         self.assertTrue('sea.' in spell)
+
+    def test_bytes_input(self):
+        """ Test using bytes instead of unicode as input """
+
+        var = b"bike"
+
+        here = os.path.dirname(__file__)
+        filepath = '{}/resources/small_dictionary.json'.format(here)
+        spell = SpellChecker(language=None, local_dictionary=filepath)
+
+        self.assertTrue(var in spell)
+        self.assertEqual(spell[var], 60)
