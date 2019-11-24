@@ -159,6 +159,10 @@ class SpellChecker(object):
         word = ENSURE_UNICODE(word)
         if self.known([word]):  # short-cut if word is correct already
             return {word}
+
+        if not self._check_if_should_check(word):
+            return {word}
+
         # get edit distance 1...
         res = [x for x in self.edit_distance_1(word)]
         tmp = self.known(res)
@@ -186,7 +190,7 @@ class SpellChecker(object):
             w
             for w in tmp
             if w in self._word_frequency.dictionary
-            or not self._check_if_should_check(w)
+            and self._check_if_should_check(w)
         )
 
     def unknown(self, words):
@@ -215,7 +219,7 @@ class SpellChecker(object):
             Returns:
                 set: The set of strings that are edit distance one from the \
                 provided word """
-        word = ENSURE_UNICODE(word).lower()
+        word = ENSURE_UNICODE(word).lower() if not self._case_sensitive else ENSURE_UNICODE(word)
         if self._check_if_should_check(word) is False:
             return {word}
         letters = self._word_frequency.letters
@@ -235,7 +239,7 @@ class SpellChecker(object):
             Returns:
                 set: The set of strings that are edit distance two from the \
                 provided word """
-        word = ENSURE_UNICODE(word).lower()
+        word = ENSURE_UNICODE(word).lower() if not self._case_sensitive else ENSURE_UNICODE(word)
         return [
             e2 for e1 in self.edit_distance_1(word) for e2 in self.edit_distance_1(e1)
         ]
@@ -257,9 +261,10 @@ class SpellChecker(object):
         ]
         return [e2 for e1 in tmp for e2 in self.edit_distance_1(e1)]
 
-    @staticmethod
-    def _check_if_should_check(word):
+    def _check_if_should_check(self, word):
         if len(word) == 1 and word in string.punctuation:
+            return False
+        if len(word) > self._word_frequency.longest_word_length + 3:  # magic number to allow removal of up to 2 letters.
             return False
         try:  # check if it is a number (int, float, etc)
             float(word)
@@ -281,6 +286,7 @@ class WordFrequency(object):
         "_letters",
         "_tokenizer",
         "_case_sensitive",
+        "_longest_word_length"
     ]
 
     def __init__(self, tokenizer=None, case_sensitive=False):
@@ -289,6 +295,7 @@ class WordFrequency(object):
         self._unique_words = 0
         self._letters = set()
         self._case_sensitive = case_sensitive
+        self._longest_word_length = 0
 
         self._tokenizer = _parse_into_words
         if tokenizer is not None:
@@ -350,6 +357,14 @@ class WordFrequency(object):
             Note:
                 Not settable """
         return self._letters
+
+    @property
+    def longest_word_length(self):
+        """ int: The longest word length in the dictionary
+
+            Note:
+                Not settable """
+        return self._longest_word_length
 
     def tokenize(self, text):
         """ Tokenize the provided string object into individual words
@@ -486,8 +501,11 @@ class WordFrequency(object):
 
     def _update_dictionary(self):
         """ Update the word frequency object """
+        self._longest_word_length = 0
         self._total_words = sum(self._dictionary.values())
         self._unique_words = len(self._dictionary.keys())
         self._letters = set()
         for key in self._dictionary:
+            if len(key) > self._longest_word_length:
+                self._longest_word_length = len(key)
             self._letters.update(key)

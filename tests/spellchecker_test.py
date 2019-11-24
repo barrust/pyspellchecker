@@ -68,8 +68,8 @@ class TestSpellChecker(unittest.TestCase):
         self.assertEqual(spell.known(['sherlock']), {'sherlock'})
         self.assertEqual(spell.known(['holmes']), {'holmes'})
         self.assertEqual(spell.known(['known']), {'known'})
-        self.assertEqual(spell.known(['-']), {'-'})
 
+        self.assertEqual(spell.known(['-']), set())
         self.assertEqual(spell.known(['foobar']), set())
         self.assertEqual(spell.known(['ths']), set())
         self.assertEqual(spell.known(['ergos']), set())
@@ -280,6 +280,29 @@ class TestSpellChecker(unittest.TestCase):
 
         self.assertEqual(spell.candidates('BB'), {'bob', 'bab'})
         self.assertEqual(spell.correction('BB'), 'bob')
+
+    def test_large_words(self):
+        ''' test checking for words that are clearly larger than the largest dictionary word '''
+        spell = SpellChecker(language=None, distance=2)
+        spell.word_frequency.add('Bob')
+
+        words = ['Bb', 'bb', 'BB']
+        self.assertEqual(spell.unknown(words), {'bb'})
+
+        known_words = ['BOB', 'bOb']
+        self.assertEqual(spell.known(known_words), {'bob'})
+
+        self.assertEqual(spell.correction('bobs'), 'bob')
+        self.assertEqual(spell.correction('bobb'), 'bob')
+        self.assertEqual(spell.correction('bobby'), 'bob')
+        self.assertEqual(spell.word_frequency.longest_word_length, 3)
+        self.assertEqual(spell.correction('bobbys'), 'bobbys')
+
+    def test_extremely_large_words(self):
+        ''' test when a word is just extreamly large '''
+        spell = SpellChecker()
+        horrible_word = 'thisisnotarealisticwordthisisnotarealisticwordthisisnotarealisticwordthisisnotarealisticword'
+        self.assertEqual(spell.correction(horrible_word), horrible_word)
 
     def test_capitalization_when_case_sensitive_true(self):
         ''' test that capitalization affects comparisons '''
