@@ -1,5 +1,15 @@
 # pyspellchecker
 
+## Version 0.5.3
+* Handle memory issues when trying to correct or find candidates for extremely long words
+
+## Version 0.5.2
+Ensure input is encoded correctly; resolves [#53](https://github.com/barrust/pyspellchecker/issues/53)
+
+## Version 0.5.1
+Handle windows encoding issues [#48](https://github.com/barrust/pyspellchecker/issues/48)
+Deterministic order to corrections [#47](https://github.com/barrust/pyspellchecker/issues/47)
+
 ## Version 0.5.0
 * Add tokenizer to the Spell object
 * Add Support for local dictionaries to be case sensitive
