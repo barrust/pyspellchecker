@@ -205,6 +205,19 @@ dictionary:
     # export it out for later use!
     spell.export('my_custom_dictionary.gz', gzipped=True)
 
+It is also possible to build a dictionary from other sources outside of pyspellchecker, it requires that the data be in the following format and saved as a json object: 
+
+.. code:: python
+    
+    {
+        "a": 1,
+        "b": 2,
+        "apple": 45,
+        "bike": 60
+    }
+
+Note that the data does not need to be sorted!
+
 
 A quick, command line spell checking program
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
