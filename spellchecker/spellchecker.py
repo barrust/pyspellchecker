@@ -259,7 +259,7 @@ class SpellChecker(object):
             for w in words
             if self._check_if_should_check(w)
         ]
-        return [e2 for e1 in tmp for e2 in self.edit_distance_1(e1)]
+        return [e2 for e1 in tmp for e2 in self.known(self.edit_distance_1(e1))]
 
     def _check_if_should_check(self, word):
         if len(word) == 1 and word in string.punctuation:
