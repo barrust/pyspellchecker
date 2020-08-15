@@ -17,7 +17,7 @@ class SpellChecker(object):
 
         Args:
             language (str): The language of the dictionary to load or None \
-            for no dictionary. Supported languages are `en`, `es`, `de`, fr` \
+            for no dictionary. Supported languages are `en`, `es`, `de`, `fr` \
             and `pt`. Defaults to `en`
             local_dictionary (str): The path to a locally stored word \
             frequency dictionary; if provided, no language will be loaded
@@ -419,7 +419,7 @@ class WordFrequency(object):
                 encoding (str): The encoding of the dictionary """
         with load_file(filename, encoding) as data:
             data = data if self._case_sensitive else data.lower()
-            self._dictionary.update(json.loads(data, encoding=encoding))
+            self._dictionary.update(json.loads(data))
             self._update_dictionary()
 
     def load_text_file(self, filename, encoding="utf-8", tokenizer=None):

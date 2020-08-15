@@ -1,5 +1,8 @@
 # pyspellchecker
 
+## Version 0.5.5
+* Remove `encode` from the call to `json.loads()`
+
 ## Version 0.5.4
 * Reduce words in __edit_distance_alt to improve memory performance; thanks [blayzen-w](https://github.com/blayzen-w)
 
