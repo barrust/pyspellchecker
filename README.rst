@@ -1,12 +1,20 @@
 pyspellchecker
 ===============================================================================
 
-.. image:: https://badge.fury.io/py/pyspellchecker.svg
-    :target: https://badge.fury.io/py/pyspellchecker
+.. image:: https://img.shields.io/badge/license-MIT-blue.svg
+    :target: https://opensource.org/licenses/MIT/
+    :alt: License
+.. image:: https://img.shields.io/github/release/barrust/pyspellchecker.svg
+    :target: https://github.com/barrust/pyspellchecker/releases
+    :alt: GitHub release
+
 .. image:: https://travis-ci.org/barrust/pyspellchecker.svg?branch=master
     :target: https://travis-ci.org/barrust/pyspellchecker
 .. image:: https://coveralls.io/repos/github/barrust/pyspellchecker/badge.svg?branch=master
     :target: https://coveralls.io/github/barrust/pyspellchecker?branch=master
+.. image:: https://badge.fury.io/py/pyspellchecker.svg
+    :target: https://badge.fury.io/py/pyspellchecker
+    :alt: PyPi Package
 .. image:: http://pepy.tech/badge/pyspellchecker
     :target: http://pepy.tech/count/pyspellchecker
     :alt: Downloads
