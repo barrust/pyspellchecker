@@ -1,6 +1,0 @@
-# needed for testing purposes
-pycodestyle
-isort
-astroid
-pylint
-coveralls
