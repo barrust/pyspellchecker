@@ -4,7 +4,7 @@
 * Remove `encode` from the call to `json.loads()`
 
 ## Version 0.5.4
-* Reduce words in __edit_distance_alt to improve memory performance; thanks [blayzen-w](https://github.com/blayzen-w)
+* Reduce words in `__edit_distance_alt` to improve memory performance; thanks [@blayzen-w](https://github.com/blayzen-w)
 
 ## Version 0.5.3
 * Handle memory issues when trying to correct or find candidates for extremely long words
