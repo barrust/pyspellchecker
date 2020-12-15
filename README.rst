@@ -7,11 +7,12 @@ pyspellchecker
 .. image:: https://img.shields.io/github/release/barrust/pyspellchecker.svg
     :target: https://github.com/barrust/pyspellchecker/releases
     :alt: GitHub release
-
-.. image:: https://travis-ci.org/barrust/pyspellchecker.svg?branch=master
-    :target: https://travis-ci.org/barrust/pyspellchecker
-.. image:: https://coveralls.io/repos/github/barrust/pyspellchecker/badge.svg?branch=master
-    :target: https://coveralls.io/github/barrust/pyspellchecker?branch=master
+.. image:: https://github.com/barrust/pyspellchecker/workflows/Python%20package/badge.svg
+    :target: https://github.com/barrust/pyspellchecker/actions?query=workflow%3A%22Python+package%22
+    :alt: Build Status
+.. image:: https://codecov.io/gh/barrust/pyspellchecker/branch/master/graph/badge.svg?token=OdETiNgz9k
+    :target: https://codecov.io/gh/barrust/pyspellchecker
+    :alt: Test Coverage
 .. image:: https://badge.fury.io/py/pyspellchecker.svg
     :target: https://badge.fury.io/py/pyspellchecker
     :alt: PyPi Package
