@@ -57,10 +57,10 @@ def load_file(filename, encoding):
         Yields:
             str: The string data from the file read
     """
-    try:
+    if filename[-3:].lower() == ".gz":
         with __gzip_read(filename, mode=READMODE, encoding=encoding) as data:
             yield data
-    except (OSError, IOError):
+    else:
         with OPEN(filename, mode="r", encoding=encoding) as fobj:
             yield fobj.read()
 

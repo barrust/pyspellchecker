@@ -1,5 +1,9 @@
 # pyspellchecker
 
+## Version 0.5.6
+* ***NOTE:*** Last planned support for **Python 2.7**
+* All dictionaries updated using the `scripts/build_dictionary.py` script
+
 ## Version 0.5.5
 * Remove `encode` from the call to `json.loads()`
 
@@ -19,7 +23,7 @@ Deterministic order to corrections [#47](https://github.com/barrust/pyspellcheck
 ## Version 0.5.0
 * Add tokenizer to the Spell object
 * Add Support for local dictionaries to be case sensitive
-[see PR #44](https://github.com/barrust/pyspellchecker/pull/44) Thanks [@davido-brainlabs ](https://github.com/davido-brainlabs)
+[see PR #44](https://github.com/barrust/pyspellchecker/pull/44) Thanks [@davido-brainlabs](https://github.com/davido-brainlabs)
 * Better python 2.7 support for reading gzipped files
 
 ## Version 0.4.0

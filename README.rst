@@ -33,8 +33,12 @@ list. Those words that are found more often in the frequency list are
 **more likely** the correct results.
 
 ``pyspellchecker`` supports multiple languages including English, Spanish,
-German, French, and Portuguese. Dictionaries were generated using
-the `WordFrequency project <https://github.com/hermitdave/FrequencyWords>`__ on GitHub.
+German, French, and Portuguese. Dictionaries were originally generated using
+the `WordFrequency project <https://github.com/hermitdave/FrequencyWords>`__ on GitHub
+but have been rebuilt using the `OpenSubtitles <http://opus.nlpl.eu/OpenSubtitles2018.php>`__
+project. Please see ``scripts/build_dictionary.py`` to see how the dictionaries were built.
+The fully parsed, original word frequency list can be found in ``scripts/data/*`` and are
+the basis of the built dictionaries.
 
 ``pyspellchecker`` supports **Python 3** and Python 2.7 but, as always, Python 3
 is the preferred version!
@@ -156,5 +160,7 @@ Credits
 -------------------------------------------------------------------------------
 
 * `Peter Norvig <https://norvig.com/spell-correct.html>`__ blog post on setting up a simple spell checking algorithm
+
+* P. Lison and J. Tiedemann, 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles. In Proceedings of the 10th International Conference on Language Resources and Evaluation (LREC 2016)
 
 * `hermetdave's WordFrequency project <https://github.com/hermitdave/FrequencyWords>`__ for providing the basis for Non-English dictionaries
