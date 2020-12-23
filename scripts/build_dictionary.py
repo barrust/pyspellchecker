@@ -27,10 +27,11 @@ from nltk.tokenize.toktok import ToktokTokenizer
 
 STRING_PUNCTUATION = tuple(string.punctuation)
 DIGETS = tuple(string.digits)
+MINIMUM_FREQUENCY = 15
 
 
 @contextlib.contextmanager
-def load_file(filename, encoding):
+def load_file(filename, encoding="utf-8"):
     """ Context manager to handle opening a gzip or text file correctly and
         reading all the data
 
@@ -105,11 +106,12 @@ def build_word_frequency(filepath, language, output_path):
     return word_frequency
 
 
-def clean_english(word_frequency):
+def clean_english(word_frequency, filepath_exclude):
     """ Clean an English word frequency list
 
         Args:
             word_frequency (Counter):
+            filepath_exclude (str)
     """
     letters = set("abcdefghijklmnopqrstuvwxyz'")
 
@@ -122,6 +124,16 @@ def clean_english(word_frequency):
         invalid_chars.append(key)
     for misfit in invalid_chars:
         word_frequency.pop(misfit)
+
+    # remove words without a vowel
+    no_vowels = list()
+    vowels = set("aeiouy")
+    for key in word_frequency:
+        if vowels.isdisjoint(key):
+            no_vowels.append(key)
+    for misfit in no_vowels:
+        word_frequency.pop(misfit)
+    print(no_vowels)
 
     # Remove double punctuations (a-a-a-able) or (a'whoppinganda'whumping)
     double_punc = list()
@@ -139,25 +151,63 @@ def clean_english(word_frequency):
     for misfit in ellipses:
         word_frequency.pop(misfit)
 
-    # leading double a, "a." and "a'"
-    double_a = list()
+    # leading or trailing doubles a, "a'", "zz", ending y's
+    doubles = list()
     for key in word_frequency:
         if key.startswith("aa") and key not in ("aardvark", "aardvarks"):
-            double_a.append(key)
+            doubles.append(key)
         elif  key.startswith("a'"):
-            double_a.append(key)
-    for misfit in double_a:
+            doubles.append(key)
+        elif  key.startswith("zz"):
+            doubles.append(key)
+        elif  key.endswith("yy"):
+            doubles.append(key)
+        elif  key.endswith("hh"):
+            doubles.append(key)
+    for misfit in doubles:
+        word_frequency.pop(misfit)
+
+    # common missing spaces
+    missing_spaces = list()
+    for key in word_frequency:
+        if key.startswith("about") and key != "about":
+            missing_spaces.append(key)
+        elif key.startswith("above") and key != "above":
+            missing_spaces.append(key)
+        elif key.startswith("after") and key != "after":
+            missing_spaces.append(key)
+        elif key.startswith("against") and key != "against":
+            missing_spaces.append(key)
+        elif key.startswith("all") and word_frequency[key] < 15:
+            missing_spaces.append(key)
+        elif key.startswith("almost") and key != "almost":
+            missing_spaces.append(key)
+        # This one has LOTS of possibilities...
+        elif key.startswith("to") and word_frequency[key] < 25:
+            missing_spaces.append(key)
+        elif key.startswith("can't") and key != "can't":
+            missing_spaces.append(key)
+        elif key.startswith("i'm") and key != "i'm":
+            missing_spaces.append(key)
+    for misfit in missing_spaces:
         word_frequency.pop(misfit)
 
     # TODO: other possible fixes?
 
-    # remove small numbers (5 or less)
+    # remove small numbers
     small_frequency = list()
     for key in word_frequency:
-        if word_frequency[key] <= 5:
+        if word_frequency[key] <= MINIMUM_FREQUENCY:
             small_frequency.append(key)
     for misfit in small_frequency:
         word_frequency.pop(misfit)
+
+    # remove flagged misspellings
+    with load_file(filepath_exclude) as fobj:
+        for line in fobj:
+            line = line.strip()
+            if line in word_frequency:
+                word_frequency.pop(line)
 
     return word_frequency
 
@@ -194,13 +244,20 @@ def clean_spanish(word_frequency):
 
     # TODO: other possible fixes?
 
-    # remove small numbers (5 or less)
+    # remove small numbers
     small_frequency = list()
     for key in word_frequency:
-        if word_frequency[key] <= 5:
+        if word_frequency[key] <= MINIMUM_FREQUENCY:
             small_frequency.append(key)
     for misfit in small_frequency:
         word_frequency.pop(misfit)
+
+    # remove flagged misspellings
+    with load_file(filepath_exclude) as fobj:
+        for line in fobj:
+            line = line.strip()
+            if line in word_frequency:
+                word_frequency.pop(line)
 
     return word_frequency
 
@@ -233,13 +290,20 @@ def clean_german(word_frequency):
 
     # TODO: other possible fixes?
 
-    # remove small numbers (5 or less)
+    # remove small numbers
     small_frequency = list()
     for key in word_frequency:
-        if word_frequency[key] <= 5:
+        if word_frequency[key] <= MINIMUM_FREQUENCY:
             small_frequency.append(key)
     for misfit in small_frequency:
         word_frequency.pop(misfit)
+
+    # remove flagged misspellings
+    with load_file(filepath_exclude) as fobj:
+        for line in fobj:
+            line = line.strip()
+            if line in word_frequency:
+                word_frequency.pop(line)
 
     return word_frequency
 
@@ -272,13 +336,20 @@ def clean_french(word_frequency):
 
     # TODO: other possible fixes?
 
-    # remove small numbers (5 or less)
+    # remove small numbers
     small_frequency = list()
     for key in word_frequency:
-        if word_frequency[key] <= 5:
+        if word_frequency[key] <= MINIMUM_FREQUENCY:
             small_frequency.append(key)
     for misfit in small_frequency:
         word_frequency.pop(misfit)
+
+    # remove flagged misspellings
+    with load_file(filepath_exclude) as fobj:
+        for line in fobj:
+            line = line.strip()
+            if line in word_frequency:
+                word_frequency.pop(line)
 
     return word_frequency
 
@@ -311,13 +382,20 @@ def clean_portuguese(word_frequency):
 
     # TODO: other possible fixes?
 
-    # remove small numbers (5 or less)
+    # remove small numbers
     small_frequency = list()
     for key in word_frequency:
-        if word_frequency[key] <= 5:
+        if word_frequency[key] <= MINIMUM_FREQUENCY:
             small_frequency.append(key)
     for misfit in small_frequency:
         word_frequency.pop(misfit)
+
+    # remove flagged misspellings
+    with load_file(filepath_exclude) as fobj:
+        for line in fobj:
+            line = line.strip()
+            if line in word_frequency:
+                word_frequency.pop(line)
 
     return word_frequency
 
@@ -354,6 +432,7 @@ if __name__ == '__main__':
     script_path = os.path.dirname(os.path.abspath(__file__))
     module_path = os.path.abspath("{}/../".format(script_path))
     resources_path = os.path.abspath("{}/resources/".format(module_path))
+    exclude_filepath = os.path.abspath("{}/data/{}_exclude.txt".format(script_path, args.language))
 
     print(script_path)
     print(module_path)
@@ -372,13 +451,13 @@ if __name__ == '__main__':
 
     # clean up the dictionary
     if args.language == "en":
-        word_frequency = clean_english(word_frequency)
+        word_frequency = clean_english(word_frequency, exclude_filepath)
     elif args.language == "es":
-        word_frequency = clean_spanish(word_frequency)
+        word_frequency = clean_spanish(word_frequency, exclude_filepath)
     elif args.language == "de":
-        word_frequency = clean_german(word_frequency)
+        word_frequency = clean_german(word_frequency, exclude_filepath)
     elif args.language == "fr":
-        word_frequency = clean_french(word_frequency)
+        word_frequency = clean_french(word_frequency, exclude_filepath)
     elif args.language == "pt":
         word_frequency = clean_portuguese(word_frequency)
 
