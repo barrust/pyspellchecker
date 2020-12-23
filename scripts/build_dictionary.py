@@ -231,8 +231,40 @@ def clean_spanish(word_frequency, filepath_exclude):
         word_frequency.pop(misfit)
 
     # fix issues with more than one accent marks
+    # NOTE: Not sure there are any occurances but this is not possible as a valid word!
+    duplicate_accents = list()
+    for key in word_frequency:
+        if (key.count("á") + key.count("é") + key.count("í") + key.count("ó") + key.count("ú")) > 1:
+            duplicate_accents.append(key)
+    for misfit in duplicate_accents:
+        word_frequency.pop(misfit)
 
     # fix misplaced "ü" marks
+    # NOTE: the ü must be just after a g and before an e or i only (with or without accent)!
+    misplaced_u = list()
+    for key in word_frequency:
+        if not "ü" in key:
+            continue
+        idx = key.index("ü")
+        if idx == 0 or idx == len(key) - 1:  # first or last letter
+            misplaced_u.append(key)
+            continue
+        if key[idx - 1] != "g" and key[idx + 1] not in "eéií":
+            misplaced_u.append(key)
+    for misfit in misplaced_u:
+        word_frequency.pop(misfit)
+
+    # ción issues
+    cion_issues = list()
+    for key in word_frequency:
+        if not key.endswith("cion"):
+            continue
+        base = key[:-4]
+        n_key = "{}ción".format(base)
+        if n_key in word_frequency:
+            cion_issues.append(key)
+    for misfit in cion_issues:
+        word_frequency.pop(misfit)
 
     # remove words that start with a double a ("aa")
     double_a = list()

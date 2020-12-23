@@ -101,12 +101,10 @@ class TestSpellChecker(unittest.TestCase):
         spell = SpellChecker(language='es')
         res = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
                'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-               'ª', 'º', 'à', 'á', 'â', 'ã', 'ä', 'å', 'ç', 'è', 'é', 'ê', 'ë',
-               'ì', 'í', 'î', 'ï', 'ð', 'ñ', 'ò', 'ó', 'ô', 'ö', 'ø', 'ù', 'ú',
-               'û', 'ü', 'ý', 'ń', 'ż', 'ž', 'у']
+               'á','é', 'í', 'ñ', 'ó', 'ú', 'ü']
         self.assertEqual(sorted(list(spell.word_frequency.letters)), res)
         self.assertTrue('mañana' in spell)
-        self.assertEqual(spell['que'], 12131641)
+        self.assertEqual(spell['que'], 37141781)
 
     def test_missing_dictionary(self):
         try:
