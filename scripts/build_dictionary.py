@@ -111,7 +111,7 @@ def clean_english(word_frequency, filepath_exclude):
 
         Args:
             word_frequency (Counter):
-            filepath_exclude (str)
+            filepath_exclude (str):
     """
     letters = set("abcdefghijklmnopqrstuvwxyz'")
 
@@ -133,7 +133,6 @@ def clean_english(word_frequency, filepath_exclude):
             no_vowels.append(key)
     for misfit in no_vowels:
         word_frequency.pop(misfit)
-    print(no_vowels)
 
     # Remove double punctuations (a-a-a-able) or (a'whoppinganda'whumping)
     double_punc = list()
@@ -212,11 +211,12 @@ def clean_english(word_frequency, filepath_exclude):
     return word_frequency
 
 
-def clean_spanish(word_frequency):
+def clean_spanish(word_frequency, filepath_exclude):
     """ Clean a Spanish word frequency list
 
         Args:
             word_frequency (Counter):
+            filepath_exclude (str):
     """
     letters = set("abcdefghijklmnopqrstuvwxyzáéíóúüñ")
 
@@ -262,11 +262,12 @@ def clean_spanish(word_frequency):
     return word_frequency
 
 
-def clean_german(word_frequency):
+def clean_german(word_frequency, filepath_exclude):
     """ Clean a German word frequency list
 
         Args:
             word_frequency (Counter):
+            filepath_exclude (str):
     """
     letters = set("abcdefghijklmnopqrstuvwxyzäöüß")
 
@@ -308,11 +309,12 @@ def clean_german(word_frequency):
     return word_frequency
 
 
-def clean_french(word_frequency):
+def clean_french(word_frequency, filepath_exclude):
     """ Clean a French word frequency list
 
         Args:
             word_frequency (Counter):
+            filepath_exclude (str):
     """
     letters = set("abcdefghijklmnopqrstuvwxyzéàèùâêîôûëïüÿçœæ")
 
@@ -354,11 +356,12 @@ def clean_french(word_frequency):
     return word_frequency
 
 
-def clean_portuguese(word_frequency):
+def clean_portuguese(word_frequency, filepath_exclude):
     """ Clean a Portuguese word frequency list
 
         Args:
             word_frequency (Counter):
+            filepath_exclude (str):
     """
     letters = set("abcdefghijklmnopqrstuvwxyzáâãàçéêíóôõú")
 
@@ -459,7 +462,7 @@ if __name__ == '__main__':
     elif args.language == "fr":
         word_frequency = clean_french(word_frequency, exclude_filepath)
     elif args.language == "pt":
-        word_frequency = clean_portuguese(word_frequency)
+        word_frequency = clean_portuguese(word_frequency, exclude_filepath)
 
     # export word frequency for review!
     export_word_frequency(os.path.join(script_path, "{}.json".format(args.language)), word_frequency)
