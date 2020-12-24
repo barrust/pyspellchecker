@@ -1,17 +1,20 @@
-"""
-    https://t-redactyl.io/blog/2017/06/text-cleaning-in-multiple-languages.html
-    https://github.com/LuminosoInsight/python-ftfy
-    https://github.com/nltk/nltk/issues/1558
-    https://www.nltk.org/api/nltk.tokenize.html
-
-
-    http://opus.nlpl.eu/OpenSubtitles2018.php
-
-    English Input:      http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.en.gz
-    Spanish Input:      http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.es.gz
-    German Input:       http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.de.gz
-    French Input:       http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.fr.gz
-    Portuguese Input:   http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.pt.gz
+""" Desc:   A script to automate the building of multiple dictionaries based on
+            known areas of concern due to the original source of the data. The
+            script can be run from the source directly (-P and -p) once a
+            sutable text file is obtained. It can also be run on a previously
+            generated word frequency list to remove known problem areas.
+    Author: Tyler Barrus
+    Notes:  The original inputs are from OpenSubtitles (http://opus.nlpl.eu/OpenSubtitles2018.php):
+            English Input:    http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.en.gz
+            Spanish Input:    http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.es.gz
+            German Input:     http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.de.gz
+            French Input:     http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.fr.gz
+            Portuguese Input: http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.pt.gz
+    Requirements:
+            The script requires more than the standard library to run in its
+            entirety. You will also need to install the NLTK package to build a
+            dictionary from scratch. Otherwise, no additional packages are
+            required.
 """
 import contextlib
 import json
@@ -21,9 +24,6 @@ import string
 import sys
 from collections import Counter
 
-from nltk.tag import pos_tag
-from nltk.tokenize import WhitespaceTokenizer
-from nltk.tokenize.toktok import ToktokTokenizer
 
 STRING_PUNCTUATION = tuple(string.punctuation)
 DIGETS = tuple(string.digits)
@@ -74,6 +74,14 @@ def build_word_frequency(filepath, language, output_path):
             This only removes words that are proper nouns (attempts to...) and
             anything that starts or stops with something that is not in the alphabet.
     """
+    # NLTK is only needed in this portion of the project
+    try:
+        from nltk.tag import pos_tag
+        from nltk.tokenize import WhitespaceTokenizer
+        from nltk.tokenize.toktok import ToktokTokenizer
+    except ImportError as ex:
+        raise ImportError("To build a dictioary from scratch, NLTK is required!\n{}".format(ex.message))
+
     word_frequency = Counter()
     if language == "es":
         tok = ToktokTokenizer()
