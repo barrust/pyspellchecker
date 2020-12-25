@@ -34,3 +34,4 @@ comment:
 ignore:
   - "./tests/"
   - "setup.py"
+  - "./scripts/"
