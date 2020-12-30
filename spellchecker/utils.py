@@ -4,26 +4,11 @@ import re
 import gzip
 import contextlib
 
-if sys.version_info < (3, 0):
-    import io  # python 2 text file encoding support
-    READMODE = 'rb'
-    WRITEMODE = 'wb'
-    OPEN = io.open  # hijack this
 
-    def ENSURE_UNICODE(s, encoding='utf-8'):
-        if isinstance(s, str):
-            return s.decode(encoding)
-        return s
-
-else:
-    READMODE = 'rt'
-    WRITEMODE = 'wt'
-    OPEN = open
-
-    def ENSURE_UNICODE(s, encoding='utf-8'):
-        if isinstance(s, bytes):
-            return s.decode(encoding)
-        return s
+def ensure_unicode(s, encoding='utf-8'):
+    if isinstance(s, bytes):
+        return s.decode(encoding)
+    return s
 
 
 @contextlib.contextmanager
@@ -58,10 +43,10 @@ def load_file(filename, encoding):
             str: The string data from the file read
     """
     if filename[-3:].lower() == ".gz":
-        with __gzip_read(filename, mode=READMODE, encoding=encoding) as data:
+        with __gzip_read(filename, mode='rt', encoding=encoding) as data:
             yield data
     else:
-        with OPEN(filename, mode="r", encoding=encoding) as fobj:
+        with open(filename, mode="r", encoding=encoding) as fobj:
             yield fobj.read()
 
 
@@ -76,10 +61,10 @@ def write_file(filepath, encoding, gzipped, data):
             data (str): The data to be written out
     """
     if gzipped:
-        with gzip.open(filepath, WRITEMODE) as fobj:
+        with gzip.open(filepath, 'wt') as fobj:
             fobj.write(data)
     else:
-        with OPEN(filepath, "w", encoding=encoding) as fobj:
+        with open(filepath, "w", encoding=encoding) as fobj:
             if sys.version_info < (3, 0):
                 data = data.decode(encoding)
             fobj.write(data)

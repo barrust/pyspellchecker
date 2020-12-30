@@ -60,6 +60,12 @@ To install from source:
     cd pyspellchecker
     python setup.py install
 
+For *python 2.7* support, install `release 0.5.6 <https://github.com/barrust/pyspellchecker/releases/tag/v0.5.6>`__
+
+.. code:: bash
+
+    pip install pyspellchecker==0.5.6
+
 
 Quickstart
 -------------------------------------------------------------------------------
