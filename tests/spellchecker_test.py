@@ -15,7 +15,7 @@ class TestSpellChecker(unittest.TestCase):
         spell = SpellChecker()
         self.assertEqual(spell.correction('ths'), 'the')
         self.assertEqual(spell.correction('ergo'), 'ergo')
-        self.assertEqual(spell.correction('alot'), 'a lot')
+        # self.assertEqual(spell.correction('alot'), 'a lot')
         self.assertEqual(spell.correction('this'), 'this')
         self.assertEqual(spell.correction('-'), '-')
         self.assertEqual(spell.correction('1213'), '1213')
@@ -24,11 +24,9 @@ class TestSpellChecker(unittest.TestCase):
     def test_candidates(self):
         ''' test spell checker candidates '''
         spell = SpellChecker()
-        cands = {'tes', 'tps', 'th', 'thi', 'tvs', 'tds', 'tbs', 'bhs', 'thf',
-                 'chs', 'tis', 'thes', 'tls', 'tho', 'thu', 'thr', 'dhs',
-                 "th'", 'thus', 'ts', 'ehs', 'tas', 'ahs', 'thos', 'thy',
-                 'tcs', 'nhs', 'the', 'tss', 'hs', 'lhs', 'vhs', "t's", 'tha',
-                 'whs', 'ghs', 'rhs', 'this'}
+        cands = {'tes', 'thas', 'tis', 'thse', 'thes', 'thus', 'ohs', 'thu',
+                 'thy', 'thi', 'tas', 'tus', 'thos', 'ahs', 'tho', 'tha',
+                 'thsi', 'tos', 'the', 'this', 'iths'}
         self.assertEqual(spell.candidates('ths'), cands)
         self.assertEqual(spell.candidates('the'), {'the'})
         self.assertEqual(spell.candidates('-'), {'-'})
@@ -51,7 +49,7 @@ class TestSpellChecker(unittest.TestCase):
         ''' test word frequency '''
         spell = SpellChecker()
         # if the default load changes so will this...
-        self.assertEqual(spell.word_frequency['the'], 6187925)
+        self.assertEqual(spell.word_frequency['the'], 76138318)
 
     def test_word_probability(self):
         ''' test the word probability calculation '''
@@ -91,24 +89,22 @@ class TestSpellChecker(unittest.TestCase):
         ''' test the use of the `in` operator '''
         spell = SpellChecker()
         self.assertTrue('key' in spell)
-        self.assertFalse('rando' in spell)
+        self.assertFalse('wantthis' in spell)  # a known excluded word
 
     def test_word_contains(self):
         ''' test the contains functionality '''
         spell = SpellChecker()
-        self.assertEqual(spell['the'], 6187925)
+        self.assertEqual(spell['the'], 76138318)
 
     def test_spanish_dict(self):
         ''' test loading in the spanish dictionary '''
         spell = SpellChecker(language='es')
         res = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
                'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-               'ª', 'º', 'à', 'á', 'â', 'ã', 'ä', 'å', 'ç', 'è', 'é', 'ê', 'ë',
-               'ì', 'í', 'î', 'ï', 'ð', 'ñ', 'ò', 'ó', 'ô', 'ö', 'ø', 'ù', 'ú',
-               'û', 'ü', 'ý', 'ń', 'ż', 'ž', 'у']
+               'á','é', 'í', 'ñ', 'ó', 'ú', 'ü']
         self.assertEqual(sorted(list(spell.word_frequency.letters)), res)
         self.assertTrue('mañana' in spell)
-        self.assertEqual(spell['que'], 12131641)
+        self.assertEqual(spell['que'], 37141781)
 
     def test_missing_dictionary(self):
         try:
@@ -170,29 +166,29 @@ class TestSpellChecker(unittest.TestCase):
     def test_remove_words(self):
         ''' test is a word is removed '''
         spell = SpellChecker()
-        self.assertEqual(spell['the'], 6187925)
+        self.assertEqual(spell['the'], 76138318)
         spell.word_frequency.remove_words(['the'])
         self.assertEqual(spell['the'], 0)
 
     def test_remove_word(self):
         ''' test a single word removed '''
         spell = SpellChecker()
-        self.assertEqual(spell['teh'], 6)
-        spell.word_frequency.remove('teh')
-        self.assertEqual(spell['teh'], 0)
+        self.assertEqual(spell['the'], 76138318)
+        spell.word_frequency.remove('the')
+        self.assertEqual(spell['the'], 0)
 
     def test_remove_by_threshold(self):
         ''' test removing everything below a certain threshold '''
         spell = SpellChecker()
         cnt = 0
         for key in spell.word_frequency.keys():
-            if spell.word_frequency[key] < 7:
+            if spell.word_frequency[key] < 30:
                 cnt += 1
         self.assertGreater(cnt, 0)
-        spell.word_frequency.remove_by_threshold(7)
+        spell.word_frequency.remove_by_threshold(30)
         cnt = 0
         for key in spell.word_frequency.words():  # synonym for keys
-            if spell.word_frequency[key] < 7:
+            if spell.word_frequency[key] < 30:
                 cnt += 1
         self.assertEqual(cnt, 0)
 
@@ -202,22 +198,22 @@ class TestSpellChecker(unittest.TestCase):
         spell = SpellChecker()
         cnt = 0
         for _, val in spell.word_frequency.items():
-            if val < 7:
+            if val < 30:
                 cnt += 1
         self.assertGreater(cnt, 0)
-        spell.word_frequency.remove_by_threshold(7)
+        spell.word_frequency.remove_by_threshold(30)
         cnt = 0
         for _, val in spell.word_frequency.items():  # synonym for keys
-            if val < 7:
+            if val < 30:
                 cnt += 1
         self.assertEqual(cnt, 0)
 
     def test_add_word(self):
         ''' test adding a word '''
         spell = SpellChecker()
-        self.assertEqual(spell['meh'], 0)
-        spell.word_frequency.add('meh')
-        self.assertEqual(spell['meh'], 1)
+        self.assertEqual(spell['appt'], 0)
+        spell.word_frequency.add('appt')
+        self.assertEqual(spell['appt'], 1)
 
     def test_checking_odd_word(self):
         ''' test checking a word that is really a number '''

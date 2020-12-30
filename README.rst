@@ -33,13 +33,12 @@ list. Those words that are found more often in the frequency list are
 **more likely** the correct results.
 
 ``pyspellchecker`` supports multiple languages including English, Spanish,
-German, French, and Portuguese. Dictionaries were generated using
-the `WordFrequency project <https://github.com/hermitdave/FrequencyWords>`__ on GitHub.
+German, French, and Portuguese. For information on how the dictionaries were created and how they can be updated and improved, please see the **Dictionary Creation and Updating** section of the readme!
 
-``pyspellchecker`` supports **Python 3** and Python 2.7 but, as always, Python 3
+``pyspellchecker`` supports **Python 3** and **Python 2.7** but, as always, Python 3
 is the preferred version!
 
-``pyspellchecker`` allows for the setting of the Levenshtein Distance to check.
+``pyspellchecker`` allows for the setting of the Levenshtein Distance (up to two) to check.
 For longer words, it is highly recommended to use a distance of 1 and not the
 default 2. See the quickstart to find how one can change the distance parameter.
 
@@ -60,10 +59,6 @@ To install from source:
     git clone https://github.com/barrust/pyspellchecker.git
     cd pyspellchecker
     python setup.py install
-
-As always, I highly recommend using the
-`Pipenv <https://github.com/pypa/pipenv>`__ package to help manage
-dependencies!
 
 
 Quickstart
@@ -87,7 +82,6 @@ forward:
 
         # Get a list of `likely` options
         print(spell.candidates(word))
-
 
 
 If the Word Frequency list is not to your liking, you can add additional
@@ -119,6 +113,16 @@ check class or after the fact.
 
     spell.distance = 2  # set the distance parameter back to the default
 
+
+Dictionary Creation and Updating
+-------------------------------------------------------------------------------
+
+The creation of the dictionaries is, unfortunately, not an exact science. I have provided a script that, given a text file of sentences (in this case from
+`OpenSubtitles <http://opus.nlpl.eu/OpenSubtitles2018.php>`__) it will generate a word frequency list based on the words found within the text. The script then attempts to ***clean up*** the word frequency by, for example, removing words with invalid characters (usually from other languages), removing low count terms (misspellings?) and attempts to enforce rules as available (no more than one accent per word in Spanish). Then it removes words from a list of known words that are to be removed.
+
+The script can be found here: ``scripts/build_dictionary.py```. The original word frequency list parsed from OpenSubtitles can be found in the ```scripts/data/``` folder along with each language's *exclude* text file.
+
+Any help in updating and maintaining the dictionaries would be greatly desired. To do this, a discussion could be started on GitHub or pull requests to update the exclude file could be added. Ideas on how to add words that are missing along with a relative frequency is something that is in the works for future versions of the dictionaries.
 
 
 Additional Methods
@@ -156,5 +160,4 @@ Credits
 -------------------------------------------------------------------------------
 
 * `Peter Norvig <https://norvig.com/spell-correct.html>`__ blog post on setting up a simple spell checking algorithm
-
-* `hermetdave's WordFrequency project <https://github.com/hermitdave/FrequencyWords>`__ for providing the basis for Non-English dictionaries
+* P Lison and J Tiedemann, 2016, OpenSubtitles2016: Extracting Large Parallel Corpora from Movie and TV Subtitles. In Proceedings of the 10th International Conference on Language Resources and Evaluation (LREC 2016)
