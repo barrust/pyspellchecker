@@ -1,5 +1,4 @@
 """ Additional utility functions """
-import sys
 import re
 import gzip
 import contextlib
@@ -23,12 +22,8 @@ def __gzip_read(filename, mode='rb', encoding='UTF-8'):
         Yields:
             str: The string data from the gzip file read
     """
-    if sys.version_info < (3, 0):
-        with gzip.open(filename, mode=mode) as fobj:
-            yield fobj.read().decode(encoding)
-    else:
-        with gzip.open(filename, mode=mode, encoding=encoding) as fobj:
-            yield fobj.read()
+    with gzip.open(filename, mode=mode, encoding=encoding) as fobj:
+        yield fobj.read()
 
 
 @contextlib.contextmanager
@@ -65,8 +60,6 @@ def write_file(filepath, encoding, gzipped, data):
             fobj.write(data)
     else:
         with open(filepath, "w", encoding=encoding) as fobj:
-            if sys.version_info < (3, 0):
-                data = data.decode(encoding)
             fobj.write(data)
 
 
