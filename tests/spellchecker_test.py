@@ -1,6 +1,5 @@
 #coding=UTF-8
 ''' Unittest class '''
-from __future__ import division, unicode_literals
 
 import unittest
 import os

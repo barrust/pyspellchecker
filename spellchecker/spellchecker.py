@@ -1,13 +1,11 @@
 """ SpellChecker Module; simple, intuitive spell checker based on the post by
     Peter Norvig. See: https://norvig.com/spell-correct.html """
-from __future__ import absolute_import, division, unicode_literals
-
 import os
 import json
 import string
 from collections import Counter
 
-from .utils import load_file, write_file, _parse_into_words, ENSURE_UNICODE
+from .utils import load_file, write_file, _parse_into_words, ensure_unicode
 
 
 class SpellChecker(object):
@@ -62,12 +60,12 @@ class SpellChecker(object):
 
     def __contains__(self, key):
         """ setup easier known checks """
-        key = ENSURE_UNICODE(key)
+        key = ensure_unicode(key)
         return key in self._word_frequency
 
     def __getitem__(self, key):
         """ setup easier frequency checks """
-        key = ENSURE_UNICODE(key)
+        key = ensure_unicode(key)
         return self._word_frequency[key]
 
     @property
@@ -107,7 +105,7 @@ class SpellChecker(object):
                 text (str): The text to split into individual words
             Returns:
                 list(str): A listing of all words in the provided text """
-        text = ENSURE_UNICODE(text)
+        text = ensure_unicode(text)
         return self._tokenizer(text)
 
     def export(self, filepath, encoding="utf-8", gzipped=True):
@@ -134,7 +132,7 @@ class SpellChecker(object):
                 float: The probability that the word is the correct word """
         if total_words is None:
             total_words = self._word_frequency.total_words
-        word = ENSURE_UNICODE(word)
+        word = ensure_unicode(word)
         return self._word_frequency.dictionary[word] / total_words
 
     def correction(self, word):
@@ -144,7 +142,7 @@ class SpellChecker(object):
                 word (str): The word to correct
             Returns:
                 str: The most likely candidate """
-        word = ENSURE_UNICODE(word)
+        word = ensure_unicode(word)
         candidates = list(self.candidates(word))
         return max(sorted(candidates), key=self.word_probability)
 
@@ -156,7 +154,7 @@ class SpellChecker(object):
                 word (str): The word for which to calculate candidate spellings
             Returns:
                 set: The set of words that are possible candidates """
-        word = ENSURE_UNICODE(word)
+        word = ensure_unicode(word)
         if self.known([word]):  # short-cut if word is correct already
             return {word}
 
@@ -184,7 +182,7 @@ class SpellChecker(object):
             Returns:
                 set: The set of those words from the input that are in the \
                 corpus """
-        words = [ENSURE_UNICODE(w) for w in words]
+        words = [ensure_unicode(w) for w in words]
         tmp = [w if self._case_sensitive else w.lower() for w in words]
         return set(
             w
@@ -202,7 +200,7 @@ class SpellChecker(object):
             Returns:
                 set: The set of those words from the input that are not in \
                 the corpus """
-        words = [ENSURE_UNICODE(w) for w in words]
+        words = [ensure_unicode(w) for w in words]
         tmp = [
             w if self._case_sensitive else w.lower()
             for w in words
@@ -219,7 +217,7 @@ class SpellChecker(object):
             Returns:
                 set: The set of strings that are edit distance one from the \
                 provided word """
-        word = ENSURE_UNICODE(word).lower() if not self._case_sensitive else ENSURE_UNICODE(word)
+        word = ensure_unicode(word).lower() if not self._case_sensitive else ensure_unicode(word)
         if self._check_if_should_check(word) is False:
             return {word}
         letters = self._word_frequency.letters
@@ -239,7 +237,7 @@ class SpellChecker(object):
             Returns:
                 set: The set of strings that are edit distance two from the \
                 provided word """
-        word = ENSURE_UNICODE(word).lower() if not self._case_sensitive else ENSURE_UNICODE(word)
+        word = ensure_unicode(word).lower() if not self._case_sensitive else ensure_unicode(word)
         return [
             e2 for e1 in self.edit_distance_1(word) for e2 in self.edit_distance_1(e1)
         ]
@@ -253,7 +251,7 @@ class SpellChecker(object):
             Returns:
                 set: The set of strings that are edit distance two from the \
                 provided words """
-        words = [ENSURE_UNICODE(w) for w in words]
+        words = [ensure_unicode(w) for w in words]
         tmp = [
             w if self._case_sensitive else w.lower()
             for w in words
@@ -303,13 +301,13 @@ class WordFrequency(object):
 
     def __contains__(self, key):
         """ turn on contains """
-        key = ENSURE_UNICODE(key)
+        key = ensure_unicode(key)
         key = key if self._case_sensitive else key.lower()
         return key in self._dictionary
 
     def __getitem__(self, key):
         """ turn on getitem """
-        key = ENSURE_UNICODE(key)
+        key = ensure_unicode(key)
         key = key if self._case_sensitive else key.lower()
         return self._dictionary[key]
 
@@ -320,7 +318,7 @@ class WordFrequency(object):
             Args:
                 key (str): The key to remove
                 default (obj): The value to return if key is not present """
-        key = ENSURE_UNICODE(key)
+        key = ensure_unicode(key)
         key = key if self._case_sensitive else key.lower()
         return self._dictionary.pop(key, default)
 
@@ -375,7 +373,7 @@ class WordFrequency(object):
                 str: The next `word` in the tokenized string
             Note:
                 This is the same as the `spellchecker.split_words()` """
-        text = ENSURE_UNICODE(text)
+        text = ensure_unicode(text)
         for word in self._tokenizer(text):
             yield word if self._case_sensitive else word.lower()
 
@@ -440,7 +438,7 @@ class WordFrequency(object):
                 text (str): The text to be loaded
                 tokenizer (function): The function to use to tokenize a string
         """
-        text = ENSURE_UNICODE(text)
+        text = ensure_unicode(text)
         if tokenizer:
             words = [x if self._case_sensitive else x.lower() for x in tokenizer(text)]
         else:
@@ -454,7 +452,7 @@ class WordFrequency(object):
 
             Args:
                 words (list): The list of words to be loaded """
-        words = [ENSURE_UNICODE(w) for w in words]
+        words = [ensure_unicode(w) for w in words]
         self._dictionary.update(
             [word if self._case_sensitive else word.lower() for word in words]
         )
@@ -465,7 +463,7 @@ class WordFrequency(object):
 
             Args:
                 word (str): The word to add """
-        word = ENSURE_UNICODE(word)
+        word = ensure_unicode(word)
         self.load_words([word])
 
     def remove_words(self, words):
@@ -473,7 +471,7 @@ class WordFrequency(object):
 
             Args:
                 words (list): The list of words to remove """
-        words = [ENSURE_UNICODE(w) for w in words]
+        words = [ensure_unicode(w) for w in words]
         for word in words:
             self._dictionary.pop(word if self._case_sensitive else word.lower())
         self._update_dictionary()
@@ -483,7 +481,7 @@ class WordFrequency(object):
 
             Args:
                 word (str): The word to remove """
-        word = ENSURE_UNICODE(word)
+        word = ensure_unicode(word)
         self._dictionary.pop(word if self._case_sensitive else word.lower())
         self._update_dictionary()
 

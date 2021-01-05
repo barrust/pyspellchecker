@@ -1,5 +1,8 @@
 # pyspellchecker
 
+## Version 0.6.0
+* Remove **python 2.7** support
+
 ## Version 0.5.6
 * ***NOTE:*** Last planned support for **Python 2.7**
 * All dictionaries updated using the `scripts/build_dictionary.py` script
