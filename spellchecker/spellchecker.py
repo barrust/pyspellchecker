@@ -3,6 +3,8 @@
 import os
 import json
 import string
+import pkgutil
+import gzip
 from collections import Counter
 
 from .utils import load_file, write_file, _parse_into_words, ensure_unicode
@@ -48,15 +50,17 @@ class SpellChecker(object):
         if local_dictionary:
             self._word_frequency.load_dictionary(local_dictionary)
         elif language:
-            filename = "{}.json.gz".format(language.lower())
-            here = os.path.dirname(__file__)
-            full_filename = os.path.join(here, "resources", filename)
-            if not os.path.exists(full_filename):
+            filename = "resources/{}.json.gz".format(language.lower())
+            try:
+                json_open = pkgutil.get_data('spellchecker', filename)
+            except FileNotFoundError:
                 msg = (
                     "The provided dictionary language ({}) does not " "exist!"
                 ).format(language.lower())
                 raise ValueError(msg)
-            self._word_frequency.load_dictionary(full_filename)
+
+            lang_dict = json.loads(gzip.decompress(json_open).decode('utf-8'))
+            self._word_frequency.load_json(lang_dict)
 
     def __contains__(self, key):
         """ setup easier known checks """
@@ -419,6 +423,14 @@ class WordFrequency(object):
             data = data if self._case_sensitive else data.lower()
             self._dictionary.update(json.loads(data))
             self._update_dictionary()
+
+    def load_json(self, data):
+        """ Load in a pre-built word frequency list
+
+            Args:
+                data (dict): The dictionary to be loaded """
+        self._dictionary.update(data)
+        self._update_dictionary()
 
     def load_text_file(self, filename, encoding="utf-8", tokenizer=None):
         """ Load in a text file from which to generate a word frequency list
