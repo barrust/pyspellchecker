@@ -35,8 +35,7 @@ list. Those words that are found more often in the frequency list are
 ``pyspellchecker`` supports multiple languages including English, Spanish,
 German, French, and Portuguese. For information on how the dictionaries were created and how they can be updated and improved, please see the **Dictionary Creation and Updating** section of the readme!
 
-``pyspellchecker`` supports **Python 3** and **Python 2.7** but, as always, Python 3
-is the preferred version!
+``pyspellchecker`` supports **Python 3**
 
 ``pyspellchecker`` allows for the setting of the Levenshtein Distance (up to two) to check.
 For longer words, it is highly recommended to use a distance of 1 and not the
