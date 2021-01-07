@@ -3,6 +3,7 @@
 import os
 import json
 import string
+import sys
 from collections import Counter
 
 from .utils import load_file, write_file, _parse_into_words, ensure_unicode
@@ -49,7 +50,11 @@ class SpellChecker(object):
             self._word_frequency.load_dictionary(local_dictionary)
         elif language:
             filename = "{}.json.gz".format(language.lower())
-            here = os.path.dirname(__file__)
+            if getattr(sys, "frozen", False):
+                here = os.path.dirname(sys.executable)
+                print(here)
+            else:
+                here = os.path.dirname(__file__)
             full_filename = os.path.join(here, "resources", filename)
             if not os.path.exists(full_filename):
                 msg = (
