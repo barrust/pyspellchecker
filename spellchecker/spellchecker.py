@@ -52,7 +52,6 @@ class SpellChecker(object):
             filename = "{}.json.gz".format(language.lower())
             if getattr(sys, "frozen", False):
                 here = os.path.dirname(sys.executable)
-                print(here)
             else:
                 here = os.path.dirname(__file__)
             full_filename = os.path.join(here, "resources", filename)
