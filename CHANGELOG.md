@@ -1,5 +1,8 @@
 # pyspellchecker
 
+## Future Release
+* Updated automated `scripts/build_dictionary.py` script to support adding missing words
+
 ## Version 0.6.0
 * Remove **python 2.7** support
 
