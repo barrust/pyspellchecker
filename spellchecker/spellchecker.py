@@ -1,13 +1,13 @@
 """ SpellChecker Module; simple, intuitive spell checker based on the post by
     Peter Norvig. See: https://norvig.com/spell-correct.html """
-import os
-import json
-import string
-import pkgutil
 import gzip
+import json
+import os
+import pkgutil
+import string
 from collections import Counter
 
-from .utils import load_file, write_file, _parse_into_words, ensure_unicode
+from .utils import _parse_into_words, ensure_unicode, load_file, write_file
 
 
 class SpellChecker(object):

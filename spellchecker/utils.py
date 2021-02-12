@@ -1,7 +1,7 @@
 """ Additional utility functions """
-import re
-import gzip
 import contextlib
+import gzip
+import re
 
 
 def ensure_unicode(s, encoding='utf-8'):
