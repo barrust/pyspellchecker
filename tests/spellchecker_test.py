@@ -191,7 +191,6 @@ class TestSpellChecker(unittest.TestCase):
                 cnt += 1
         self.assertEqual(cnt, 0)
 
-
     def test_remove_by_threshold_using_items(self):
         ''' test removing everything below a certain threshold; using items to test '''
         spell = SpellChecker()
@@ -398,3 +397,9 @@ class TestSpellChecker(unittest.TestCase):
 
         self.assertTrue(var in spell)
         self.assertEqual(spell[var], 60)
+
+    def test_split_words(self):
+        ''' test using split_words '''
+        spell = SpellChecker()
+        res = spell.split_words("This isn't a good test, but it is a test!!!!")
+        self.assertEqual(set(res), set(["this", "isn't", "a", "good", "test", "but", "it", "is", "a", "test"]))
