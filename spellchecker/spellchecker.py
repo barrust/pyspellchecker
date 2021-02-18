@@ -376,7 +376,8 @@ class WordFrequency(object):
             Yields:
                 str: The next `word` in the tokenized string
             Note:
-                This is the same as the `spellchecker.split_words()` """
+                This is the same as the `spellchecker.split_words()` unless \
+                a tokenizer function was provided. """
         text = ensure_unicode(text)
         for word in self._tokenizer(text):
             yield word if self._case_sensitive else word.lower()
