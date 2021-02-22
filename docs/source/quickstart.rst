@@ -251,7 +251,6 @@ straight forward:
             print(spell.candidates(word))
 
 
-
 Using with PyInstaller
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -263,4 +262,5 @@ You will need to add the files to a folder in your executable called **spellchec
 to match the location that ``pyspellchecker`` checks for the supported dictionaries.
 
 .. code:: bash
+
     pyinstaller --add-binary="spellchecker/resources/en.json.gz:spellchecker/resources" my_prog.py
