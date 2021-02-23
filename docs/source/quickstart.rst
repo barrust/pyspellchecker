@@ -183,7 +183,7 @@ How to Build a New Dictionary
 
 Building a custom or new language dictionary is relatively straight forward. To
 begin, you will need to have either a word frequency list or text files that
-represent the usage of the terms. Since `pyspellchecker` uses word frequency, it
+represent the usage of the terms. Since ``pyspellchecker`` uses word frequency, it
 is better to have the most common words have higher frequencies!
 
 Once you have the corpus, code similar to the following should build out the
@@ -205,10 +205,12 @@ dictionary:
     # export it out for later use!
     spell.export('my_custom_dictionary.gz', gzipped=True)
 
-It is also possible to build a dictionary from other sources outside of pyspellchecker, it requires that the data be in the following format and saved as a json object: 
+It is also possible to build a dictionary from other sources outside of
+``pyspellchecker``, it requires that the data be in the following format and
+saved as a json object:
 
 .. code:: python
-    
+
     {
         "a": 1,
         "b": 2,
@@ -222,7 +224,7 @@ Note that the data does not need to be sorted!
 A quick, command line spell checking program
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Setting up a quick and easy command line program using pyspellchecker is
+Setting up a quick and easy command line program using ``pyspellchecker`` is
 straight forward:
 
 .. code:: python
@@ -247,3 +249,18 @@ straight forward:
 
             print("If that is not enough; here are all possible candidate words:")
             print(spell.candidates(word))
+
+
+Using with PyInstaller
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+It is possible to use ``pyspellchecker`` with tools such as PyInstaller to add
+spell-checking to your executable program. To do so, you will need to add the
+required dictionaries to the executable.
+
+You will need to add the files to a folder in your executable called **spellchecker/resources/**
+to match the location that ``pyspellchecker`` checks for the supported dictionaries.
+
+.. code:: bash
+
+    pyinstaller --add-binary="spellchecker/resources/en.json.gz:spellchecker/resources" my_prog.py

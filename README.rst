@@ -33,7 +33,9 @@ list. Those words that are found more often in the frequency list are
 **more likely** the correct results.
 
 ``pyspellchecker`` supports multiple languages including English, Spanish,
-German, French, and Portuguese. For information on how the dictionaries were created and how they can be updated and improved, please see the **Dictionary Creation and Updating** section of the readme!
+German, French, and Portuguese. For information on how the dictionaries were
+created and how they can be updated and improved, please see the
+**Dictionary Creation and Updating** section of the readme!
 
 ``pyspellchecker`` supports **Python 3**
 
@@ -60,6 +62,7 @@ To install from source:
     python setup.py install
 
 For *python 2.7* support, install `release 0.5.6 <https://github.com/barrust/pyspellchecker/releases/tag/v0.5.6>`__
+but note that no future updates will support *python 2*.
 
 .. code:: bash
 
@@ -123,11 +126,12 @@ Dictionary Creation and Updating
 -------------------------------------------------------------------------------
 
 The creation of the dictionaries is, unfortunately, not an exact science. I have provided a script that, given a text file of sentences (in this case from
-`OpenSubtitles <http://opus.nlpl.eu/OpenSubtitles2018.php>`__) it will generate a word frequency list based on the words found within the text. The script then attempts to ***clean up*** the word frequency by, for example, removing words with invalid characters (usually from other languages), removing low count terms (misspellings?) and attempts to enforce rules as available (no more than one accent per word in Spanish). Then it removes words from a list of known words that are to be removed.
+`OpenSubtitles <http://opus.nlpl.eu/OpenSubtitles2018.php>`__) it will generate a word frequency list based on the words found within the text. The script then attempts to ***clean up*** the word frequency by, for example, removing words with invalid characters (usually from other languages), removing low count terms (misspellings?) and attempts to enforce rules as available (no more than one accent per word in Spanish). Then it removes words from a list of known words that are to be removed. It then adds words into the dictionary that are known to be missing or were removed for being too low frequency.
 
-The script can be found here: ``scripts/build_dictionary.py```. The original word frequency list parsed from OpenSubtitles can be found in the ```scripts/data/``` folder along with each language's *exclude* text file.
+The script can be found here: ``scripts/build_dictionary.py```. The original word frequency list parsed from OpenSubtitles can be found in the ```scripts/data/``` folder along with each language's *include* and *exclude* text files.
 
-Any help in updating and maintaining the dictionaries would be greatly desired. To do this, a discussion could be started on GitHub or pull requests to update the exclude file could be added. Ideas on how to add words that are missing along with a relative frequency is something that is in the works for future versions of the dictionaries.
+Any help in updating and maintaining the dictionaries would be greatly desired. To do this, a
+`discussion <https://github.com/barrust/pyspellchecker/discussions>`__ could be started on GitHub or pull requests to update the include and exclude files could be added.
 
 
 Additional Methods

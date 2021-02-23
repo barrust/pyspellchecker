@@ -1,10 +1,19 @@
 """ Additional utility functions """
-import re
-import gzip
 import contextlib
+import gzip
+import re
 
 
 def ensure_unicode(s, encoding='utf-8'):
+    """ Simplify checking if passed in data are bytes or a string and decode
+        bytes into unicode.
+
+        Args:
+            s (str): The input string (possibly bytes)
+            encoding (str): The encoding to use if input is bytes
+        Returns:
+            str: The encoded string
+    """
     if isinstance(s, bytes):
         return s.decode(encoding)
     return s
