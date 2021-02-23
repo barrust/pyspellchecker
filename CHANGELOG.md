@@ -1,10 +1,9 @@
 # pyspellchecker
 
-## Future Release
-* Updated automated `scripts/build_dictionary.py` script to support adding missing words
-
-## Version 0.6.0
+## Version 0.6.0 (future version)
 * Remove **python 2.7** support
+* Updated automated `scripts/build_dictionary.py` script to support adding missing words
+* Updated `split_words()` to attempt to better handle punctuation; [#84](https://github.com/barrust/pyspellchecker/issues/84)
 
 ## Version 0.5.6
 * ***NOTE:*** Last planned support for **Python 2.7**
