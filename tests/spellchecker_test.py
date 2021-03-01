@@ -50,13 +50,13 @@ class TestSpellChecker(unittest.TestCase):
         # if the default load changes so will this...
         self.assertEqual(spell.word_frequency['the'], 76138318)
 
-    def test_word_probability(self):
+    def test_word_usage_frequency(self):
         ''' test the word probability calculation '''
         spell = SpellChecker()
         # if the default load changes so will this...
         num = spell.word_frequency['the']
         denom = spell.word_frequency.total_words
-        self.assertEqual(spell.word_probability('the'), num / denom)
+        self.assertEqual(spell.word_usage_frequency('the'), num / denom)
 
     def test_word_known(self):
         ''' test if the word is a `known` word or not '''

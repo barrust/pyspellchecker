@@ -2,7 +2,34 @@
 import contextlib
 import gzip
 import re
+import warnings
+import functools
 
+
+def deprecated(message=""):
+    """
+    This is a decorator which can be used to mark functions
+    as deprecated. It will result in a warning being emitted
+    when the function is used first time and filter is set for show DeprecationWarning.
+    """
+    import warnings
+    import functools
+
+    def decorator_wrapper(func):
+        @functools.wraps(func)
+        def function_wrapper(*args, **kwargs):
+            func_name = func.__name__
+            if func_name not in function_wrapper.deprecated_items:
+                warnings.warn("Function {} is now deprecated! {}".format(func.__name__, message),
+                              category=DeprecationWarning, stacklevel=2)
+                function_wrapper.deprecated_items.add(func_name)
+
+            return func(*args, **kwargs)
+        # set this up the first time the decorator is called
+        function_wrapper.deprecated_items = set()
+
+        return function_wrapper
+    return decorator_wrapper
 
 def ensure_unicode(s, encoding='utf-8'):
     """ Simplify checking if passed in data are bytes or a string and decode
