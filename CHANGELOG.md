@@ -1,5 +1,8 @@
 # pyspellchecker
 
+## Version 0.6.1 (Future)
+* Deprecated `spell.word_probability` since the name makes it seem that it is building a true probability; use `spell.word_usage_frequency` instead
+
 ## Version 0.6.0
 * Remove **python 2.7** support
 * Updated automated `scripts/build_dictionary.py` script to support adding missing words

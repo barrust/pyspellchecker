@@ -155,7 +155,9 @@ class SpellChecker(object):
                 float: The probability that the word is the correct word
             Note:
                 Deprecated as of version 0.6.1; use `word_usage_frequency` \
-                instead """
+                instead
+            Note:
+                Will be removed in version 0.6.3 """
         return self.word_usage_frequency(word, total_words)
 
     def correction(self, word):

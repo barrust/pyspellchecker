@@ -5,6 +5,7 @@ import unittest
 import os
 
 from spellchecker import SpellChecker
+from spellchecker.utils import fail_after
 
 class TestSpellChecker(unittest.TestCase):
     ''' test the spell checker class '''
@@ -51,12 +52,22 @@ class TestSpellChecker(unittest.TestCase):
         self.assertEqual(spell.word_frequency['the'], 76138318)
 
     def test_word_usage_frequency(self):
-        ''' test the word probability calculation '''
+        ''' test the word usage frequency calculation '''
         spell = SpellChecker()
         # if the default load changes so will this...
         num = spell.word_frequency['the']
         denom = spell.word_frequency.total_words
         self.assertEqual(spell.word_usage_frequency('the'), num / denom)
+
+    # deprecated!
+    @fail_after("0.6.3")
+    def test_word_probability_calc(self):
+        ''' test the word probability calculation '''
+        spell = SpellChecker()
+        # if the default load changes so will this...
+        num = spell.word_frequency['the']
+        denom = spell.word_frequency.total_words
+        self.assertEqual(spell.word_probability('the'), num / denom)
 
     def test_word_known(self):
         ''' test if the word is a `known` word or not '''

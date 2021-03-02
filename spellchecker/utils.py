@@ -2,9 +2,19 @@
 import contextlib
 import gzip
 import re
-import warnings
-import functools
 
+def fail_after(version):
+    import functools
+    from .info import __version__
+
+    def decorator_wrapper(func):
+        @functools.wraps(func)
+        def test_inner(*args, **kwargs):
+            if [int(x) for x in version.split('.')] <= [int(x) for x in __version__.split('.')]:
+                raise AssertionError("The function {} must be fully removed as it is depricated and must be removed by version {}".format(func.__name__, version))
+            return func(*args, **kwargs)
+        return test_inner
+    return decorator_wrapper
 
 def deprecated(message=""):
     """
