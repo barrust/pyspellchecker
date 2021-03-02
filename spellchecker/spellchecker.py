@@ -2,7 +2,6 @@
     Peter Norvig. See: https://norvig.com/spell-correct.html """
 import gzip
 import json
-import os
 import pkgutil
 import string
 from collections import Counter
@@ -52,14 +51,14 @@ class SpellChecker(object):
         elif language:
             filename = "resources/{}.json.gz".format(language.lower())
             try:
-                json_open = pkgutil.get_data('spellchecker', filename)
+                json_open = pkgutil.get_data("spellchecker", filename)
             except FileNotFoundError:
                 msg = (
                     "The provided dictionary language ({}) does not " "exist!"
                 ).format(language.lower())
                 raise ValueError(msg)
 
-            lang_dict = json.loads(gzip.decompress(json_open).decode('utf-8'))
+            lang_dict = json.loads(gzip.decompress(json_open).decode("utf-8"))
             self._word_frequency.load_json(lang_dict)
 
     def __contains__(self, key):
@@ -212,8 +211,7 @@ class SpellChecker(object):
         return set(
             w
             for w in tmp
-            if w in self._word_frequency.dictionary
-            and self._check_if_should_check(w)
+            if w in self._word_frequency.dictionary and self._check_if_should_check(w)
         )
 
     def unknown(self, words):
@@ -242,7 +240,11 @@ class SpellChecker(object):
             Returns:
                 set: The set of strings that are edit distance one from the \
                 provided word """
-        word = ensure_unicode(word).lower() if not self._case_sensitive else ensure_unicode(word)
+        word = (
+            ensure_unicode(word).lower()
+            if not self._case_sensitive
+            else ensure_unicode(word)
+        )
         if self._check_if_should_check(word) is False:
             return {word}
         letters = self._word_frequency.letters
@@ -262,7 +264,11 @@ class SpellChecker(object):
             Returns:
                 set: The set of strings that are edit distance two from the \
                 provided word """
-        word = ensure_unicode(word).lower() if not self._case_sensitive else ensure_unicode(word)
+        word = (
+            ensure_unicode(word).lower()
+            if not self._case_sensitive
+            else ensure_unicode(word)
+        )
         return [
             e2 for e1 in self.edit_distance_1(word) for e2 in self.edit_distance_1(e1)
         ]
@@ -287,7 +293,9 @@ class SpellChecker(object):
     def _check_if_should_check(self, word):
         if len(word) == 1 and word in string.punctuation:
             return False
-        if len(word) > self._word_frequency.longest_word_length + 3:  # magic number to allow removal of up to 2 letters.
+        if (
+            len(word) > self._word_frequency.longest_word_length + 3
+        ):  # magic number to allow removal of up to 2 letters.
             return False
         try:  # check if it is a number (int, float, etc)
             float(word)
@@ -309,7 +317,7 @@ class WordFrequency(object):
         "_letters",
         "_tokenizer",
         "_case_sensitive",
-        "_longest_word_length"
+        "_longest_word_length",
     ]
 
     def __init__(self, tokenizer=None, case_sensitive=False):

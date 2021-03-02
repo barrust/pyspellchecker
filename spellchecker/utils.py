@@ -2,62 +2,80 @@
 import contextlib
 import gzip
 import re
+import functools
+import warnings
+
+from .info import __version__
+
 
 def fail_after(version):
-    import functools
-    from .info import __version__
+    """ Decorator to add to tests to ensure that they fail if a deprecated
+        feature is not removed before the specified version
+
+        Args:
+            version (str): The version to check against """
 
     def decorator_wrapper(func):
         @functools.wraps(func)
         def test_inner(*args, **kwargs):
-            if [int(x) for x in version.split('.')] <= [int(x) for x in __version__.split('.')]:
-                raise AssertionError("The function {} must be fully removed as it is depricated and must be removed by version {}".format(func.__name__, version))
+            if [int(x) for x in version.split(".")] <= [
+                int(x) for x in __version__.split(".")
+            ]:
+                msg = "The function {} must be fully removed as it is depricated and must be removed by version {}".format(
+                    func.__name__, version
+                )
+                raise AssertionError(msg)
             return func(*args, **kwargs)
+
         return test_inner
+
     return decorator_wrapper
 
+
 def deprecated(message=""):
+    """ A simplistic decorator to mark functions as deprecated. The function
+        will pass a message to the user on the first use of the function
+
+        Args:
+            message (str): The message to display if the function is deprecated
     """
-    This is a decorator which can be used to mark functions
-    as deprecated. It will result in a warning being emitted
-    when the function is used first time and filter is set for show DeprecationWarning.
-    """
-    import warnings
-    import functools
 
     def decorator_wrapper(func):
         @functools.wraps(func)
         def function_wrapper(*args, **kwargs):
             func_name = func.__name__
             if func_name not in function_wrapper.deprecated_items:
-                warnings.warn("Function {} is now deprecated! {}".format(func.__name__, message),
-                              category=DeprecationWarning, stacklevel=2)
+                msg = "Function {} is now deprecated! {}".format(func.__name__, message)
+                warnings.warn(msg, category=DeprecationWarning, stacklevel=2)
                 function_wrapper.deprecated_items.add(func_name)
 
             return func(*args, **kwargs)
+
         # set this up the first time the decorator is called
         function_wrapper.deprecated_items = set()
 
         return function_wrapper
+
     return decorator_wrapper
 
-def ensure_unicode(s, encoding='utf-8'):
+
+def ensure_unicode(_str, encoding="utf-8"):
     """ Simplify checking if passed in data are bytes or a string and decode
         bytes into unicode.
 
         Args:
-            s (str): The input string (possibly bytes)
+            _str (str): The input string (possibly bytes)
             encoding (str): The encoding to use if input is bytes
         Returns:
             str: The encoded string
     """
-    if isinstance(s, bytes):
-        return s.decode(encoding)
-    return s
+    if isinstance(_str, bytes):
+        return _str.decode(encoding)
+    return _str
 
 
 @contextlib.contextmanager
-def __gzip_read(filename, mode='rb', encoding='UTF-8'):
+def __gzip_read(filename, mode="rb", encoding="UTF-8"):
     """ Context manager to correctly handle the decoding of the output of \
         the gzip file
 
@@ -84,7 +102,7 @@ def load_file(filename, encoding):
             str: The string data from the file read
     """
     if filename[-3:].lower() == ".gz":
-        with __gzip_read(filename, mode='rt', encoding=encoding) as data:
+        with __gzip_read(filename, mode="rt", encoding=encoding) as data:
             yield data
     else:
         with open(filename, mode="r", encoding=encoding) as fobj:
@@ -102,7 +120,7 @@ def write_file(filepath, encoding, gzipped, data):
             data (str): The data to be written out
     """
     if gzipped:
-        with gzip.open(filepath, 'wt') as fobj:
+        with gzip.open(filepath, "wt") as fobj:
             fobj.write(data)
     else:
         with open(filepath, "w", encoding=encoding) as fobj:
