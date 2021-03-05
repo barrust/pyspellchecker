@@ -17,8 +17,8 @@ class SpellChecker(object):
 
         Args:
             language (str): The language of the dictionary to load or None \
-            for no dictionary. Supported languages are `en`, `es`, `de`, `fr` \
-            and `pt`. Defaults to `en`
+            for no dictionary. Supported languages are `en`, `es`, `de`, `fr`, \
+            `pt` and `ru`. Defaults to `en`
             local_dictionary (str): The path to a locally stored word \
             frequency dictionary; if provided, no language will be loaded
             distance (int): The edit distance to use. Defaults to 2.
