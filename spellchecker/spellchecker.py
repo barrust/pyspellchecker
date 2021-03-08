@@ -71,6 +71,11 @@ class SpellChecker(object):
         key = ensure_unicode(key)
         return self._word_frequency[key]
 
+    def __iter__(self):
+        """ setup iter support """
+        for word, freq in self._word_frequency.items():
+            yield word, freq
+
     @property
     def word_frequency(self):
         """ WordFrequency: An encapsulation of the word frequency `dictionary`
@@ -343,6 +348,11 @@ class WordFrequency(object):
         key = ensure_unicode(key)
         key = key if self._case_sensitive else key.lower()
         return self._dictionary[key]
+
+    def __iter__(self):
+        """ turn on iter support """
+        for word, freq in self._dictionary.items():
+            yield word, freq
 
     def pop(self, key, default=None):
         """ Remove the key and return the associated value or default if not
