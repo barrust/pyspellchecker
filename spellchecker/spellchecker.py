@@ -2,12 +2,11 @@
     Peter Norvig. See: https://norvig.com/spell-correct.html """
 import gzip
 import json
-import os
 import pkgutil
 import string
 from collections import Counter
 
-from .utils import _parse_into_words, ensure_unicode, load_file, write_file
+from .utils import _parse_into_words, ensure_unicode, load_file, write_file, deprecated
 
 
 class SpellChecker(object):
@@ -52,14 +51,14 @@ class SpellChecker(object):
         elif language:
             filename = "resources/{}.json.gz".format(language.lower())
             try:
-                json_open = pkgutil.get_data('spellchecker', filename)
+                json_open = pkgutil.get_data("spellchecker", filename)
             except FileNotFoundError:
                 msg = (
                     "The provided dictionary language ({}) does not " "exist!"
                 ).format(language.lower())
                 raise ValueError(msg)
 
-            lang_dict = json.loads(gzip.decompress(json_open).decode('utf-8'))
+            lang_dict = json.loads(gzip.decompress(json_open).decode("utf-8"))
             self._word_frequency.load_json(lang_dict)
 
     def __contains__(self, key):
@@ -122,9 +121,9 @@ class SpellChecker(object):
         data = json.dumps(self.word_frequency.dictionary, sort_keys=True)
         write_file(filepath, encoding, gzipped, data)
 
-    def word_probability(self, word, total_words=None):
-        """ Calculate the probability of the `word` being the desired, correct
-            word
+    def word_usage_frequency(self, word, total_words=None):
+        """ Calculate the frequency to the `word` provided as seen across the
+            entire dictionary
 
             Args:
                 word (str): The word for which the word probability is \
@@ -134,10 +133,31 @@ class SpellChecker(object):
                 frequency
             Returns:
                 float: The probability that the word is the correct word """
-        if total_words is None:
+        if not total_words:
             total_words = self._word_frequency.total_words
         word = ensure_unicode(word)
         return self._word_frequency.dictionary[word] / total_words
+
+    @deprecated("Deprecated as of version 0.6.1; use word_usage_frequency instead")
+    def word_probability(self, word, total_words=None):
+        """ Calculate the frequency to the `word` provided as seen across the
+            entire dictionary; function was a misnomar and is therefore
+            deprecated!
+
+            Args:
+                word (str): The word for which the word probability is \
+                calculated
+                total_words (int): The total number of words to use in the \
+                calculation; use the default for using the whole word \
+                frequency
+            Returns:
+                float: The probability that the word is the correct word
+            Note:
+                Deprecated as of version 0.6.1; use `word_usage_frequency` \
+                instead
+            Note:
+                Will be removed in version 0.6.3 """
+        return self.word_usage_frequency(word, total_words)
 
     def correction(self, word):
         """ The most probable correct spelling for the word
@@ -148,7 +168,7 @@ class SpellChecker(object):
                 str: The most likely candidate """
         word = ensure_unicode(word)
         candidates = list(self.candidates(word))
-        return max(sorted(candidates), key=self.word_probability)
+        return max(sorted(candidates), key=self.__getitem__)
 
     def candidates(self, word):
         """ Generate possible spelling corrections for the provided word up to
@@ -191,8 +211,7 @@ class SpellChecker(object):
         return set(
             w
             for w in tmp
-            if w in self._word_frequency.dictionary
-            and self._check_if_should_check(w)
+            if w in self._word_frequency.dictionary and self._check_if_should_check(w)
         )
 
     def unknown(self, words):
@@ -221,7 +240,11 @@ class SpellChecker(object):
             Returns:
                 set: The set of strings that are edit distance one from the \
                 provided word """
-        word = ensure_unicode(word).lower() if not self._case_sensitive else ensure_unicode(word)
+        word = (
+            ensure_unicode(word).lower()
+            if not self._case_sensitive
+            else ensure_unicode(word)
+        )
         if self._check_if_should_check(word) is False:
             return {word}
         letters = self._word_frequency.letters
@@ -241,7 +264,11 @@ class SpellChecker(object):
             Returns:
                 set: The set of strings that are edit distance two from the \
                 provided word """
-        word = ensure_unicode(word).lower() if not self._case_sensitive else ensure_unicode(word)
+        word = (
+            ensure_unicode(word).lower()
+            if not self._case_sensitive
+            else ensure_unicode(word)
+        )
         return [
             e2 for e1 in self.edit_distance_1(word) for e2 in self.edit_distance_1(e1)
         ]
@@ -266,7 +293,9 @@ class SpellChecker(object):
     def _check_if_should_check(self, word):
         if len(word) == 1 and word in string.punctuation:
             return False
-        if len(word) > self._word_frequency.longest_word_length + 3:  # magic number to allow removal of up to 2 letters.
+        if (
+            len(word) > self._word_frequency.longest_word_length + 3
+        ):  # magic number to allow removal of up to 2 letters.
             return False
         try:  # check if it is a number (int, float, etc)
             float(word)
@@ -288,7 +317,7 @@ class WordFrequency(object):
         "_letters",
         "_tokenizer",
         "_case_sensitive",
-        "_longest_word_length"
+        "_longest_word_length",
     ]
 
     def __init__(self, tokenizer=None, case_sensitive=False):
