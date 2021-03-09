@@ -122,6 +122,30 @@ check class or after the fact.
     spell.distance = 2  # set the distance parameter back to the default
 
 
+Non-English Dictionaries
+-------------------------------------------------------------------------------
+
+``pyspellchecker`` supports several default dictionaries as part of the default
+package. Each is simple to use when initializing the dictionary:
+
+.. code:: python
+
+    from spellchecker import SpellChecker
+
+    english = SpellChecker()  # the default is English (language='en')
+    spanish = SpellChecker(language='es')  # use the Spanish Dictionary
+    russian = SpellChecker(language='ru')  # use the Russian Dictionary
+
+
+The currently supported dictionaries are:
+
+* English       - 'en'
+* Spanish       - 'es'
+* French        - 'fr'
+* Portuguese    - 'pt'
+* German        - 'de'
+* Russian       - 'ru'
+
 Dictionary Creation and Updating
 -------------------------------------------------------------------------------
 

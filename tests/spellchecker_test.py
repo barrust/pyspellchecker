@@ -414,3 +414,29 @@ class TestSpellChecker(unittest.TestCase):
         spell = SpellChecker()
         res = spell.split_words("This isn't a good test, but it is a test!!!!")
         self.assertEqual(set(res), set(["this", "isn't", "a", "good", "test", "but", "it", "is", "a", "test"]))
+
+    def test_iter_spellchecker(self):
+        """ Test using the iterator on the SpellChecker """
+        here = os.path.dirname(__file__)
+        filepath = '{}/resources/small_dictionary.json'.format(here)
+
+        spell = SpellChecker(language=None, local_dictionary=filepath)
+
+        cnt = 0
+        for word in spell:
+            self.assertTrue(word in spell)
+            cnt += 1
+        self.assertEqual(cnt, len(spell.word_frequency.dictionary))
+
+    def test_iter_word_frequency(self):
+        """ Test using the iterator on the WordFrequency """
+        here = os.path.dirname(__file__)
+        filepath = '{}/resources/small_dictionary.json'.format(here)
+
+        spell = SpellChecker(language=None, local_dictionary=filepath)
+
+        cnt = 0
+        for word in spell.word_frequency:
+            self.assertTrue(word in spell)
+            cnt += 1
+        self.assertEqual(cnt, len(spell.word_frequency.dictionary))

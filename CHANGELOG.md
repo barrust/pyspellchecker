@@ -3,6 +3,7 @@
 ## Version 0.6.1 (Future)
 * Deprecated `spell.word_probability` since the name makes it seem that it is building a true probability; use `spell.word_usage_frequency` instead
 * Added Russian language dictionary; [#91](https://github.com/barrust/pyspellchecker/pull/91) Thanks [@sviperm](https://github.com/sviperm)
+* Include `__iter__` to both the `SpellChecker` and `WordFrequency` objects
 
 ## Version 0.6.0
 * Removed **python 2.7** support
