@@ -177,6 +177,23 @@ Removing words is as simple as adding words:
     # or remove a single word
     spell.word_frequency.remove('meh')
 
+Iterating Over a Dictionary
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Iterating over the dictionary is as easy as writing a simple for loop:
+
+.. code:: python
+
+    from spellchecker import SpellChecker
+
+    spell = SpellChecker()
+
+    for word in spell:
+        print("{}: {}".format(word, spell[word]))
+
+The iterator returns the word. To get the number of times that the word is
+found in the WordFrequency object one can use a simple lookup.
+
 
 How to Build a New Dictionary
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

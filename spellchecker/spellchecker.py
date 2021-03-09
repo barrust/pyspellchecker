@@ -73,8 +73,8 @@ class SpellChecker(object):
 
     def __iter__(self):
         """ setup iter support """
-        for word, freq in self._word_frequency.items():
-            yield word, freq
+        for word in self._word_frequency.dictionary:
+            yield word
 
     @property
     def word_frequency(self):
@@ -351,8 +351,8 @@ class WordFrequency(object):
 
     def __iter__(self):
         """ turn on iter support """
-        for word, freq in self._dictionary.items():
-            yield word, freq
+        for word in self._dictionary:
+            yield word
 
     def pop(self, key, default=None):
         """ Remove the key and return the associated value or default if not

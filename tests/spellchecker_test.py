@@ -422,8 +422,11 @@ class TestSpellChecker(unittest.TestCase):
 
         spell = SpellChecker(language=None, local_dictionary=filepath)
 
-        for word, freq in spell:
-            self.assertEqual(freq, spell[word])
+        cnt = 0
+        for word in spell:
+            self.assertTrue(word in spell)
+            cnt += 1
+        self.assertEqual(cnt, len(spell.word_frequency.dictionary))
 
     def test_iter_word_frequency(self):
         """ Test using the iterator on the WordFrequency """
@@ -432,5 +435,8 @@ class TestSpellChecker(unittest.TestCase):
 
         spell = SpellChecker(language=None, local_dictionary=filepath)
 
-        for word, freq in spell.word_frequency:
-            self.assertEqual(freq, spell[word])
+        cnt = 0
+        for word in spell.word_frequency:
+            self.assertTrue(word in spell)
+            cnt += 1
+        self.assertEqual(cnt, len(spell.word_frequency.dictionary))
