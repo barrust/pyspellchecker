@@ -576,20 +576,20 @@ def _parse_args():
 
     parser = argparse.ArgumentParser(description='Build a new dictionary (word frequency) using the OpenSubtitles2018 project')
     parser.add_argument("-l", "--language", required=True, help="The language being built", choices=['en', 'es', 'de', 'fr', 'pt', 'ru'])
-    parser.add_argument("-p", "--path", help="The path to the downloaded text file OR the saved word frequency json")
-    parser.add_argument("-P", "--parse_input", action="store_true", help="Add this if providing a text file to be parsed")
+    parser.add_argument("-f", "--file-path", help="The path to the downloaded text file OR the saved word frequency json")
+    parser.add_argument("-p", "--parse-input", action="store_true", help="Add this if providing a text file to be parsed")
 
     args = parser.parse_args()
 
     # validate that we have a path, if needed!
     if args.parse_input:
-        if not args.path:
+        if not args.file_path:
             raise Exception("A path is required if parsing a text file!")
 
-    if args.path:
-        args.path = os.path.abspath(os.path.realpath(args.path))
+    if args.file_path:
+        args.file_path = os.path.abspath(os.path.realpath(args.file_path))
 
-        if not os.path.exists(args.path):
+        if not os.path.exists(args.file_path):
             raise FileNotFoundError("File Not Found. A valid path is required if parsing a text file!")
 
     return args
@@ -611,11 +611,18 @@ if __name__ == '__main__':
     print(exclude_filepath)
     print(include_filepath)
 
+    # Create if files dont exist
+    for filepath in (exclude_filepath, include_filepath):
+        if not os.path.exists(filepath):
+            print(f"Creating {filepath}")
+            with open(filepath, 'w+'):
+                pass
+
     # Should we re-process a file?
     if args.parse_input:
         json_path = os.path.join(script_path, "data", "{}.json".format(args.language))
         print(json_path)
-        word_frequency = build_word_frequency(args.path, args.language, json_path)
+        word_frequency = build_word_frequency(args.file_path, args.language, json_path)
     else:
         json_path = os.path.join(script_path, "data", "{}_full.json.gz".format(args.language))
         print(json_path)
