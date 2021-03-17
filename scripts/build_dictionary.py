@@ -1,6 +1,6 @@
 """ Desc:   A script to automate the building of multiple dictionaries based on
             known areas of concern due to the original source of the data. The
-            script can be run from the source directly (-P and -p) once a
+            script can be run from the source directly (-f and -p) once a
             sutable text file is obtained. It can also be run on a previously
             generated word frequency list to remove known problem areas.
     Author: Tyler Barrus
@@ -10,21 +10,20 @@
             German Input:     http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.de.gz
             French Input:     http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.fr.gz
             Portuguese Input: http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.pt.gz
-            Russian Input:    http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.ru.gz
+            Russian Input:    scripts/preprocessing/russian/ru_lenta.txt.bz2
     Requirements:
             The script requires more than the standard library to run in its
             entirety. You will also need to install the NLTK package to build a
             dictionary from scratch. Otherwise, no additional packages are
             required.
 """
+import bz2
 import contextlib
-import json
 import gzip
+import json
 import os
 import string
-import sys
 from collections import Counter
-
 
 STRING_PUNCTUATION = tuple(string.punctuation)
 DIGETS = tuple(string.digits)
@@ -32,7 +31,7 @@ MINIMUM_FREQUENCY = 15
 
 
 @contextlib.contextmanager
-def load_file(filename, encoding="utf-8"):
+def load_file(filename, mode=None, encoding="utf-8"):
     """ Context manager to handle opening a gzip or text file correctly and
         reading all the data
 
@@ -42,13 +41,19 @@ def load_file(filename, encoding="utf-8"):
         Yields:
             str: The string data from the file read
     """
-    if filename[-3:].lower() == ".gz":
-        with gzip.open(filename, mode="rt", encoding=encoding) as fobj:
+    extension = filename.rplit('.', 1).lower()
+    if extension == ".gz":
+        with gzip.open(filename, mode=(mode or "rt"), encoding=encoding) as fobj:
+            yield fobj
+    elif extension == ".bz2":
+        with bz2.open(filename, mode=(mode or "rt"), encoding=encoding) as fobj:
             yield fobj
     else:
-        with open(filename, mode="r", encoding=encoding) as fobj:
+        with open(filename, mode=(mode or "r"), encoding=encoding) as fobj:
             yield fobj
 
+
+# TODO: Cleaner, LangCleaner, CleanerManager classes
 
 def export_word_frequency(filepath, word_frequency):
     """ Export a word frequency as a json object
@@ -494,7 +499,7 @@ def clean_portuguese(word_frequency, filepath_exclude, filepath_include):
     return word_frequency
 
 
-def clean_russian(word_frequency, filepath_exclude, filepath_include):
+def clean_russian(word_frequency, filepath_exclude, filepath_include, **kwargs):
     """ Clean an Russian word frequency list
 
         Args:
@@ -502,10 +507,10 @@ def clean_russian(word_frequency, filepath_exclude, filepath_include):
             filepath_exclude (str):
             filepath_include (str):
     """
-    letters = set("абвгдеёжзийклмнопрстуфхцчшщъыьэюя")
 
     # remove words with invalid characters
     invalid_chars = list()
+    letters = set("абвгдеёжзийклмнопрстуфхцчшщъыьэюя-")
     for key in word_frequency:
         kl = set(key)
         if kl.issubset(letters):
@@ -567,6 +572,14 @@ def clean_russian(word_frequency, filepath_exclude, filepath_include):
             else:
                 word_frequency[line] = MINIMUM_FREQUENCY
 
+    misfit_filepath = kwargs.get('misfit_filepath')
+    if misfit_filepath:
+        with open(misfit_filepath, 'w+') as file:
+            words = small_frequency + doubles + no_vowels + doubles
+            for word in words:
+                file.write(word)
+                file.write('\n')
+
     return word_frequency
 
 
@@ -604,13 +617,16 @@ if __name__ == '__main__':
     resources_path = os.path.abspath("{}/resources/".format(module_path))
     exclude_filepath = os.path.abspath("{}/data/{}_exclude.txt".format(script_path, args.language))
     include_filepath = os.path.abspath("{}/data/{}_include.txt".format(script_path, args.language))
+    misfit_filepath = os.path.abspath("{}/data/{}_misfit.txt".format(script_path, args.language))
 
     print(script_path)
     print(module_path)
     print(resources_path)
     print(exclude_filepath)
     print(include_filepath)
+    print(misfit_filepath)
 
+    # TODO: remove
     # Create if files dont exist
     for filepath in (exclude_filepath, include_filepath):
         if not os.path.exists(filepath):
@@ -620,7 +636,7 @@ if __name__ == '__main__':
 
     # Should we re-process a file?
     if args.parse_input:
-        json_path = os.path.join(script_path, "data", "{}.json".format(args.language))
+        json_path = os.path.join(script_path, "data", "{}_full.json".format(args.language))
         print(json_path)
         word_frequency = build_word_frequency(args.file_path, args.language, json_path)
     else:
@@ -641,7 +657,7 @@ if __name__ == '__main__':
     elif args.language == "pt":
         word_frequency = clean_portuguese(word_frequency, exclude_filepath, include_filepath)
     elif args.language == "ru":
-        word_frequency = clean_russian(word_frequency, exclude_filepath, include_filepath)
+        word_frequency = clean_russian(word_frequency, exclude_filepath, include_filepath, misfit_filepath=misfit_filepath)
 
     # export word frequency for review!
     export_word_frequency(os.path.join(script_path, "{}.json".format(args.language)), word_frequency)
