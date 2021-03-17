@@ -41,7 +41,7 @@ def load_file(filename, mode=None, encoding="utf-8"):
         Yields:
             str: The string data from the file read
     """
-    extension = filename.rplit('.', 1).lower()
+    extension = filename.rsplit('.', 1)[-1].lower()
     if extension == ".gz":
         with gzip.open(filename, mode=(mode or "rt"), encoding=encoding) as fobj:
             yield fobj
@@ -64,6 +64,13 @@ def export_word_frequency(filepath, word_frequency):
     """
     with open(filepath, 'w') as f:
         json.dump(word_frequency, f, indent="", sort_keys=True, ensure_ascii=False)
+
+
+def export_misfit_words(filepath, misfits):
+    with open(filepath, 'w+') as file:
+        for word in misfits:
+            file.write(word)
+            file.write('\n')
 
 
 def build_word_frequency(filepath, language, output_path):
