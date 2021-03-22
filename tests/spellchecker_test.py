@@ -116,6 +116,15 @@ class TestSpellChecker(unittest.TestCase):
         self.assertTrue('mañana' in spell)
         self.assertEqual(spell['que'], 37141781)
 
+    def test_multiple_dicts(self):
+        ''' test loading in multiple dictionaries '''
+        es = SpellChecker(language='es')
+        self.assertEqual(es['a'], 25517457)
+        en = SpellChecker(language='en')
+        self.assertEqual(en['a'], 48779620)
+        spell = SpellChecker(language=['en', 'es'])
+        self.assertEqual(spell['a'], 74297077)  # 48779620 + 25517457
+
     def test_missing_dictionary(self):
         try:
             SpellChecker(language='no')
