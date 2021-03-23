@@ -1,8 +1,8 @@
 """ Additional utility functions """
 import contextlib
 import gzip
-import re
 import functools
+import re
 import warnings
 
 from .info import __version__
@@ -135,4 +135,4 @@ def _parse_into_words(text):
             text (str): The text to split into words
     """
     # see: https://stackoverflow.com/a/12705513
-    return re.findall(r"(\w[\w']*\w|\w)", text.lower())
+    return re.findall(r"(\w[\w']*\w|\w)", text)
