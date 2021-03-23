@@ -36,13 +36,13 @@ class TestSpellChecker(unittest.TestCase):
     def test_words(self):
         ''' test the parsing of words '''
         spell = SpellChecker()
-        res = ['this', 'is', 'a', 'test', 'of', 'this']
+        res = ['This', 'is', 'a', 'test', 'of', 'this']
         self.assertEqual(spell.split_words('This is a test of this'), res)
 
     def test_words_more_complete(self):
         ''' test the parsing of words '''
         spell = SpellChecker()
-        res = ['this', 'is', 'a', 'test', 'of', 'the', 'word', 'parser', 'it', 'should', 'work', 'correctly']
+        res = ['This', 'is', 'a', 'test', 'of', 'the', 'word', 'parser', 'It', 'should', 'work', 'correctly']
         self.assertEqual(spell.split_words('This is a test of the word parser. It should work correctly!!!'), res)
 
     def test_word_frequency(self):
@@ -413,7 +413,7 @@ class TestSpellChecker(unittest.TestCase):
         ''' test using split_words '''
         spell = SpellChecker()
         res = spell.split_words("This isn't a good test, but it is a test!!!!")
-        self.assertEqual(set(res), set(["this", "isn't", "a", "good", "test", "but", "it", "is", "a", "test"]))
+        self.assertEqual(set(res), set(["This", "isn't", "a", "good", "test", "but", "it", "is", "a", "test"]))
 
     def test_iter_spellchecker(self):
         """ Test using the iterator on the SpellChecker """

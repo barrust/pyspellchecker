@@ -3,11 +3,10 @@
 import gzip
 import json
 import pkgutil
-import re
 import string
 from collections import Counter
 
-from .utils import ensure_unicode, load_file, write_file, deprecated
+from .utils import _parse_into_words, ensure_unicode, load_file, write_file, deprecated
 
 
 class SpellChecker(object):
@@ -40,7 +39,7 @@ class SpellChecker(object):
         self._distance = None
         self.distance = distance  # use the setter value check
 
-        self._tokenizer = self._parse_into_words
+        self._tokenizer = _parse_into_words
         if tokenizer is not None:
             self._tokenizer = tokenizer
 
@@ -311,16 +310,6 @@ class SpellChecker(object):
 
         return True
 
-    def _parse_into_words(self, text):
-        """ Parse the text into words; currently removes punctuation except for
-            apostrophies.
-
-            Args:
-                text (str): The text to split into words
-        """
-        # see: https://stackoverflow.com/a/12705513
-        return re.findall(r"(\w[\w']*\w|\w)", text if self._case_sensitive else text.lower())
-
 
 class WordFrequency(object):
     """ Store the `dictionary` as a word frequency list while allowing for
@@ -344,7 +333,7 @@ class WordFrequency(object):
         self._case_sensitive = case_sensitive
         self._longest_word_length = 0
 
-        self._tokenizer = self._parse_into_words
+        self._tokenizer = _parse_into_words
         if tokenizer is not None:
             self._tokenizer = tokenizer
 
@@ -570,13 +559,3 @@ class WordFrequency(object):
             if len(key) > self._longest_word_length:
                 self._longest_word_length = len(key)
             self._letters.update(key)
-
-    def _parse_into_words(self, text):
-        """ Parse the text into words; currently removes punctuation except for
-            apostrophies.
-
-            Args:
-                text (str): The text to split into words
-        """
-        # see: https://stackoverflow.com/a/12705513
-        return re.findall(r"(\w[\w']*\w|\w)", text if self.case_sensitive else text.lower())
