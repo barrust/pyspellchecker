@@ -1,7 +1,6 @@
 """ Additional utility functions """
 import contextlib
 import gzip
-import re
 import functools
 import warnings
 
@@ -125,14 +124,3 @@ def write_file(filepath, encoding, gzipped, data):
     else:
         with open(filepath, "w", encoding=encoding) as fobj:
             fobj.write(data)
-
-
-def _parse_into_words(text):
-    """ Parse the text into words; currently removes punctuation except for
-        apostrophies.
-
-        Args:
-            text (str): The text to split into words
-    """
-    # see: https://stackoverflow.com/a/12705513
-    return re.findall(r"(\w[\w']*\w|\w)", text.lower())

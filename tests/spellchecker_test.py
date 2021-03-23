@@ -440,3 +440,9 @@ class TestSpellChecker(unittest.TestCase):
             self.assertTrue(word in spell)
             cnt += 1
         self.assertEqual(cnt, len(spell.word_frequency.dictionary))
+
+    def test_case_sensitive_parse_words(self):
+        """ Test using the parse words to generate a case sensitive dict """
+        spell = SpellChecker(language=None, case_sensitive=True)
+        spell.word_frequency.load_text("This is a Test of the test!")
+        self.assertTrue("This" in spell)
