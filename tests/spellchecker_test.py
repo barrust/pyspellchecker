@@ -446,3 +446,11 @@ class TestSpellChecker(unittest.TestCase):
         spell = SpellChecker(language=None, case_sensitive=True)
         spell.word_frequency.load_text("This is a Test of the test!")
         self.assertTrue("This" in spell)
+        self.assertFalse("this" in spell)
+
+    def test_case_insensitive_parse_words(self):
+        """ Test using the parse words to generate a case insensitive dict """
+        spell = SpellChecker(language=None, case_sensitive=False)
+        spell.word_frequency.load_text("This is a Test of the test!")
+        # in makes sure it is lower case in this instance
+        self.assertTrue("this" in spell)
