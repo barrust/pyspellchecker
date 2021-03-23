@@ -66,6 +66,9 @@ Once a word is identified as misspelled, you can find the likeliest replacement:
         spell.correction(word)  # 'happening'
 
 
+If using a set of long words that is taking a long time to process corrections
+then the Levenshtein distance can be set to 1. The default, is 2.
+
 .. code:: python
 
     from spellchecker import SpellChecker
@@ -104,6 +107,18 @@ parameter on initialization.
 
     spell = SpellChecker(language='es')  # Spanish dictionary
     print(spell['mañana'])
+
+
+Multiple Languages
+-------------------------------------------------------------------------------
+
+If you would like to check multiple default languages, it is possible to pass a
+list of language identifiers to the constructor to load each:
+
+.. code:: python
+    from spellchecker import SpellChecker
+
+    spell = SpellChecker(language=['es', 'en'])
 
 
 Adding and Removing Terms from a Dictionary

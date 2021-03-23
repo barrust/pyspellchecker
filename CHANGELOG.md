@@ -2,6 +2,7 @@
 
 ## Version 0.6.2 (future)
 * Add ability to load multiple languages at once; [see discussion](https://github.com/barrust/pyspellchecker/discussions/97)
+* Fix default tokenizer to not enforce lower case; [#99](https://github.com/barrust/pyspellchecker/issues/99)
 
 ## Version 0.6.1
 * Deprecated `spell.word_probability` since the name makes it seem that it is building a true probability; use `spell.word_usage_frequency` instead
