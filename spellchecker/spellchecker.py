@@ -17,7 +17,8 @@ class SpellChecker(object):
         Args:
             language (str): The language of the dictionary to load or None \
             for no dictionary. Supported languages are `en`, `es`, `de`, `fr`, \
-            `pt` and `ru`. Defaults to `en`
+            `pt` and `ru`. Defaults to `en`. A list of languages may be \
+            provided and all languages will be loaded.
             local_dictionary (str): The path to a locally stored word \
             frequency dictionary; if provided, no language will be loaded
             distance (int): The edit distance to use. Defaults to 2.
@@ -49,17 +50,20 @@ class SpellChecker(object):
         if local_dictionary:
             self._word_frequency.load_dictionary(local_dictionary)
         elif language:
-            filename = "resources/{}.json.gz".format(language.lower())
-            try:
-                json_open = pkgutil.get_data("spellchecker", filename)
-            except FileNotFoundError:
-                msg = (
-                    "The provided dictionary language ({}) does not " "exist!"
-                ).format(language.lower())
-                raise ValueError(msg)
+            if not isinstance(language, list):
+                language = [language]
+            for lang in language:
+                filename = "resources/{}.json.gz".format(lang.lower())
+                try:
+                    json_open = pkgutil.get_data("spellchecker", filename)
+                except FileNotFoundError:
+                    msg = (
+                        "The provided dictionary language ({}) does not " "exist!"
+                    ).format(lang.lower())
+                    raise ValueError(msg)
 
-            lang_dict = json.loads(gzip.decompress(json_open).decode("utf-8"))
-            self._word_frequency.load_json(lang_dict)
+                lang_dict = json.loads(gzip.decompress(json_open).decode("utf-8"))
+                self._word_frequency.load_json(lang_dict)
 
     def __contains__(self, key):
         """ setup easier known checks """
