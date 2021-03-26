@@ -22,8 +22,9 @@ import json
 import gzip
 import os
 import string
-import sys
 from collections import Counter
+
+from nltk import data
 
 
 STRING_PUNCTUATION = tuple(string.punctuation)
@@ -113,6 +114,22 @@ def build_word_frequency(filepath, language, output_path):
     export_word_frequency(output_path, word_frequency)
 
     return word_frequency
+
+
+def export_misfit_words(misfit_filepath, word_freq_filepath, word_frequency):
+    with load_file(word_freq_filepath, 'utf-8') as f:
+        source_word_frequency = json.load(f)
+
+    source_words = set(source_word_frequency.keys())
+    final_words = set(word_frequency.keys())
+
+    misfitted_words = source_words.difference(final_words)
+    misfitted_words = sorted(list(misfitted_words))
+
+    with open(misfit_filepath, 'w+') as file:
+        for word in misfitted_words:
+            file.write(word)
+            file.write('\n')
 
 
 def clean_english(word_frequency, filepath_exclude, filepath_include):
@@ -576,20 +593,21 @@ def _parse_args():
 
     parser = argparse.ArgumentParser(description='Build a new dictionary (word frequency) using the OpenSubtitles2018 project')
     parser.add_argument("-l", "--language", required=True, help="The language being built", choices=['en', 'es', 'de', 'fr', 'pt', 'ru'])
-    parser.add_argument("-p", "--path", help="The path to the downloaded text file OR the saved word frequency json")
-    parser.add_argument("-P", "--parse_input", action="store_true", help="Add this if providing a text file to be parsed")
+    parser.add_argument("-f", "--file-path", help="The path to the downloaded text file OR the saved word frequency json")
+    parser.add_argument("-p", "--parse-input", action="store_true", help="Add this if providing a text file to be parsed")
+    parser.add_argument("-m", "--misfit-file", action="store_true", help="Create file with words which was removed from dictionary")
 
     args = parser.parse_args()
 
     # validate that we have a path, if needed!
     if args.parse_input:
-        if not args.path:
+        if not args.file_path:
             raise Exception("A path is required if parsing a text file!")
 
-    if args.path:
-        args.path = os.path.abspath(os.path.realpath(args.path))
+    if args.file_path:
+        args.file_path = os.path.abspath(os.path.realpath(args.file_path))
 
-        if not os.path.exists(args.path):
+        if not os.path.exists(args.file_path):
             raise FileNotFoundError("File Not Found. A valid path is required if parsing a text file!")
 
     return args
@@ -602,8 +620,9 @@ if __name__ == '__main__':
     script_path = os.path.dirname(os.path.abspath(__file__))
     module_path = os.path.abspath("{}/../".format(script_path))
     resources_path = os.path.abspath("{}/resources/".format(module_path))
-    exclude_filepath = os.path.abspath("{}/data/{}_exclude.txt".format(script_path, args.language))
-    include_filepath = os.path.abspath("{}/data/{}_include.txt".format(script_path, args.language))
+    data_path = os.path.abspath("{}/data/".format(script_path))
+    exclude_filepath = os.path.abspath("{}/{}_exclude.txt".format(data_path, args.language))
+    include_filepath = os.path.abspath("{}/{}_include.txt".format(data_path, args.language))
 
     print(script_path)
     print(module_path)
@@ -613,9 +632,9 @@ if __name__ == '__main__':
 
     # Should we re-process a file?
     if args.parse_input:
-        json_path = os.path.join(script_path, "data", "{}.json".format(args.language))
+        json_path = os.path.join(script_path, "data", "{}_full.json".format(args.language))
         print(json_path)
-        word_frequency = build_word_frequency(args.path, args.language, json_path)
+        word_frequency = build_word_frequency(args.file_path, args.language, json_path)
     else:
         json_path = os.path.join(script_path, "data", "{}_full.json.gz".format(args.language))
         print(json_path)
@@ -637,4 +656,9 @@ if __name__ == '__main__':
         word_frequency = clean_russian(word_frequency, exclude_filepath, include_filepath)
 
     # export word frequency for review!
-    export_word_frequency(os.path.join(script_path, "{}.json".format(args.language)), word_frequency)
+    word_frequency_path = os.path.join(script_path, "{}.json".format(args.language))
+    export_word_frequency(word_frequency_path, word_frequency)
+
+    if args.misfit_file:
+        misfit_filepath = os.path.abspath("{}/{}_misfit.txt".format(data_path, args.language))
+        export_misfit_words(misfit_filepath, json_path, word_frequency)
