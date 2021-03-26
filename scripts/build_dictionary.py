@@ -641,6 +641,11 @@ if __name__ == '__main__':
         with load_file(json_path, 'utf-8') as f:
             word_frequency = json.load(f)
 
+    # create include and exclude files before cleaning
+    for filepath in (include_filepath, exclude_filepath):
+        with open(filepath, 'a+'):
+            pass
+
     # clean up the dictionary
     if args.language == "en":
         word_frequency = clean_english(word_frequency, exclude_filepath, include_filepath)
