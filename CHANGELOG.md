@@ -1,6 +1,6 @@
 # pyspellchecker
 
-## Version 0.6.2 (future)
+## Version 0.6.2
 * Add ability to load multiple languages at once; [see discussion](https://github.com/barrust/pyspellchecker/discussions/97)
 * Fix default tokenizer to not enforce lower case; [#99](https://github.com/barrust/pyspellchecker/issues/99)
 
