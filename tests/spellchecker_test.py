@@ -60,7 +60,7 @@ class TestSpellChecker(unittest.TestCase):
         self.assertEqual(spell.word_usage_frequency('the'), num / denom)
 
     # deprecated!
-    @fail_after("0.6.3")
+    @fail_after("0.6.4")
     def test_word_probability_calc(self):
         ''' test the word probability calculation '''
         spell = SpellChecker()
