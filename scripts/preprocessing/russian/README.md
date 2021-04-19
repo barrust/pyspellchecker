@@ -24,6 +24,12 @@ To create a dictionary on more then 3 million words we need:
     After script finish its work, two files will appear: `ru_lenta.txt` and 
     `ru_include.txt`
 
-3. Copy `ru_include.txt` to `scripts/data`
+3. Gzip `ru_include.txt`
+    
+    ```sh
+    gzip ru_include.txt
+    ```
+
+4. Copy `ru_include.txt.gz` to `scripts/data`
 
 After all of this steps, you could run `build_dictionary.py` using `ru_lenta.txt` with `-f` tag.
