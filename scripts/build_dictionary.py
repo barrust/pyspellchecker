@@ -10,7 +10,7 @@
             German Input:     http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.de.gz
             French Input:     http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.fr.gz
             Portuguese Input: http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.pt.gz
-            Russian Input:    http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.ru.gz
+            Russian Input:    read scripts/preprocessing/russian/README.md
     Requirements:
             The script requires more than the standard library to run in its
             entirety. You will also need to install the NLTK package to build a
@@ -240,7 +240,7 @@ def clean_english(word_frequency, filepath_exclude, filepath_include):
         for line in fobj:
             line = line.strip()
             if line in word_frequency:
-                print("{} is already found in the dictionary! Skipping!")
+                print("{} is already found in the dictionary! Skipping!".format(line))
             else:
                 word_frequency[line] = MINIMUM_FREQUENCY
 
@@ -333,7 +333,7 @@ def clean_spanish(word_frequency, filepath_exclude, filepath_include):
         for line in fobj:
             line = line.strip()
             if line in word_frequency:
-                print("{} is already found in the dictionary! Skipping!")
+                print("{} is already found in the dictionary! Skipping!".format(line))
             else:
                 word_frequency[line] = MINIMUM_FREQUENCY
 
@@ -390,7 +390,7 @@ def clean_german(word_frequency, filepath_exclude, filepath_include):
         for line in fobj:
             line = line.strip()
             if line in word_frequency:
-                print("{} is already found in the dictionary! Skipping!")
+                print("{} is already found in the dictionary! Skipping!".format(line))
             else:
                 word_frequency[line] = MINIMUM_FREQUENCY
 
@@ -447,7 +447,7 @@ def clean_french(word_frequency, filepath_exclude, filepath_include):
         for line in fobj:
             line = line.strip()
             if line in word_frequency:
-                print("{} is already found in the dictionary! Skipping!")
+                print("{} is already found in the dictionary! Skipping!".format(line))
             else:
                 word_frequency[line] = MINIMUM_FREQUENCY
 
@@ -504,7 +504,7 @@ def clean_portuguese(word_frequency, filepath_exclude, filepath_include):
         for line in fobj:
             line = line.strip()
             if line in word_frequency:
-                print("{} is already found in the dictionary! Skipping!")
+                print("{} is already found in the dictionary! Skipping!".format(line))
             else:
                 word_frequency[line] = MINIMUM_FREQUENCY
 
@@ -576,11 +576,11 @@ def clean_russian(word_frequency, filepath_exclude, filepath_include):
                 word_frequency.pop(line)
 
     # Add known missing words back in (ugh)
-    with load_file(filepath_include) as fobj:
+    with load_file(filepath_include + ".gz") as fobj:
         for line in fobj:
             line = line.strip()
             if line in word_frequency:
-                print("{} is already found in the dictionary! Skipping!")
+                print("{} is already found in the dictionary! Skipping!".format(line))
             else:
                 word_frequency[line] = MINIMUM_FREQUENCY
 
@@ -664,6 +664,7 @@ if __name__ == '__main__':
     word_frequency_path = os.path.join(script_path, "{}.json".format(args.language))
     export_word_frequency(word_frequency_path, word_frequency)
 
+    # export misfit words
     if args.misfit_file:
         misfit_filepath = os.path.abspath("{}/{}_misfit.txt".format(data_path, args.language))
         export_misfit_words(misfit_filepath, json_path, word_frequency)
