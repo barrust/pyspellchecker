@@ -17,7 +17,7 @@ pyspellchecker
     :target: https://badge.fury.io/py/pyspellchecker
     :alt: PyPi Package
 .. image:: http://pepy.tech/badge/pyspellchecker
-    :target: http://pepy.tech/count/pyspellchecker
+    :target: https://pepy.tech/project/pyspellchecker
     :alt: Downloads
 
 
