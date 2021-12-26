@@ -80,6 +80,11 @@ class SpellChecker(object):
         for word in self._word_frequency.dictionary:
             yield word
 
+    @classmethod
+    def languages(cls):
+        """ list: A list of all official languages supported by the library """
+        return ['de', 'en', 'es', 'fr', 'pt', 'ru']
+
     @property
     def word_frequency(self):
         """ WordFrequency: An encapsulation of the word frequency `dictionary`

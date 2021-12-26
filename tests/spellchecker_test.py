@@ -463,3 +463,11 @@ class TestSpellChecker(unittest.TestCase):
         spell.word_frequency.load_text("This is a Test of the test!")
         # in makes sure it is lower case in this instance
         self.assertTrue("this" in spell)
+
+    def test_language_list(self):
+        """ Test pulling a list of supported languages """
+        langs = SpellChecker.languages()
+        self.assertIn('en', langs)
+        self.assertIn('de', langs)
+        self.assertIn('es', langs)
+        self.assertNotIn('ja', langs)
