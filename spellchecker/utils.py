@@ -1,13 +1,12 @@
 """ Additional utility functions """
 import contextlib
-import gzip
 import functools
+import gzip
 import re
 import typing
 import warnings
 
 from .info import __version__
-
 
 KeyT = typing.Union[str, bytes]
 
