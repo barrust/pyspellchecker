@@ -1,7 +1,9 @@
 # pyspellchecker
 
-## Future Release
+## Version 0.6.3
 * Added class method to be able to get a listing of all supported languages
+* Added type hinting
+* Updated English dictionary to remove incorrect `cie` words; see [#112](https://github.com/barrust/pyspellchecker/issues/112)
 
 ## Version 0.6.2
 * Add ability to load multiple languages at once; [see discussion](https://github.com/barrust/pyspellchecker/discussions/97)
