@@ -132,7 +132,7 @@ def write_file(filepath: str, encoding: str, gzipped: bool, data: str) -> None:
             fobj.write(data)
 
 
-def _parse_into_words(text: str) -> typing.List[str]:
+def _parse_into_words(text: str) -> typing.Iterable[str]:
     """Parse the text into words; currently removes punctuation except for
     apostrophies.
 
