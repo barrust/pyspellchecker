@@ -4,9 +4,18 @@ import gzip
 import json
 import pkgutil
 import string
+import typing
 from collections import Counter
+from collections.abc import Iterable
 
-from .utils import _parse_into_words, ensure_unicode, load_file, write_file, deprecated
+from .utils import (
+    KeyT,
+    _parse_into_words,
+    deprecated,
+    ensure_unicode,
+    load_file,
+    write_file,
+)
 
 
 class SpellChecker(object):
@@ -31,18 +40,19 @@ class SpellChecker(object):
 
     def __init__(
         self,
-        language="en",
-        local_dictionary=None,
-        distance=2,
-        tokenizer=None,
-        case_sensitive=False,
-    ):
-        self._distance = None
+        language: typing.Union[str, typing.Iterable[str]] = "en",
+        local_dictionary: typing.Optional[str] = None,
+        distance: int = 2,
+        tokenizer: typing.Optional[typing.Callable[[str], typing.Iterable[str]]] = None,
+        case_sensitive: bool = False,
+    ) -> None:
+        self._distance = 2  # default
         self.distance = distance  # use the setter value check
 
-        self._tokenizer = _parse_into_words
-        if tokenizer is not None:
+        if tokenizer:
             self._tokenizer = tokenizer
+        else:
+            self._tokenizer = _parse_into_words
 
         self._case_sensitive = case_sensitive if not language else False
         self._word_frequency = WordFrequency(self._tokenizer, self._case_sensitive)
@@ -50,8 +60,8 @@ class SpellChecker(object):
         if local_dictionary:
             self._word_frequency.load_dictionary(local_dictionary)
         elif language:
-            if not isinstance(language, list):
-                language = [language]
+            if not isinstance(language, Iterable) or isinstance(language, (str, bytes)):
+                language = [language]  # type: ignore
             for lang in language:
                 filename = "resources/{}.json.gz".format(lang.lower())
                 try:
@@ -61,40 +71,40 @@ class SpellChecker(object):
                         "The provided dictionary language ({}) does not " "exist!"
                     ).format(lang.lower())
                     raise ValueError(msg)
-
-                lang_dict = json.loads(gzip.decompress(json_open).decode("utf-8"))
+                if json_open:
+                    lang_dict = json.loads(gzip.decompress(json_open).decode("utf-8"))
                 self._word_frequency.load_json(lang_dict)
 
-    def __contains__(self, key):
-        """ setup easier known checks """
+    def __contains__(self, key: KeyT) -> bool:
+        """setup easier known checks"""
         key = ensure_unicode(key)
         return key in self._word_frequency
 
-    def __getitem__(self, key):
-        """ setup easier frequency checks """
+    def __getitem__(self, key: KeyT) -> int:
+        """setup easier frequency checks"""
         key = ensure_unicode(key)
         return self._word_frequency[key]
 
-    def __iter__(self):
-        """ setup iter support """
+    def __iter__(self) -> typing.Generator[str, None, None]:
+        """setup iter support"""
         for word in self._word_frequency.dictionary:
             yield word
 
     @classmethod
-    def languages(cls):
-        """ list: A list of all official languages supported by the library """
-        return ['de', 'en', 'es', 'fr', 'pt', 'ru']
+    def languages(cls) -> typing.Iterable[str]:
+        """list: A list of all official languages supported by the library"""
+        return ["de", "en", "es", "fr", "pt", "ru"]
 
     @property
-    def word_frequency(self):
-        """ WordFrequency: An encapsulation of the word frequency `dictionary`
+    def word_frequency(self) -> "WordFrequency":
+        """WordFrequency: An encapsulation of the word frequency `dictionary`
 
-            Note:
-                Not settable """
+        Note:
+            Not settable"""
         return self._word_frequency
 
     @property
-    def distance(self):
+    def distance(self) -> int:
         """ int: The maximum edit distance to calculate
 
             Note:
@@ -103,8 +113,8 @@ class SpellChecker(object):
         return self._distance
 
     @distance.setter
-    def distance(self, val):
-        """ set the distance parameter """
+    def distance(self, val: int) -> None:
+        """set the distance parameter"""
         tmp = 2
         try:
             int(val)
@@ -114,28 +124,32 @@ class SpellChecker(object):
             pass
         self._distance = tmp
 
-    def split_words(self, text):
-        """ Split text into individual `words` using either a simple whitespace
-            regex or the passed in tokenizer
+    def split_words(self, text: KeyT) -> typing.Iterable[str]:
+        """Split text into individual `words` using either a simple whitespace
+        regex or the passed in tokenizer
 
-            Args:
-                text (str): The text to split into individual words
-            Returns:
-                list(str): A listing of all words in the provided text """
+        Args:
+            text (str): The text to split into individual words
+        Returns:
+            list(str): A listing of all words in the provided text"""
         text = ensure_unicode(text)
         return self._tokenizer(text)
 
-    def export(self, filepath, encoding="utf-8", gzipped=True):
-        """ Export the word frequency list for import in the future
+    def export(
+        self, filepath: str, encoding: str = "utf-8", gzipped: bool = True
+    ) -> None:
+        """Export the word frequency list for import in the future
 
-             Args:
-                filepath (str): The filepath to the exported dictionary
-                encoding (str): The encoding of the resulting output
-                gzipped (bool): Whether to gzip the dictionary or not """
+        Args:
+           filepath (str): The filepath to the exported dictionary
+           encoding (str): The encoding of the resulting output
+           gzipped (bool): Whether to gzip the dictionary or not"""
         data = json.dumps(self.word_frequency.dictionary, sort_keys=True)
         write_file(filepath, encoding, gzipped, data)
 
-    def word_usage_frequency(self, word, total_words=None):
+    def word_usage_frequency(
+        self, word: KeyT, total_words: typing.Optional[int] = None
+    ) -> float:
         """ Calculate the frequency to the `word` provided as seen across the
             entire dictionary
 
@@ -153,7 +167,9 @@ class SpellChecker(object):
         return self._word_frequency.dictionary[word] / total_words
 
     @deprecated("Deprecated as of version 0.6.1; use word_usage_frequency instead")
-    def word_probability(self, word, total_words=None):
+    def word_probability(
+        self, word: KeyT, total_words: typing.Optional[int] = None
+    ) -> float:
         """ Calculate the frequency to the `word` provided as seen across the
             entire dictionary; function was a misnomar and is therefore
             deprecated!
@@ -173,25 +189,25 @@ class SpellChecker(object):
                 Will be removed in version 0.6.3 """
         return self.word_usage_frequency(word, total_words)
 
-    def correction(self, word):
-        """ The most probable correct spelling for the word
+    def correction(self, word: KeyT) -> str:
+        """The most probable correct spelling for the word
 
-            Args:
-                word (str): The word to correct
-            Returns:
-                str: The most likely candidate """
+        Args:
+            word (str): The word to correct
+        Returns:
+            str: The most likely candidate"""
         word = ensure_unicode(word)
         candidates = list(self.candidates(word))
         return max(sorted(candidates), key=self.__getitem__)
 
-    def candidates(self, word):
-        """ Generate possible spelling corrections for the provided word up to
-            an edit distance of two, if and only when needed
+    def candidates(self, word: KeyT) -> typing.Set[str]:
+        """Generate possible spelling corrections for the provided word up to
+        an edit distance of two, if and only when needed
 
-            Args:
-                word (str): The word for which to calculate candidate spellings
-            Returns:
-                set: The set of words that are possible candidates """
+        Args:
+            word (str): The word for which to calculate candidate spellings
+        Returns:
+            set: The set of words that are possible candidates"""
         word = ensure_unicode(word)
         if self.known([word]):  # short-cut if word is correct already
             return {word}
@@ -211,7 +227,7 @@ class SpellChecker(object):
                 return tmp
         return {word}
 
-    def known(self, words):
+    def known(self, words: typing.Iterable[KeyT]) -> typing.Set[str]:
         """ The subset of `words` that appear in the dictionary of words
 
             Args:
@@ -220,15 +236,15 @@ class SpellChecker(object):
             Returns:
                 set: The set of those words from the input that are in the \
                 corpus """
-        words = [ensure_unicode(w) for w in words]
-        tmp = [w if self._case_sensitive else w.lower() for w in words]
+        tmp_words = [ensure_unicode(w) for w in words]
+        tmp = [w if self._case_sensitive else w.lower() for w in tmp_words]
         return set(
             w
             for w in tmp
             if w in self._word_frequency.dictionary and self._check_if_should_check(w)
         )
 
-    def unknown(self, words):
+    def unknown(self, words: typing.Iterable[KeyT]) -> typing.Set[str]:
         """ The subset of `words` that do not appear in the dictionary
 
             Args:
@@ -237,15 +253,15 @@ class SpellChecker(object):
             Returns:
                 set: The set of those words from the input that are not in \
                 the corpus """
-        words = [ensure_unicode(w) for w in words]
+        tmp_words = [ensure_unicode(w) for w in words]
         tmp = [
             w if self._case_sensitive else w.lower()
-            for w in words
+            for w in tmp_words
             if self._check_if_should_check(w)
         ]
         return set(w for w in tmp if w not in self._word_frequency.dictionary)
 
-    def edit_distance_1(self, word):
+    def edit_distance_1(self, word: KeyT) -> typing.Set[str]:
         """ Compute all strings that are one edit away from `word` using only
             the letters in the corpus
 
@@ -254,22 +270,22 @@ class SpellChecker(object):
             Returns:
                 set: The set of strings that are edit distance one from the \
                 provided word """
-        word = (
+        tmp_word = (
             ensure_unicode(word).lower()
             if not self._case_sensitive
             else ensure_unicode(word)
         )
-        if self._check_if_should_check(word) is False:
-            return {word}
+        if self._check_if_should_check(tmp_word) is False:
+            return {tmp_word}
         letters = self._word_frequency.letters
-        splits = [(word[:i], word[i:]) for i in range(len(word) + 1)]
+        splits = [(tmp_word[:i], tmp_word[i:]) for i in range(len(tmp_word) + 1)]
         deletes = [L + R[1:] for L, R in splits if R]
         transposes = [L + R[1] + R[0] + R[2:] for L, R in splits if len(R) > 1]
         replaces = [L + c + R[1:] for L, R in splits if R for c in letters]
         inserts = [L + c + R for L, R in splits for c in letters]
         return set(deletes + transposes + replaces + inserts)
 
-    def edit_distance_2(self, word):
+    def edit_distance_2(self, word: KeyT) -> typing.List[str]:
         """ Compute all strings that are two edits away from `word` using only
             the letters in the corpus
 
@@ -287,7 +303,7 @@ class SpellChecker(object):
             e2 for e1 in self.edit_distance_1(word) for e2 in self.edit_distance_1(e1)
         ]
 
-    def __edit_distance_alt(self, words):
+    def __edit_distance_alt(self, words: typing.Iterable[KeyT]) -> typing.List[str]:
         """ Compute all strings that are 1 edits away from all the words using
             only the letters in the corpus
 
@@ -296,15 +312,15 @@ class SpellChecker(object):
             Returns:
                 set: The set of strings that are edit distance two from the \
                 provided words """
-        words = [ensure_unicode(w) for w in words]
+        tmp_words = [ensure_unicode(w) for w in words]
         tmp = [
             w if self._case_sensitive else w.lower()
-            for w in words
+            for w in tmp_words
             if self._check_if_should_check(w)
         ]
         return [e2 for e1 in tmp for e2 in self.known(self.edit_distance_1(e1))]
 
-    def _check_if_should_check(self, word):
+    def _check_if_should_check(self, word: str) -> bool:
         if len(word) == 1 and word in string.punctuation:
             return False
         if (
@@ -321,8 +337,8 @@ class SpellChecker(object):
 
 
 class WordFrequency(object):
-    """ Store the `dictionary` as a word frequency list while allowing for
-        different methods to load the data and update over time """
+    """Store the `dictionary` as a word frequency list while allowing for
+    different methods to load the data and update over time"""
 
     __slots__ = [
         "_dictionary",
@@ -346,36 +362,36 @@ class WordFrequency(object):
         if tokenizer is not None:
             self._tokenizer = tokenizer
 
-    def __contains__(self, key):
-        """ turn on contains """
+    def __contains__(self, key: KeyT) -> bool:
+        """turn on contains"""
         key = ensure_unicode(key)
         key = key if self._case_sensitive else key.lower()
         return key in self._dictionary
 
-    def __getitem__(self, key):
-        """ turn on getitem """
+    def __getitem__(self, key: KeyT) -> int:
+        """turn on getitem"""
         key = ensure_unicode(key)
         key = key if self._case_sensitive else key.lower()
         return self._dictionary[key]
 
-    def __iter__(self):
-        """ turn on iter support """
+    def __iter__(self) -> typing.Generator[str, None, None]:
+        """turn on iter support"""
         for word in self._dictionary:
             yield word
 
-    def pop(self, key, default=None):
-        """ Remove the key and return the associated value or default if not
-            found
+    def pop(self, key: KeyT, default: typing.Optional[int] = None) -> int:
+        """Remove the key and return the associated value or default if not
+        found
 
-            Args:
-                key (str): The key to remove
-                default (obj): The value to return if key is not present """
+        Args:
+            key (str): The key to remove
+            default (obj): The value to return if key is not present"""
         key = ensure_unicode(key)
         key = key if self._case_sensitive else key.lower()
         return self._dictionary.pop(key, default)
 
     @property
-    def dictionary(self):
+    def dictionary(self) -> typing.Dict[str, int]:
         """ Counter: A counting dictionary of all words in the corpus and the \
             number of times each has been seen
 
@@ -384,7 +400,7 @@ class WordFrequency(object):
         return self._dictionary
 
     @property
-    def total_words(self):
+    def total_words(self) -> int:
         """ int: The sum of all word occurances in the word frequency \
                  dictionary
 
@@ -393,30 +409,30 @@ class WordFrequency(object):
         return self._total_words
 
     @property
-    def unique_words(self):
-        """ int: The total number of unique words in the word frequency list
+    def unique_words(self) -> int:
+        """int: The total number of unique words in the word frequency list
 
-            Note:
-                Not settable """
+        Note:
+            Not settable"""
         return self._unique_words
 
     @property
-    def letters(self):
-        """ str: The listing of all letters found within the corpus
+    def letters(self) -> typing.Set[str]:
+        """set: The listing of all letters found within the corpus
 
-            Note:
-                Not settable """
+        Note:
+            Not settable"""
         return self._letters
 
     @property
-    def longest_word_length(self):
-        """ int: The longest word length in the dictionary
+    def longest_word_length(self) -> int:
+        """int: The longest word length in the dictionary
 
-            Note:
-                Not settable """
+        Note:
+            Not settable"""
         return self._longest_word_length
 
-    def tokenize(self, text):
+    def tokenize(self, text: KeyT) -> typing.Generator[str, None, None]:
         """ Tokenize the provided string object into individual words
 
             Args:
@@ -426,42 +442,42 @@ class WordFrequency(object):
             Note:
                 This is the same as the `spellchecker.split_words()` unless \
                 a tokenizer function was provided. """
-        text = ensure_unicode(text)
-        for word in self._tokenizer(text):
+        tmp_text = ensure_unicode(text)
+        for word in self._tokenizer(tmp_text):
             yield word if self._case_sensitive else word.lower()
 
-    def keys(self):
-        """ Iterator over the key of the dictionary
+    def keys(self) -> typing.Generator[str, None, None]:
+        """Iterator over the key of the dictionary
 
-            Yields:
-                str: The next key in the dictionary
-            Note:
-                This is the same as `spellchecker.words()` """
+        Yields:
+            str: The next key in the dictionary
+        Note:
+            This is the same as `spellchecker.words()`"""
         for key in self._dictionary.keys():
             yield key
 
-    def words(self):
-        """ Iterator over the words in the dictionary
+    def words(self) -> typing.Generator[str, None, None]:
+        """Iterator over the words in the dictionary
 
-            Yields:
-                str: The next word in the dictionary
-            Note:
-                This is the same as `spellchecker.keys()` """
+        Yields:
+            str: The next word in the dictionary
+        Note:
+            This is the same as `spellchecker.keys()`"""
         for word in self._dictionary.keys():
             yield word
 
-    def items(self):
-        """ Iterator over the words in the dictionary
+    def items(self) -> typing.Generator[typing.Tuple[str, int], None, None]:
+        """Iterator over the words in the dictionary
 
-            Yields:
-                str: The next word in the dictionary
-                int: The number of instances in the dictionary
-            Note:
-                This is the same as `dict.items()` """
+        Yields:
+            str: The next word in the dictionary
+            int: The number of instances in the dictionary
+        Note:
+            This is the same as `dict.items()`"""
         for word in self._dictionary.keys():
             yield word, self._dictionary[word]
 
-    def load_dictionary(self, filename, encoding="utf-8"):
+    def load_dictionary(self, filename: str, encoding: str = "utf-8") -> None:
         """ Load in a pre-built word frequency list
 
             Args:
@@ -473,80 +489,89 @@ class WordFrequency(object):
             self._dictionary.update(json.loads(data))
             self._update_dictionary()
 
-    def load_json(self, data):
-        """ Load in a pre-built word frequency list
+    def load_json(self, data: typing.Dict[str, int]) -> None:
+        """Load in a pre-built word frequency list
 
-            Args:
-                data (dict): The dictionary to be loaded """
+        Args:
+            data (dict): The dictionary to be loaded"""
         self._dictionary.update(data)
         self._update_dictionary()
 
-    def load_text_file(self, filename, encoding="utf-8", tokenizer=None):
-        """ Load in a text file from which to generate a word frequency list
+    def load_text_file(
+        self,
+        filename: str,
+        encoding: str = "utf-8",
+        tokenizer: typing.Optional[typing.Callable[[str], typing.Iterable[str]]] = None,
+    ) -> None:
+        """Load in a text file from which to generate a word frequency list
 
-            Args:
-                filename (str): The filepath to the text file to be loaded
-                encoding (str): The encoding of the text file
-                tokenizer (function): The function to use to tokenize a string
+        Args:
+            filename (str): The filepath to the text file to be loaded
+            encoding (str): The encoding of the text file
+            tokenizer (function): The function to use to tokenize a string
         """
         with load_file(filename, encoding=encoding) as data:
             self.load_text(data, tokenizer)
 
-    def load_text(self, text, tokenizer=None):
-        """ Load text from which to generate a word frequency list
+    def load_text(
+        self,
+        text: KeyT,
+        tokenizer: typing.Optional[typing.Callable[[str], typing.Iterable[str]]] = None,
+    ) -> None:
+        """Load text from which to generate a word frequency list
 
-            Args:
-                text (str): The text to be loaded
-                tokenizer (function): The function to use to tokenize a string
+        Args:
+            text (str): The text to be loaded
+            tokenizer (function): The function to use to tokenize a string
         """
         text = ensure_unicode(text)
         if tokenizer:
             words = [x if self._case_sensitive else x.lower() for x in tokenizer(text)]
         else:
-            words = self.tokenize(text)
+            words = self.tokenize(text)  # type: ignore
 
         self._dictionary.update(words)
         self._update_dictionary()
 
-    def load_words(self, words):
-        """ Load a list of words from which to generate a word frequency list
+    def load_words(self, words: typing.Iterable[KeyT]) -> None:
+        """Load a list of words from which to generate a word frequency list
 
-            Args:
-                words (list): The list of words to be loaded """
+        Args:
+            words (list): The list of words to be loaded"""
         words = [ensure_unicode(w) for w in words]
         self._dictionary.update(
             [word if self._case_sensitive else word.lower() for word in words]
         )
         self._update_dictionary()
 
-    def add(self, word):
-        """ Add a word to the word frequency list
+    def add(self, word: KeyT) -> None:
+        """Add a word to the word frequency list
 
-            Args:
-                word (str): The word to add """
+        Args:
+            word (str): The word to add"""
         word = ensure_unicode(word)
         self.load_words([word])
 
-    def remove_words(self, words):
-        """ Remove a list of words from the word frequency list
+    def remove_words(self, words: typing.Iterable[KeyT]) -> None:
+        """Remove a list of words from the word frequency list
 
-            Args:
-                words (list): The list of words to remove """
+        Args:
+            words (list): The list of words to remove"""
         words = [ensure_unicode(w) for w in words]
         for word in words:
             self._dictionary.pop(word if self._case_sensitive else word.lower())
         self._update_dictionary()
 
-    def remove(self, word):
-        """ Remove a word from the word frequency list
+    def remove(self, word: KeyT) -> None:
+        """Remove a word from the word frequency list
 
-            Args:
-                word (str): The word to remove """
+        Args:
+            word (str): The word to remove"""
         word = ensure_unicode(word)
         self._dictionary.pop(word if self._case_sensitive else word.lower())
         self._update_dictionary()
 
-    def remove_by_threshold(self, threshold=5):
+    def remove_by_threshold(self, threshold: int = 5) -> None:
         """ Remove all words at, or below, the provided threshold
 
             Args:
@@ -558,8 +583,8 @@ class WordFrequency(object):
                 self._dictionary.pop(key)
         self._update_dictionary()
 
-    def _update_dictionary(self):
-        """ Update the word frequency object """
+    def _update_dictionary(self) -> None:
+        """Update the word frequency object"""
         self._longest_word_length = 0
         self._total_words = sum(self._dictionary.values())
         self._unique_words = len(self._dictionary.keys())
