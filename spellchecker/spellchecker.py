@@ -60,7 +60,7 @@ class SpellChecker(object):
         if local_dictionary:
             self._word_frequency.load_dictionary(local_dictionary)
         elif language:
-            if not isinstance(language, Iterable):
+            if not isinstance(language, Iterable) or isinstance(language, (str, bytes)):
                 language = [language]  # type: ignore
             for lang in language:
                 filename = "resources/{}.json.gz".format(lang.lower())
