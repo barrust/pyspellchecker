@@ -508,7 +508,7 @@ class WordFrequency(object):
     def load_text(
         self,
         text: KeyT,
-        tokenizer: typing.Callable[[str], typing.Iterable[str]] = None,
+        tokenizer: typing.Callable[[str], typing.List[str]] = None,
     ) -> None:
         """Load text from which to generate a word frequency list
 
