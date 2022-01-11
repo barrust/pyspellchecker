@@ -21,9 +21,7 @@ def fail_after(version: str) -> typing.Callable:
     def decorator_wrapper(func):
         @functools.wraps(func)
         def test_inner(*args, **kwargs):
-            if [int(x) for x in version.split(".")] <= [
-                int(x) for x in __version__.split(".")
-            ]:
+            if [int(x) for x in version.split(".")] <= [int(x) for x in __version__.split(".")]:
                 msg = "The function {} must be fully removed as it is depricated and must be removed by version {}".format(
                     func.__name__, version
                 )
@@ -78,18 +76,15 @@ def ensure_unicode(_str: KeyT, encoding: str = "utf-8") -> str:
 
 
 @contextlib.contextmanager
-def __gzip_read(
-    filename: str, mode: str = "rb", encoding: str = "UTF-8"
-) -> typing.Generator[KeyT, None, None]:
-    """ Context manager to correctly handle the decoding of the output of \
-        the gzip file
+def __gzip_read(filename: str, mode: str = "rb", encoding: str = "UTF-8") -> typing.Generator[KeyT, None, None]:
+    """Context manager to correctly handle the decoding of the output of the gzip file
 
-        Args:
-            filename (str): The filename to open
-            mode (str): The mode to read the data
-            encoding (str): The file encoding to use
-        Yields:
-            str: The string data from the gzip file read
+    Args:
+        filename (str): The filename to open
+        mode (str): The mode to read the data
+        encoding (str): The file encoding to use
+    Yields:
+        str: The string data from the gzip file read
     """
     with gzip.open(filename, mode=mode, encoding=encoding) as fobj:
         yield fobj.read()
