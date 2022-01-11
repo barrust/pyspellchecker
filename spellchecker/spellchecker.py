@@ -19,22 +19,21 @@ from .utils import (
 
 
 class SpellChecker(object):
-    """ The SpellChecker class encapsulates the basics needed to accomplish a
-        simple spell checking algorithm. It is based on the work by
-        Peter Norvig (https://norvig.com/spell-correct.html)
+    """The SpellChecker class encapsulates the basics needed to accomplish a
+    simple spell checking algorithm. It is based on the work by
+    Peter Norvig (https://norvig.com/spell-correct.html)
 
-        Args:
-            language (str): The language of the dictionary to load or None \
-            for no dictionary. Supported languages are `en`, `es`, `de`, `fr`, \
-            `pt` and `ru`. Defaults to `en`. A list of languages may be \
-            provided and all languages will be loaded.
-            local_dictionary (str): The path to a locally stored word \
-            frequency dictionary; if provided, no language will be loaded
-            distance (int): The edit distance to use. Defaults to 2.
-            case_sensitive (bool): Flag to use a case sensitive dictionary or \
-            not, only available when not using a language dictionary.
-        Note:
-            Using a case sensitive dictionary can be slow to correct words."""
+    Args:
+        language (str): The language of the dictionary to load or None for no dictionary. Supported languages are \
+            `en`, `es`, `de`, `fr`, `pt` and `ru`. Defaults to `en`. A list of languages may be provided and all \
+                languages will be loaded.
+        local_dictionary (str): The path to a locally stored word frequency dictionary; if provided, no language \
+            will be loaded
+        distance (int): The edit distance to use. Defaults to 2.
+        case_sensitive (bool): Flag to use a case sensitive dictionary or not, only available when not using a \
+            language dictionary.
+    Note:
+        Using a case sensitive dictionary can be slow to correct words."""
 
     __slots__ = ["_distance", "_word_frequency", "_tokenizer", "_case_sensitive"]
 
