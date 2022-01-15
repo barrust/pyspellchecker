@@ -155,7 +155,7 @@ class SpellChecker(object):
         word = ensure_unicode(word)
         return self._word_frequency.dictionary[word] / total_words
 
-    @deprecated("Deprecated as of version 0.6.1; use word_usage_frequency instead")
+    @deprecated("Deprecated as of version 0.6.5; use word_usage_frequency instead")
     def word_probability(self, word: KeyT, total_words: typing.Optional[int] = None) -> float:
         """Calculate the frequency to the `word` provided as seen across the
         entire dictionary; function was a misnomar and is therefore
@@ -169,7 +169,7 @@ class SpellChecker(object):
         Note:
             Deprecated as of version 0.6.1; use `word_usage_frequency` instead
         Note:
-            Will be removed in version 0.6.3"""
+            Will be removed in version 0.6.4"""
         return self.word_usage_frequency(word, total_words)
 
     def correction(self, word: KeyT) -> str:
