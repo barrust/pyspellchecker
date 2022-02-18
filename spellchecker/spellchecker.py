@@ -1,5 +1,6 @@
 """ SpellChecker Module; simple, intuitive spell checker based on the post by
     Peter Norvig. See: https://norvig.com/spell-correct.html """
+import os
 import gzip
 import json
 import pkgutil
@@ -62,7 +63,10 @@ class SpellChecker(object):
             if not isinstance(language, Iterable) or isinstance(language, (str, bytes)):
                 language = [language]  # type: ignore
             for lang in language:
-                filename = "resources/{}.json.gz".format(lang.lower())
+                if os.path.exists(lang):
+                    filename = lang
+                else:
+                    filename = "resources/{}.json.gz".format(lang.lower())
                 try:
                     json_open = pkgutil.get_data("spellchecker", filename)
                 except FileNotFoundError:
