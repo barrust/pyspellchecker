@@ -341,8 +341,7 @@ class WordFrequency(object):
             key (str): The key to remove
             default (obj): The value to return if key is not present"""
         key = ensure_unicode(key)
-        key = key if self._case_sensitive else key.lower()
-        return self._dictionary.pop(key, default)
+        return self._dictionary.pop(key if self._case_sensitive else key.lower(), default)
 
     @property
     def dictionary(self) -> typing.Dict[str, int]:
@@ -508,7 +507,7 @@ class WordFrequency(object):
             words (list): The list of words to remove"""
         words = [ensure_unicode(w) for w in words]
         for word in words:
-            self._dictionary.pop(word if self._case_sensitive else word.lower())
+            self.pop(word)
         self._update_dictionary()
 
     def remove(self, word: KeyT) -> None:
@@ -516,8 +515,7 @@ class WordFrequency(object):
 
         Args:
             word (str): The word to remove"""
-        word = ensure_unicode(word)
-        self._dictionary.pop(word if self._case_sensitive else word.lower())
+        self.pop(word)
         self._update_dictionary()
 
     def remove_by_threshold(self, threshold: int = 5) -> None:
@@ -525,11 +523,8 @@ class WordFrequency(object):
 
         Args:
             threshold (int): The threshold at which a word is to be removed"""
-        keys = [x for x in self._dictionary.keys()]
-        for key in keys:
-            if self._dictionary[key] <= threshold:
-                self._dictionary.pop(key)
-        self._update_dictionary()
+        to_remove = [k for k, v in self._dictionary.items() if v <= threshold]
+        self.remove_words(to_remove)
 
     def _update_dictionary(self) -> None:
         """Update the word frequency object"""
