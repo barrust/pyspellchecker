@@ -8,14 +8,7 @@ import typing
 from collections import Counter
 from collections.abc import Iterable
 
-from .utils import (
-    KeyT,
-    _parse_into_words,
-    deprecated,
-    ensure_unicode,
-    load_file,
-    write_file,
-)
+from .utils import KeyT, _parse_into_words, ensure_unicode, load_file, write_file
 
 
 class SpellChecker(object):
@@ -155,42 +148,27 @@ class SpellChecker(object):
         word = ensure_unicode(word)
         return self._word_frequency.dictionary[word] / total_words
 
-    @deprecated("Deprecated as of version 0.6.5; use word_usage_frequency instead")
-    def word_probability(self, word: KeyT, total_words: typing.Optional[int] = None) -> float:
-        """Calculate the frequency to the `word` provided as seen across the
-        entire dictionary; function was a misnomar and is therefore
-        deprecated!
-
-        Args:
-            word (str): The word for which the word probability is calculated
-            total_words (int): The total number of words to use in thecalculation; use the default for using the whole word frequency
-        Returns:
-            float: The probability that the word is the correct word
-        Note:
-            Deprecated as of version 0.6.1; use `word_usage_frequency` instead
-        Note:
-            Will be removed in version 0.6.4"""
-        return self.word_usage_frequency(word, total_words)
-
-    def correction(self, word: KeyT) -> str:
+    def correction(self, word: KeyT) -> typing.Optional[str]:
         """The most probable correct spelling for the word
 
         Args:
             word (str): The word to correct
         Returns:
-            str: The most likely candidate"""
+            str: The most likely candidate or None if no correction is present"""
         word = ensure_unicode(word)
-        candidates = list(self.candidates(word))
-        return max(sorted(candidates), key=self.__getitem__)
+        candidates = self.candidates(word)
+        if not candidates:
+            return None
+        return max(sorted(list(candidates)), key=self.__getitem__)
 
-    def candidates(self, word: KeyT) -> typing.Set[str]:
+    def candidates(self, word: KeyT) -> typing.Optional[typing.Set[str]]:
         """Generate possible spelling corrections for the provided word up to
         an edit distance of two, if and only when needed
 
         Args:
             word (str): The word for which to calculate candidate spellings
         Returns:
-            set: The set of words that are possible candidates"""
+            set: The set of words that are possible candidates or None if there are no candidates"""
         word = ensure_unicode(word)
         if self.known([word]):  # short-cut if word is correct already
             return {word}
@@ -208,7 +186,7 @@ class SpellChecker(object):
             tmp = self.known([x for x in self.__edit_distance_alt(res)])
             if tmp:
                 return tmp
-        return {word}
+        return None
 
     def known(self, words: typing.Iterable[KeyT]) -> typing.Set[str]:
         """The subset of `words` that appear in the dictionary of words
