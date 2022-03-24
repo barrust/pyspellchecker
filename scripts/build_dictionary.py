@@ -166,7 +166,7 @@ def clean_english(word_frequency, filepath_exclude, filepath_include):
     # Remove double punctuations (a-a-a-able) or (a'whoppinganda'whumping)
     double_punc = list()
     for key in word_frequency:
-        if key.count("'") > 1 or key.count(".") > 2:
+        if key.count("'") > 1 or key.count("-") > 1 or key.count(".") > 2:
             double_punc.append(key)
     for misfit in double_punc:
         word_frequency.pop(misfit)

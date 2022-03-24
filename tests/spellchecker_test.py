@@ -28,24 +28,18 @@ class TestSpellChecker(unittest.TestCase):
             "tes",
             "thas",
             "tis",
-            "thse",
             "thes",
             "thus",
-            "ohs",
             "thu",
             "thy",
             "thi",
             "tas",
             "tus",
             "thos",
-            "ahs",
             "tho",
             "tha",
-            "thsi",
-            "tos",
             "the",
             "this",
-            "iths",
         }
         self.assertEqual(spell.candidates("ths"), cands)
         self.assertEqual(spell.candidates("the"), {"the"})
@@ -243,13 +237,13 @@ class TestSpellChecker(unittest.TestCase):
         spell = SpellChecker()
         cnt = 0
         for key in spell.word_frequency.keys():
-            if spell.word_frequency[key] < 30:
+            if spell.word_frequency[key] < 300:
                 cnt += 1
         self.assertGreater(cnt, 0)
-        spell.word_frequency.remove_by_threshold(30)
+        spell.word_frequency.remove_by_threshold(300)
         cnt = 0
         for key in spell.word_frequency.words():  # synonym for keys
-            if spell.word_frequency[key] < 30:
+            if spell.word_frequency[key] < 300:
                 cnt += 1
         self.assertEqual(cnt, 0)
 
@@ -258,13 +252,13 @@ class TestSpellChecker(unittest.TestCase):
         spell = SpellChecker()
         cnt = 0
         for _, val in spell.word_frequency.items():
-            if val < 30:
+            if val < 300:
                 cnt += 1
         self.assertGreater(cnt, 0)
-        spell.word_frequency.remove_by_threshold(30)
+        spell.word_frequency.remove_by_threshold(300)
         cnt = 0
         for _, val in spell.word_frequency.items():  # synonym for keys
-            if val < 30:
+            if val < 300:
                 cnt += 1
         self.assertEqual(cnt, 0)
 
