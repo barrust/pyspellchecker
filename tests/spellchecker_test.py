@@ -5,7 +5,6 @@ import unittest
 import os
 
 from spellchecker import SpellChecker
-from spellchecker.utils import fail_after
 
 
 class TestSpellChecker(unittest.TestCase):
@@ -29,30 +28,24 @@ class TestSpellChecker(unittest.TestCase):
             "tes",
             "thas",
             "tis",
-            "thse",
             "thes",
             "thus",
-            "ohs",
             "thu",
             "thy",
             "thi",
             "tas",
             "tus",
             "thos",
-            "ahs",
             "tho",
             "tha",
-            "thsi",
-            "tos",
             "the",
             "this",
-            "iths",
         }
         self.assertEqual(spell.candidates("ths"), cands)
         self.assertEqual(spell.candidates("the"), {"the"})
         self.assertEqual(spell.candidates("-"), {"-"})
-        # something that cannot exist... should return just the same element...
-        self.assertEqual(spell.candidates("manasaeds"), {"manasaeds"})
+        # something that cannot exist... should return None...
+        self.assertEqual(spell.candidates("manasaeds"), None)
 
     def test_words(self):
         """test the parsing of words"""
@@ -79,16 +72,6 @@ class TestSpellChecker(unittest.TestCase):
         num = spell.word_frequency["the"]
         denom = spell.word_frequency.total_words
         self.assertEqual(spell.word_usage_frequency("the"), num / denom)
-
-    # deprecated!
-    @fail_after("0.6.4")
-    def test_word_probability_calc(self):
-        """test the word probability calculation"""
-        spell = SpellChecker()
-        # if the default load changes so will this...
-        num = spell.word_frequency["the"]
-        denom = spell.word_frequency.total_words
-        self.assertEqual(spell.word_probability("the"), num / denom)
 
     def test_word_known(self):
         """test if the word is a `known` word or not"""
@@ -254,13 +237,13 @@ class TestSpellChecker(unittest.TestCase):
         spell = SpellChecker()
         cnt = 0
         for key in spell.word_frequency.keys():
-            if spell.word_frequency[key] < 30:
+            if spell.word_frequency[key] < 300:
                 cnt += 1
         self.assertGreater(cnt, 0)
-        spell.word_frequency.remove_by_threshold(30)
+        spell.word_frequency.remove_by_threshold(300)
         cnt = 0
         for key in spell.word_frequency.words():  # synonym for keys
-            if spell.word_frequency[key] < 30:
+            if spell.word_frequency[key] < 300:
                 cnt += 1
         self.assertEqual(cnt, 0)
 
@@ -269,13 +252,13 @@ class TestSpellChecker(unittest.TestCase):
         spell = SpellChecker()
         cnt = 0
         for _, val in spell.word_frequency.items():
-            if val < 30:
+            if val < 300:
                 cnt += 1
         self.assertGreater(cnt, 0)
-        spell.word_frequency.remove_by_threshold(30)
+        spell.word_frequency.remove_by_threshold(300)
         cnt = 0
         for _, val in spell.word_frequency.items():  # synonym for keys
-            if val < 30:
+            if val < 300:
                 cnt += 1
         self.assertEqual(cnt, 0)
 
@@ -363,7 +346,7 @@ class TestSpellChecker(unittest.TestCase):
         self.assertEqual(spell.correction("bobb"), "bob")
         self.assertEqual(spell.correction("bobby"), "bob")
         self.assertEqual(spell.word_frequency.longest_word_length, 3)
-        self.assertEqual(spell.correction("bobbys"), "bobbys")
+        self.assertIsNone(spell.correction("bobbys"))
 
     def test_extremely_large_words(self):
         """test when a word is just extreamly large"""
