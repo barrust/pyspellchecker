@@ -152,7 +152,6 @@ suficiente
 scientifiic
 prophecied
 lucien's
-
 yourself's
 yourselfa
 yourselfat
@@ -455,3 +454,6 @@ you'ld
 you'li
 you'all
 nan
+adress
+helo
+abcs

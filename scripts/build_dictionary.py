@@ -24,24 +24,22 @@ import os
 import string
 from collections import Counter
 
-from nltk import data
-
 
 STRING_PUNCTUATION = tuple(string.punctuation)
 DIGETS = tuple(string.digits)
-MINIMUM_FREQUENCY = 15
+MINIMUM_FREQUENCY = 50
 
 
 @contextlib.contextmanager
 def load_file(filename, encoding="utf-8"):
-    """ Context manager to handle opening a gzip or text file correctly and
-        reading all the data
+    """Context manager to handle opening a gzip or text file correctly and
+    reading all the data
 
-        Args:
-            filename (str): The filename to open
-            encoding (str): The file encoding to use
-        Yields:
-            str: The string data from the file read
+    Args:
+        filename (str): The filename to open
+        encoding (str): The file encoding to use
+    Yields:
+        str: The string data from the file read
     """
     if filename[-3:].lower() == ".gz":
         with gzip.open(filename, mode="rt", encoding=encoding) as fobj:
@@ -52,29 +50,29 @@ def load_file(filename, encoding="utf-8"):
 
 
 def export_word_frequency(filepath, word_frequency):
-    """ Export a word frequency as a json object
+    """Export a word frequency as a json object
 
-        Args:
-            filepath (str):
-            word_frequency (Counter):
+    Args:
+        filepath (str):
+        word_frequency (Counter):
     """
-    with open(filepath, 'w') as f:
+    with open(filepath, "w") as f:
         json.dump(word_frequency, f, indent="", sort_keys=True, ensure_ascii=False)
 
 
 def build_word_frequency(filepath, language, output_path):
-    """ Parse the passed in text file (likely from Open Subtitles) into
-        a word frequency list and write it out to disk
+    """Parse the passed in text file (likely from Open Subtitles) into
+    a word frequency list and write it out to disk
 
-        Args:
-            filepath (str):
-            language (str):
-            output_path (str):
-        Returns:
-            Counter: The word frequency as parsed from the file
-        Note:
-            This only removes words that are proper nouns (attempts to...) and
-            anything that starts or stops with something that is not in the alphabet.
+    Args:
+        filepath (str):
+        language (str):
+        output_path (str):
+    Returns:
+        Counter: The word frequency as parsed from the file
+    Note:
+        This only removes words that are proper nouns (attempts to...) and
+        anything that starts or stops with something that is not in the alphabet.
     """
     # NLTK is only needed in this portion of the project
     try:
@@ -91,7 +89,7 @@ def build_word_frequency(filepath, language, output_path):
         tok = WhitespaceTokenizer()
 
     idx = 0
-    with load_file(filepath, 'utf-8') as fobj:
+    with load_file(filepath, "utf-8") as fobj:
         for line in fobj:
             # tokenize into parts
             parts = tok.tokenize(line)
@@ -99,7 +97,11 @@ def build_word_frequency(filepath, language, output_path):
             # Attempt to remove proper nouns
             # Remove things that have leading or trailing non-alphabetic characters.
             tagged_sent = pos_tag(parts)
-            words = [word[0].lower() for word in tagged_sent if word[0] and not word[1] == "NNP" and word[0][0].isalpha() and word[0][-1].isalpha()]
+            words = [
+                word[0].lower()
+                for word in tagged_sent
+                if word[0] and not word[1] == "NNP" and word[0][0].isalpha() and word[0][-1].isalpha()
+            ]
 
             # print(words)
             if words:
@@ -117,7 +119,7 @@ def build_word_frequency(filepath, language, output_path):
 
 
 def export_misfit_words(misfit_filepath, word_freq_filepath, word_frequency):
-    with load_file(word_freq_filepath, 'utf-8') as f:
+    with load_file(word_freq_filepath, "utf-8") as f:
         source_word_frequency = json.load(f)
 
     source_words = set(source_word_frequency.keys())
@@ -126,19 +128,19 @@ def export_misfit_words(misfit_filepath, word_freq_filepath, word_frequency):
     misfitted_words = source_words.difference(final_words)
     misfitted_words = sorted(list(misfitted_words))
 
-    with open(misfit_filepath, 'w+') as file:
+    with open(misfit_filepath, "w+") as file:
         for word in misfitted_words:
             file.write(word)
-            file.write('\n')
+            file.write("\n")
 
 
 def clean_english(word_frequency, filepath_exclude, filepath_include):
-    """ Clean an English word frequency list
+    """Clean an English word frequency list
 
-        Args:
-            word_frequency (Counter):
-            filepath_exclude (str):
-            filepath_include (str):
+    Args:
+        word_frequency (Counter):
+        filepath_exclude (str):
+        filepath_include (str):
     """
     letters = set("abcdefghijklmnopqrstuvwxyz'")
 
@@ -164,7 +166,7 @@ def clean_english(word_frequency, filepath_exclude, filepath_include):
     # Remove double punctuations (a-a-a-able) or (a'whoppinganda'whumping)
     double_punc = list()
     for key in word_frequency:
-        if key.count("'") > 1 or key.count(".") > 2:
+        if key.count("'") > 1 or key.count("-") > 1 or key.count(".") > 2:
             double_punc.append(key)
     for misfit in double_punc:
         word_frequency.pop(misfit)
@@ -248,12 +250,12 @@ def clean_english(word_frequency, filepath_exclude, filepath_include):
 
 
 def clean_spanish(word_frequency, filepath_exclude, filepath_include):
-    """ Clean a Spanish word frequency list
+    """Clean a Spanish word frequency list
 
-        Args:
-            word_frequency (Counter):
-            filepath_exclude (str):
-            filepath_include (str):
+    Args:
+        word_frequency (Counter):
+        filepath_exclude (str):
+        filepath_include (str):
     """
     letters = set("abcdefghijklmnopqrstuvwxyzáéíóúüñ")
 
@@ -341,12 +343,12 @@ def clean_spanish(word_frequency, filepath_exclude, filepath_include):
 
 
 def clean_german(word_frequency, filepath_exclude, filepath_include):
-    """ Clean a German word frequency list
+    """Clean a German word frequency list
 
-        Args:
-            word_frequency (Counter):
-            filepath_exclude (str):
-            filepath_include (str):
+    Args:
+        word_frequency (Counter):
+        filepath_exclude (str):
+        filepath_include (str):
     """
     letters = set("abcdefghijklmnopqrstuvwxyzäöüß")
 
@@ -398,12 +400,12 @@ def clean_german(word_frequency, filepath_exclude, filepath_include):
 
 
 def clean_french(word_frequency, filepath_exclude, filepath_include):
-    """ Clean a French word frequency list
+    """Clean a French word frequency list
 
-        Args:
-            word_frequency (Counter):
-            filepath_exclude (str):
-            filepath_include (str):
+    Args:
+        word_frequency (Counter):
+        filepath_exclude (str):
+        filepath_include (str):
     """
     letters = set("abcdefghijklmnopqrstuvwxyzéàèùâêîôûëïüÿçœæ")
 
@@ -455,12 +457,12 @@ def clean_french(word_frequency, filepath_exclude, filepath_include):
 
 
 def clean_portuguese(word_frequency, filepath_exclude, filepath_include):
-    """ Clean a Portuguese word frequency list
+    """Clean a Portuguese word frequency list
 
-        Args:
-            word_frequency (Counter):
-            filepath_exclude (str):
-            filepath_include (str):
+    Args:
+        word_frequency (Counter):
+        filepath_exclude (str):
+        filepath_include (str):
     """
     letters = set("abcdefghijklmnopqrstuvwxyzáâãàçéêíóôõú")
 
@@ -512,12 +514,12 @@ def clean_portuguese(word_frequency, filepath_exclude, filepath_include):
 
 
 def clean_russian(word_frequency, filepath_exclude, filepath_include):
-    """ Clean an Russian word frequency list
+    """Clean an Russian word frequency list
 
-        Args:
-            word_frequency (Counter):
-            filepath_exclude (str):
-            filepath_include (str):
+    Args:
+        word_frequency (Counter):
+        filepath_exclude (str):
+        filepath_include (str):
     """
     letters = set("абвгдеёжзийклмнопрстуфхцчшщъыьэюя")
 
@@ -591,11 +593,21 @@ def _parse_args():
     """parse arguments for command-line usage"""
     import argparse
 
-    parser = argparse.ArgumentParser(description='Build a new dictionary (word frequency) using the OpenSubtitles2018 project')
-    parser.add_argument("-l", "--language", required=True, help="The language being built", choices=['en', 'es', 'de', 'fr', 'pt', 'ru'])
-    parser.add_argument("-f", "--file-path", help="The path to the downloaded text file OR the saved word frequency json")
-    parser.add_argument("-p", "--parse-input", action="store_true", help="Add this if providing a text file to be parsed")
-    parser.add_argument("-m", "--misfit-file", action="store_true", help="Create file with words which was removed from dictionary")
+    parser = argparse.ArgumentParser(
+        description="Build a new dictionary (word frequency) using the OpenSubtitles2018 project"
+    )
+    parser.add_argument(
+        "-l", "--language", required=True, help="The language being built", choices=["en", "es", "de", "fr", "pt", "ru"]
+    )
+    parser.add_argument(
+        "-f", "--file-path", help="The path to the downloaded text file OR the saved word frequency json"
+    )
+    parser.add_argument(
+        "-p", "--parse-input", action="store_true", help="Add this if providing a text file to be parsed"
+    )
+    parser.add_argument(
+        "-m", "--misfit-file", action="store_true", help="Create file with words which was removed from dictionary"
+    )
 
     args = parser.parse_args()
 
@@ -613,7 +625,7 @@ def _parse_args():
     return args
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     args = _parse_args()
 
     # get current path to find where the script is currently
@@ -638,12 +650,12 @@ if __name__ == '__main__':
     else:
         json_path = os.path.join(script_path, "data", "{}_full.json.gz".format(args.language))
         print(json_path)
-        with load_file(json_path, 'utf-8') as f:
+        with load_file(json_path, "utf-8") as f:
             word_frequency = json.load(f)
 
     # create include and exclude files before cleaning
     for filepath in (include_filepath, exclude_filepath):
-        with open(filepath, 'a+'):
+        with open(filepath, "a+"):
             pass
 
     # clean up the dictionary
