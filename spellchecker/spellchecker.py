@@ -147,7 +147,8 @@ class SpellChecker(object):
 
         Args:
             word (str): The word for which the word probability is calculated
-            total_words (int): The total number of words to use in the calculation; use the default for using the whole word frequency
+            total_words (int): The total number of words to use in the calculation; \
+                use the default for using the whole word frequency
         Returns:
             float: The probability that the word is the correct word"""
         if not total_words:
@@ -163,7 +164,8 @@ class SpellChecker(object):
 
         Args:
             word (str): The word for which the word probability is calculated
-            total_words (int): The total number of words to use in thecalculation; use the default for using the whole word frequency
+            total_words (int): The total number of words to use in thecalculation; \
+                use the default for using the whole word frequency
         Returns:
             float: The probability that the word is the correct word
         Note:

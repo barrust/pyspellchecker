@@ -1,5 +1,8 @@
 # pyspellchecker
 
+## Future Release
+* Fix float("nan") issue; see [#125](https://github.com/barrust/pyspellchecker/issues/125)
+
 ## Version 0.6.3
 * Added class method to be able to get a listing of all supported languages
 * Added type hinting
