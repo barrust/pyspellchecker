@@ -513,6 +513,8 @@ class TestSpellChecker(unittest.TestCase):
     def test_nan_correction(self):
         """Test that nan does not get skipped because of float('nan')"""
         spell = SpellChecker()
+
         if "nan" in spell:
+            self.assertEqual(spell.candidates("nan"), {"nan"})
             spell.word_frequency.remove("nan")
         self.assertNotEqual(spell.candidates("nan"), {"nan"})
