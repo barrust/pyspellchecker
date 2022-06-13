@@ -6,6 +6,7 @@
 * Remove misspelled words from [issue #120](https://github.com/barrust/pyspellchecker/issues/120)
 * Update all default language dictionaries after updating the minimum frequency to 50 in `scripts/build_dictionary.py`
 * Fix float("nan") issue; see [#125](https://github.com/barrust/pyspellchecker/issues/125)
+* Include [Wikipedia's common typo list](https://en.wikipedia.org/wiki/Wikipedia:Lists_of_common_misspellings/For_machines) to the exclude listing; see [#124](https://github.com/barrust/pyspellchecker/issues/124)
 
 ## Version 0.6.3
 * Added class method to be able to get a listing of all supported languages
