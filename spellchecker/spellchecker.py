@@ -279,7 +279,7 @@ class SpellChecker(object):
             return False
         elif (len(word) > self._word_frequency.longest_word_length + 3):  # magic number to allow removal of up to 2 letters.
             return False
-        elif word == 'nan':  # nan passes the float(word) so this will bypass that issue (#125)
+        elif word.lower() == 'nan':  # nan passes the float(word) so this will bypass that issue (#125)
             return True
         try:  # check if it is a number (int, float, etc)
             float(word)
