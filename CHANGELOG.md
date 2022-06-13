@@ -5,6 +5,7 @@
     * `spell.candidates` and `spell.correction` now return `None` if there are no valid corrections or candidates
 * Remove misspelled words from [issue #120](https://github.com/barrust/pyspellchecker/issues/120)
 * Update all default language dictionaries after updating the minimum frequency to 50 in `scripts/build_dictionary.py`
+* Fix float("nan") issue; see [#125](https://github.com/barrust/pyspellchecker/issues/125)
 
 ## Version 0.6.3
 * Added class method to be able to get a listing of all supported languages

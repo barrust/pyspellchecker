@@ -140,7 +140,8 @@ class SpellChecker(object):
 
         Args:
             word (str): The word for which the word probability is calculated
-            total_words (int): The total number of words to use in the calculation; use the default for using the whole word frequency
+            total_words (int): The total number of words to use in the calculation; \
+                use the default for using the whole word frequency
         Returns:
             float: The probability that the word is the correct word"""
         if not total_words:
@@ -255,10 +256,10 @@ class SpellChecker(object):
     def _check_if_should_check(self, word: str) -> bool:
         if len(word) == 1 and word in string.punctuation:
             return False
-        if (
-            len(word) > self._word_frequency.longest_word_length + 3
-        ):  # magic number to allow removal of up to 2 letters.
+        elif (len(word) > self._word_frequency.longest_word_length + 3):  # magic number to allow removal of up to 2 letters.
             return False
+        elif word.lower() == 'nan':  # nan passes the float(word) so this will bypass that issue (#125)
+            return True
         try:  # check if it is a number (int, float, etc)
             float(word)
             return False
