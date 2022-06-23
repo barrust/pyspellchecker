@@ -269,6 +269,13 @@ class TestSpellChecker(unittest.TestCase):
         spell.word_frequency.add("appt")
         self.assertEqual(spell["appt"], 1)
 
+    def test_add_word_priority(self):
+        """test adding a word with larger priority"""
+        spell = SpellChecker()
+        self.assertEqual(spell["appt"], 0)
+        spell.word_frequency.add("appt", 5000)
+        self.assertEqual(spell["appt"], 5000)
+
     def test_checking_odd_word(self):
         """test checking a word that is really a number"""
         spell = SpellChecker()
@@ -334,7 +341,7 @@ class TestSpellChecker(unittest.TestCase):
     def test_large_words(self):
         """test checking for words that are clearly larger than the largest dictionary word"""
         spell = SpellChecker(language=None, distance=2)
-        spell.word_frequency.add("Bob")
+        spell.word_frequency.add("Bob", 1)
 
         words = ["Bb", "bb", "BB"]
         self.assertEqual(spell.unknown(words), {"bb"})
