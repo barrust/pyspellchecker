@@ -83,7 +83,7 @@ class SpellChecker(object):
     @classmethod
     def languages(cls) -> typing.Iterable[str]:
         """list: A list of all official languages supported by the library"""
-        return ["de", "en", "es", "fr", "pt", "ru"]
+        return ["de", "en", "es", "fr", "pt", "ru", "ar"]
 
     @property
     def word_frequency(self) -> "WordFrequency":
