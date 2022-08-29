@@ -135,6 +135,7 @@ package. Each is simple to use when initializing the dictionary:
     english = SpellChecker()  # the default is English (language='en')
     spanish = SpellChecker(language='es')  # use the Spanish Dictionary
     russian = SpellChecker(language='ru')  # use the Russian Dictionary
+    arabic = SpellChecker(language='ar')   # use the Arabic Dictionary
 
 
 The currently supported dictionaries are:
@@ -145,6 +146,7 @@ The currently supported dictionaries are:
 * Portuguese    - 'pt'
 * German        - 'de'
 * Russian       - 'ru'
+* Arabic        - 'ar'
 
 Dictionary Creation and Updating
 -------------------------------------------------------------------------------
