@@ -471,13 +471,14 @@ class WordFrequency(object):
         self._dictionary.update([word if self._case_sensitive else word.lower() for word in words])
         self._update_dictionary()
 
-    def add(self, word: KeyT) -> None:
+    def add(self, word: KeyT, val: int = 1) -> None:
         """Add a word to the word frequency list
 
         Args:
-            word (str): The word to add"""
+            word (str): The word to add
+            val (int): The number of times to insert the word"""
         word = ensure_unicode(word)
-        self.load_words([word])
+        self.load_json({word if self._case_sensitive else word.lower(): val})
 
     def remove_words(self, words: typing.Iterable[KeyT]) -> None:
         """Remove a list of words from the word frequency list
