@@ -58,9 +58,9 @@ class SpellChecker:
                 filename = f"resources/{lang.lower()}.json.gz"
                 try:
                     json_open = pkgutil.get_data("spellchecker", filename)
-                except FileNotFoundError:
+                except FileNotFoundError as exc:
                     msg = f"The provided dictionary language ({lang.lower()}) does not exist!"
-                    raise ValueError(msg)
+                    raise ValueError(msg) from exc
                 if json_open:
                     lang_dict = json.loads(gzip.decompress(json_open).decode("utf-8"))
                 self._word_frequency.load_json(lang_dict)
@@ -105,8 +105,7 @@ class SpellChecker:
         """set the distance parameter"""
         tmp = 2
         try:
-            int(val)
-            if val > 0 and val <= 2:
+            if 0 < int(val) <= 2:
                 tmp = val
         except (ValueError, TypeError):
             pass
@@ -177,13 +176,13 @@ class SpellChecker:
             return {word}
 
         # get edit distance 1...
-        res = [x for x in self.edit_distance_1(word)]
+        res = list(self.edit_distance_1(word))
         tmp = self.known(res)
         if tmp:
             return tmp
         # if still not found, use the edit distance 1 to calc edit distance 2
         if self._distance == 2:
-            tmp = self.known([x for x in self.__edit_distance_alt(res)])
+            tmp = self.known(list(self.__edit_distance_alt(res)))
             if tmp:
                 return tmp
         return None
@@ -255,9 +254,9 @@ class SpellChecker:
     def _check_if_should_check(self, word: str) -> bool:
         if len(word) == 1 and word in string.punctuation:
             return False
-        elif (len(word) > self._word_frequency.longest_word_length + 3):  # magic number to allow removal of up to 2 letters.
+        if len(word) > self._word_frequency.longest_word_length + 3:  # allow removal of up to 2 letters
             return False
-        elif word.lower() == 'nan':  # nan passes the float(word) so this will bypass that issue (#125)
+        if word.lower() == 'nan':  # nan passes the float(word) so this will bypass that issue (#125)
             return True
         try:  # check if it is a number (int, float, etc)
             float(word)
@@ -400,8 +399,7 @@ class WordFrequency:
             int: The number of instances in the dictionary
         Note:
             This is the same as `dict.items()`"""
-        for word in self._dictionary.keys():
-            yield word, self._dictionary[word]
+        yield from self._dictionary.items()
 
     def load_dictionary(self, filename: str, encoding: str = "utf-8") -> None:
         """Load in a pre-built word frequency list

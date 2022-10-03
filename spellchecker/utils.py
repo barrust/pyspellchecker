@@ -22,8 +22,9 @@ def fail_after(version: str) -> typing.Callable:
         @functools.wraps(func)
         def test_inner(*args, **kwargs):
             if [int(x) for x in version.split(".")] <= [int(x) for x in __version__.split(".")]:
-                msg = "The function {} must be fully removed as it is depricated and must be removed by version {}".format(
-                    func.__name__, version
+                msg = (
+                    f"The function {func.__name__} must be fully removed as it is depricated"
+                    f" and must be removed by version {version}"
                 )
                 raise AssertionError(msg)
             return func(*args, **kwargs)

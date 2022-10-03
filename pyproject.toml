@@ -81,6 +81,10 @@ line-length = 120
 target-version = ['py36']
 include = '\.pyi?$'
 
+[tool.pylint.'MESSAGES CONTROL']
+max-line-length = 120
+max-args = 6
+
 [build-system]
 requires = ["setuptools>=61.2.0", "wheel"]
 build-backend = "setuptools.build_meta"
