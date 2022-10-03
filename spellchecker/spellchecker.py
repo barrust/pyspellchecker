@@ -11,7 +11,7 @@ from collections.abc import Iterable
 from .utils import KeyT, _parse_into_words, ensure_unicode, load_file, write_file
 
 
-class SpellChecker(object):
+class SpellChecker:
     """The SpellChecker class encapsulates the basics needed to accomplish a
     simple spell checking algorithm. It is based on the work by
     Peter Norvig (https://norvig.com/spell-correct.html)
@@ -55,11 +55,11 @@ class SpellChecker(object):
             if not isinstance(language, Iterable) or isinstance(language, (str, bytes)):
                 language = [language]  # type: ignore
             for lang in language:
-                filename = "resources/{}.json.gz".format(lang.lower())
+                filename = f"resources/{lang.lower()}.json.gz"
                 try:
                     json_open = pkgutil.get_data("spellchecker", filename)
                 except FileNotFoundError:
-                    msg = ("The provided dictionary language ({}) does not exist!").format(lang.lower())
+                    msg = f"The provided dictionary language ({lang.lower()}) does not exist!"
                     raise ValueError(msg)
                 if json_open:
                     lang_dict = json.loads(gzip.decompress(json_open).decode("utf-8"))
@@ -77,8 +77,7 @@ class SpellChecker(object):
 
     def __iter__(self) -> typing.Generator[str, None, None]:
         """setup iter support"""
-        for word in self._word_frequency.dictionary:
-            yield word
+        yield from self._word_frequency.dictionary
 
     @classmethod
     def languages(cls) -> typing.Iterable[str]:
@@ -198,7 +197,7 @@ class SpellChecker(object):
             set: The set of those words from the input that are in the corpus"""
         tmp_words = [ensure_unicode(w) for w in words]
         tmp = [w if self._case_sensitive else w.lower() for w in tmp_words]
-        return set(w for w in tmp if w in self._word_frequency.dictionary and self._check_if_should_check(w))
+        return {w for w in tmp if w in self._word_frequency.dictionary and self._check_if_should_check(w)}
 
     def unknown(self, words: typing.Iterable[KeyT]) -> typing.Set[str]:
         """The subset of `words` that do not appear in the dictionary
@@ -209,7 +208,7 @@ class SpellChecker(object):
             set: The set of those words from the input that are not in the corpus"""
         tmp_words = [ensure_unicode(w) for w in words]
         tmp = [w if self._case_sensitive else w.lower() for w in tmp_words if self._check_if_should_check(w)]
-        return set(w for w in tmp if w not in self._word_frequency.dictionary)
+        return {w for w in tmp if w not in self._word_frequency.dictionary}
 
     def edit_distance_1(self, word: KeyT) -> typing.Set[str]:
         """Compute all strings that are one edit away from `word` using only
@@ -269,7 +268,7 @@ class SpellChecker(object):
         return True
 
 
-class WordFrequency(object):
+class WordFrequency:
     """Store the `dictionary` as a word frequency list while allowing for
     different methods to load the data and update over time"""
 
@@ -309,8 +308,7 @@ class WordFrequency(object):
 
     def __iter__(self) -> typing.Generator[str, None, None]:
         """turn on iter support"""
-        for word in self._dictionary:
-            yield word
+        yield from self._dictionary
 
     def pop(self, key: KeyT, default: typing.Optional[int] = None) -> int:
         """Remove the key and return the associated value or default if not
@@ -383,8 +381,7 @@ class WordFrequency(object):
             str: The next key in the dictionary
         Note:
             This is the same as `spellchecker.words()`"""
-        for key in self._dictionary.keys():
-            yield key
+        yield from self._dictionary.keys()
 
     def words(self) -> typing.Generator[str, None, None]:
         """Iterator over the words in the dictionary
@@ -393,8 +390,7 @@ class WordFrequency(object):
             str: The next word in the dictionary
         Note:
             This is the same as `spellchecker.keys()`"""
-        for word in self._dictionary.keys():
-            yield word
+        yield from self._dictionary.keys()
 
     def items(self) -> typing.Generator[typing.Tuple[str, int], None, None]:
         """Iterator over the words in the dictionary

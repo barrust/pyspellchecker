@@ -1,4 +1,3 @@
-# coding=UTF-8
 """ Unittest class """
 
 import unittest
@@ -171,7 +170,7 @@ class TestSpellChecker(unittest.TestCase):
     def test_load_external_dictionary(self):
         """test loading a local dictionary"""
         here = os.path.dirname(__file__)
-        filepath = "{}/resources/small_dictionary.json".format(here)
+        filepath = f"{here}/resources/small_dictionary.json"
         spell = SpellChecker(language=None, local_dictionary=filepath)
         self.assertEqual(spell["a"], 1)
         self.assertTrue("apple" in spell)
@@ -179,14 +178,14 @@ class TestSpellChecker(unittest.TestCase):
     def test_edit_distance_one(self):
         """test a case where edit distance must be one"""
         here = os.path.dirname(__file__)
-        filepath = "{}/resources/small_dictionary.json".format(here)
+        filepath = f"{here}/resources/small_dictionary.json"
         spell = SpellChecker(language=None, local_dictionary=filepath, distance=1)
         self.assertEqual(spell.candidates("hike"), {"bike"})
 
     def test_edit_distance_two(self):
         """test a case where edit distance must be two"""
         here = os.path.dirname(__file__)
-        filepath = "{}/resources/small_dictionary.json".format(here)
+        filepath = f"{here}/resources/small_dictionary.json"
         spell = SpellChecker(language=None, local_dictionary=filepath)
         self.assertEqual(spell.candidates("ale"), {"a", "apple"})
 
@@ -209,7 +208,7 @@ class TestSpellChecker(unittest.TestCase):
     def test_load_text_file(self):
         """test loading a text file"""
         here = os.path.dirname(__file__)
-        filepath = "{}/resources/small_doc.txt".format(here)
+        filepath = f"{here}/resources/small_doc.txt"
         spell = SpellChecker(language=None)  # just from this doc!
         spell.word_frequency.load_text_file(filepath)
         self.assertEqual(spell["a"], 3)
@@ -289,11 +288,11 @@ class TestSpellChecker(unittest.TestCase):
     def test_import_export_json(self):
         """test the export functionality as json"""
         here = os.path.dirname(__file__)
-        filepath = "{}/resources/small_dictionary.json".format(here)
+        filepath = f"{here}/resources/small_dictionary.json"
 
         spell = SpellChecker(language=None, local_dictionary=filepath)
         spell.word_frequency.add("meh")
-        new_filepath = "{}/resources/small_dictionary_new.json".format(here)
+        new_filepath = f"{here}/resources/small_dictionary_new.json"
         spell.export(new_filepath, gzipped=False)
 
         sp = SpellChecker(language=None, local_dictionary=new_filepath)
@@ -305,11 +304,11 @@ class TestSpellChecker(unittest.TestCase):
     def test_import_export_gzip(self):
         """test the export functionality as gzip"""
         here = os.path.dirname(__file__)
-        filepath = "{}/resources/small_dictionary.json".format(here)
+        filepath = f"{here}/resources/small_dictionary.json"
 
         spell = SpellChecker(language=None, local_dictionary=filepath)
         spell.word_frequency.add("meh")
-        new_filepath = "{}/resources/small_dictionary_new.json.gz".format(here)
+        new_filepath = f"{here}/resources/small_dictionary_new.json.gz"
         spell.export(new_filepath, gzipped=True)
 
         sp = SpellChecker(language=None, local_dictionary=new_filepath)
@@ -407,7 +406,7 @@ class TestSpellChecker(unittest.TestCase):
         self.assertEqual("ñ" in spell.word_frequency.letters, True)
 
         here = os.path.dirname(__file__)
-        new_filepath = "{}/resources/small_dictionary_new.json.gz".format(here)
+        new_filepath = f"{here}/resources/small_dictionary_new.json.gz"
         spell.export(new_filepath, gzipped=True)
 
         spell2 = SpellChecker(language=None, local_dictionary=new_filepath)
@@ -419,11 +418,10 @@ class TestSpellChecker(unittest.TestCase):
         """def using a custom tokenizer for file loading"""
 
         def tokens(txt):
-            for x in txt.split():
-                yield x
+            yield from txt.split()
 
         here = os.path.dirname(__file__)
-        filepath = "{}/resources/small_doc.txt".format(here)
+        filepath = f"{here}/resources/small_doc.txt"
         spell = SpellChecker(language=None)  # just from this doc!
         spell.word_frequency.load_text_file(filepath, tokenizer=tokens)
         self.assertEqual(spell["a"], 3)
@@ -437,11 +435,10 @@ class TestSpellChecker(unittest.TestCase):
         """Test passing in a tokenizer"""
 
         def tokens(txt):
-            for x in txt.split():
-                yield x
+            yield from txt.split()
 
         here = os.path.dirname(__file__)
-        filepath = "{}/resources/small_doc.txt".format(here)
+        filepath = f"{here}/resources/small_doc.txt"
         spell = SpellChecker(language=None, tokenizer=tokens)  # just from this doc!
         spell.word_frequency.load_text_file(filepath)
         self.assertEqual(spell["a"], 3)
@@ -457,7 +454,7 @@ class TestSpellChecker(unittest.TestCase):
         var = b"bike"
 
         here = os.path.dirname(__file__)
-        filepath = "{}/resources/small_dictionary.json".format(here)
+        filepath = f"{here}/resources/small_dictionary.json"
         spell = SpellChecker(language=None, local_dictionary=filepath)
 
         self.assertTrue(var in spell)
@@ -467,12 +464,12 @@ class TestSpellChecker(unittest.TestCase):
         """test using split_words"""
         spell = SpellChecker()
         res = spell.split_words("This isn't a good test, but it is a test!!!!")
-        self.assertEqual(set(res), set(["This", "isn't", "a", "good", "test", "but", "it", "is", "a", "test"]))
+        self.assertEqual(set(res), {"This", "isn't", "a", "good", "test", "but", "it", "is", "a", "test"})
 
     def test_iter_spellchecker(self):
         """Test using the iterator on the SpellChecker"""
         here = os.path.dirname(__file__)
-        filepath = "{}/resources/small_dictionary.json".format(here)
+        filepath = f"{here}/resources/small_dictionary.json"
 
         spell = SpellChecker(language=None, local_dictionary=filepath)
 
@@ -485,7 +482,7 @@ class TestSpellChecker(unittest.TestCase):
     def test_iter_word_frequency(self):
         """Test using the iterator on the WordFrequency"""
         here = os.path.dirname(__file__)
-        filepath = "{}/resources/small_dictionary.json".format(here)
+        filepath = f"{here}/resources/small_dictionary.json"
 
         spell = SpellChecker(language=None, local_dictionary=filepath)
 
