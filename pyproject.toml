@@ -43,10 +43,6 @@ bug-tracker = "https://github.com/barrust/pyprobables/issues"
 documentation = "https://pyprobables.readthedocs.io/"
 
 
-[tool.setuptools]
-include_package_data = True
-
-
 [tool.poetry]
 packages = [
         {include = "spellchecker"},
