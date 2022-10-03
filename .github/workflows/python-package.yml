@@ -11,12 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.5', '3.6', '3.7', '3.8', '3.9']
+        python-version: ['3.6', '3.7', '3.8', '3.9']
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
@@ -39,3 +39,18 @@ jobs:
       with:
         file: ./coverage.xml
         fail_ci_if_error: true
+
+  build-verification:
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+    - name: Build and check twine
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install build twine
+        python -m build
+        twine check dist/*

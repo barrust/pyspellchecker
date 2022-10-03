@@ -1,0 +1,88 @@
+[project]
+name = "pyspellchecker"
+dynamic = ["version"]
+authors = [{name = "Tyler Barrus", email = "barrust@gmail.com"}]
+license = {text = "MIT"}
+description = "Pure python spell checker based on work by Peter Norvig"
+keywords = [
+    "python",
+    "spelling",
+    "natural language processing",
+    "nlp",
+    "typo",
+    "checker",
+]
+readme = "README.rst"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Science/Research",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Utilities",
+    "License :: OSI Approved",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+]
+requires-python = ">=3.6"
+
+
+[tool.setuptools.dynamic]
+version = {attr = "spellchecker.__version__"}
+
+
+[project.urls]
+homepage = "https://github.com/barrust/pyprobables"
+bug-tracker = "https://github.com/barrust/pyprobables/issues"
+documentation = "https://pyprobables.readthedocs.io/"
+
+
+[tool.poetry]
+packages = [
+        {include = "spellchecker"},
+]
+
+[tool.poetry.dev-dependencies]
+pre-commit = {version = ">=2.18.1", python = "^3.6.1"}
+black = {version = "^20.8b1", python = "^3.6"}
+isort = {version = "^5.6.4", python = "^3.6"}
+pytest = {version = "^6.1.1", python = "^3.6"}
+flake8 = {version = "^3.6.0", python = "^3.6"}
+
+[tool.setuptools.packages.find]
+include = ["spellchecker", "spellchecker.*"]
+
+[tool.flit.module]
+name = "spellchecker"
+
+[tool.distutils.bdist_wheel]
+universal = 0
+
+[tool.pep8]
+max-line-length = 120
+
+[tool.pycodestyle]
+max-line-length = 120
+
+[tool.flake8]
+max-line-length = 120
+
+[tool.isort]
+profile = "black"
+
+[tool.black]
+line-length = 120
+target-version = ['py36']
+include = '\.pyi?$'
+
+[build-system]
+requires = ["setuptools>=61.2.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+
