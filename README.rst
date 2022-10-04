@@ -53,13 +53,13 @@ The easiest method to install is using pip:
 
     pip install pyspellchecker
 
-To install from source:
+To build from source:
 
 .. code:: bash
 
     git clone https://github.com/barrust/pyspellchecker.git
     cd pyspellchecker
-    python setup.py install
+    python -m build
 
 For *python 2.7* support, install `release 0.5.6 <https://github.com/barrust/pyspellchecker/releases/tag/v0.5.6>`__
 but note that no future updates will support *python 2*.
