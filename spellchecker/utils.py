@@ -22,8 +22,9 @@ def fail_after(version: str) -> typing.Callable:
         @functools.wraps(func)
         def test_inner(*args, **kwargs):
             if [int(x) for x in version.split(".")] <= [int(x) for x in __version__.split(".")]:
-                msg = "The function {} must be fully removed as it is depricated and must be removed by version {}".format(
-                    func.__name__, version
+                msg = (
+                    f"The function {func.__name__} must be fully removed as it is depricated"
+                    f" and must be removed by version {version}"
                 )
                 raise AssertionError(msg)
             return func(*args, **kwargs)
@@ -46,7 +47,7 @@ def deprecated(message: str = "") -> typing.Callable:
         def function_wrapper(*args, **kwargs):
             func_name = func.__name__
             if func_name not in function_wrapper.deprecated_items:
-                msg = "Function {} is now deprecated! {}".format(func.__name__, message)
+                msg = f"Function {func.__name__} is now deprecated! {message}"
                 warnings.warn(msg, category=DeprecationWarning, stacklevel=2)
                 function_wrapper.deprecated_items.add(func_name)
 
@@ -105,7 +106,7 @@ def load_file(filename: str, encoding: str) -> typing.Generator[KeyT, None, None
         with __gzip_read(filename, mode="rt", encoding=encoding) as data:
             yield data
     else:
-        with open(filename, mode="r", encoding=encoding) as fobj:
+        with open(filename, encoding=encoding) as fobj:
             yield fobj.read()
 
 

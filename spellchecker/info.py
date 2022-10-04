@@ -8,4 +8,4 @@ __license__ = "MIT"
 __version__ = "0.7.0"
 __credits__ = ["Peter Norvig"]
 __url__ = "https://github.com/barrust/pyspellchecker"
-__bugtrack_url__ = "{0}/issues".format(__url__)
+__bugtrack_url__ = f"{__url__}/issues"

@@ -11,7 +11,7 @@ from collections.abc import Iterable
 from .utils import KeyT, _parse_into_words, ensure_unicode, load_file, write_file
 
 
-class SpellChecker(object):
+class SpellChecker:
     """The SpellChecker class encapsulates the basics needed to accomplish a
     simple spell checking algorithm. It is based on the work by
     Peter Norvig (https://norvig.com/spell-correct.html)
@@ -55,12 +55,12 @@ class SpellChecker(object):
             if not isinstance(language, Iterable) or isinstance(language, (str, bytes)):
                 language = [language]  # type: ignore
             for lang in language:
-                filename = "resources/{}.json.gz".format(lang.lower())
+                filename = f"resources/{lang.lower()}.json.gz"
                 try:
                     json_open = pkgutil.get_data("spellchecker", filename)
-                except FileNotFoundError:
-                    msg = ("The provided dictionary language ({}) does not exist!").format(lang.lower())
-                    raise ValueError(msg)
+                except FileNotFoundError as exc:
+                    msg = f"The provided dictionary language ({lang.lower()}) does not exist!"
+                    raise ValueError(msg) from exc
                 if json_open:
                     lang_dict = json.loads(gzip.decompress(json_open).decode("utf-8"))
                 self._word_frequency.load_json(lang_dict)
@@ -77,8 +77,7 @@ class SpellChecker(object):
 
     def __iter__(self) -> typing.Generator[str, None, None]:
         """setup iter support"""
-        for word in self._word_frequency.dictionary:
-            yield word
+        yield from self._word_frequency.dictionary
 
     @classmethod
     def languages(cls) -> typing.Iterable[str]:
@@ -106,8 +105,7 @@ class SpellChecker(object):
         """set the distance parameter"""
         tmp = 2
         try:
-            int(val)
-            if val > 0 and val <= 2:
+            if 0 < int(val) <= 2:
                 tmp = val
         except (ValueError, TypeError):
             pass
@@ -178,13 +176,13 @@ class SpellChecker(object):
             return {word}
 
         # get edit distance 1...
-        res = [x for x in self.edit_distance_1(word)]
+        res = list(self.edit_distance_1(word))
         tmp = self.known(res)
         if tmp:
             return tmp
         # if still not found, use the edit distance 1 to calc edit distance 2
         if self._distance == 2:
-            tmp = self.known([x for x in self.__edit_distance_alt(res)])
+            tmp = self.known(list(self.__edit_distance_alt(res)))
             if tmp:
                 return tmp
         return None
@@ -198,7 +196,7 @@ class SpellChecker(object):
             set: The set of those words from the input that are in the corpus"""
         tmp_words = [ensure_unicode(w) for w in words]
         tmp = [w if self._case_sensitive else w.lower() for w in tmp_words]
-        return set(w for w in tmp if w in self._word_frequency.dictionary and self._check_if_should_check(w))
+        return {w for w in tmp if w in self._word_frequency.dictionary and self._check_if_should_check(w)}
 
     def unknown(self, words: typing.Iterable[KeyT]) -> typing.Set[str]:
         """The subset of `words` that do not appear in the dictionary
@@ -209,7 +207,7 @@ class SpellChecker(object):
             set: The set of those words from the input that are not in the corpus"""
         tmp_words = [ensure_unicode(w) for w in words]
         tmp = [w if self._case_sensitive else w.lower() for w in tmp_words if self._check_if_should_check(w)]
-        return set(w for w in tmp if w not in self._word_frequency.dictionary)
+        return {w for w in tmp if w not in self._word_frequency.dictionary}
 
     def edit_distance_1(self, word: KeyT) -> typing.Set[str]:
         """Compute all strings that are one edit away from `word` using only
@@ -256,9 +254,9 @@ class SpellChecker(object):
     def _check_if_should_check(self, word: str) -> bool:
         if len(word) == 1 and word in string.punctuation:
             return False
-        elif (len(word) > self._word_frequency.longest_word_length + 3):  # magic number to allow removal of up to 2 letters.
+        if len(word) > self._word_frequency.longest_word_length + 3:  # allow removal of up to 2 letters
             return False
-        elif word.lower() == 'nan':  # nan passes the float(word) so this will bypass that issue (#125)
+        if word.lower() == 'nan':  # nan passes the float(word) so this will bypass that issue (#125)
             return True
         try:  # check if it is a number (int, float, etc)
             float(word)
@@ -269,7 +267,7 @@ class SpellChecker(object):
         return True
 
 
-class WordFrequency(object):
+class WordFrequency:
     """Store the `dictionary` as a word frequency list while allowing for
     different methods to load the data and update over time"""
 
@@ -309,8 +307,7 @@ class WordFrequency(object):
 
     def __iter__(self) -> typing.Generator[str, None, None]:
         """turn on iter support"""
-        for word in self._dictionary:
-            yield word
+        yield from self._dictionary
 
     def pop(self, key: KeyT, default: typing.Optional[int] = None) -> int:
         """Remove the key and return the associated value or default if not
@@ -383,8 +380,7 @@ class WordFrequency(object):
             str: The next key in the dictionary
         Note:
             This is the same as `spellchecker.words()`"""
-        for key in self._dictionary.keys():
-            yield key
+        yield from self._dictionary.keys()
 
     def words(self) -> typing.Generator[str, None, None]:
         """Iterator over the words in the dictionary
@@ -393,8 +389,7 @@ class WordFrequency(object):
             str: The next word in the dictionary
         Note:
             This is the same as `spellchecker.keys()`"""
-        for word in self._dictionary.keys():
-            yield word
+        yield from self._dictionary.keys()
 
     def items(self) -> typing.Generator[typing.Tuple[str, int], None, None]:
         """Iterator over the words in the dictionary
@@ -404,8 +399,7 @@ class WordFrequency(object):
             int: The number of instances in the dictionary
         Note:
             This is the same as `dict.items()`"""
-        for word in self._dictionary.keys():
-            yield word, self._dictionary[word]
+        yield from self._dictionary.items()
 
     def load_dictionary(self, filename: str, encoding: str = "utf-8") -> None:
         """Load in a pre-built word frequency list
