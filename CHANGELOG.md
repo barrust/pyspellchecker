@@ -1,5 +1,8 @@
 # pyspellchecker
 
+## Version 0.7.1
+* Add `py.typed` to enable mypy support
+
 ## Version 0.7.0
 * Backwards Combatibility Change:
     * `spell.candidates` and `spell.correction` now return `None` if there are no valid corrections or candidates

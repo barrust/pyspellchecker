@@ -1,1 +1,2 @@
 recursive-include spellchecker/resources *
+include spellchecker/py.typed
