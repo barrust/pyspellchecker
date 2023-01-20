@@ -39,9 +39,9 @@ version = {attr = "spellchecker.__version__"}
 
 
 [project.urls]
-homepage = "https://github.com/barrust/pyprobables"
-bug-tracker = "https://github.com/barrust/pyprobables/issues"
-documentation = "https://pyprobables.readthedocs.io/"
+homepage = "https://github.com/barrust/pyspellchecker"
+bug-tracker = "https://github.com/barrust/pyspellchecker/issues"
+documentation = "https://pyspellchecker.readthedocs.io/"
 
 
 [tool.poetry]
