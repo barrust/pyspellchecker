@@ -296,3 +296,9 @@ to match the location that ``pyspellchecker`` checks for the supported dictionar
 .. code:: bash
 
     pyinstaller --add-binary="spellchecker/resources/en.json.gz:spellchecker/resources" my_prog.py
+    
+On windows one should use a semi-colon instead of the colon:
+
+.. code:: bash
+
+    pyinstaller --add-binary="spellchecker/resources/en.json.gz;spellchecker/resources" my_prog.py
