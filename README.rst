@@ -147,6 +147,7 @@ The currently supported dictionaries are:
 * German        - 'de'
 * Russian       - 'ru'
 * Arabic        - 'ar'
+* Latvian       - 'lv'
 
 Dictionary Creation and Updating
 -------------------------------------------------------------------------------
