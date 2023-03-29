@@ -33,7 +33,7 @@ list. Those words that are found more often in the frequency list are
 **more likely** the correct results.
 
 ``pyspellchecker`` supports multiple languages including English, Spanish,
-German, French, and Portuguese. For information on how the dictionaries were
+German, French, Portuguese, Arabic and Basque. For information on how the dictionaries were
 created and how they can be updated and improved, please see the
 **Dictionary Creation and Updating** section of the readme!
 
@@ -147,6 +147,7 @@ The currently supported dictionaries are:
 * German        - 'de'
 * Russian       - 'ru'
 * Arabic        - 'ar'
+* Basque        - 'eu'
 
 Dictionary Creation and Updating
 -------------------------------------------------------------------------------
