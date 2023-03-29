@@ -11,7 +11,8 @@
             French Input:     http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.fr.gz
             Portuguese Input: http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.pt.gz
             Russian Input:    http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.ru.gz
-            Arabic Input:    http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.ar.gz
+            Arabic Input:     http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.ar.gz
+            Basque Input:     http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.au.gz
     Requirements:
             The script requires more than the standard library to run in its
             entirety. You will also need to install the NLTK package to build a
@@ -646,6 +647,61 @@ def clean_arabic(word_frequency, filepath_exclude, filepath_include):
 
     return word_frequency
 
+def clean_basque(word_frequency, filepath_exclude, filepath_include):
+    """Clean a Basque word frequency list
+
+    Args:
+        word_frequency (Counter):
+        filepath_exclude (str):
+        filepath_include (str):
+    """
+    letters = set("abcdefghijklmnopqrstuvwxyzñ")
+
+    # fix issues with words containing other characters
+    invalid_chars = list()
+    for key in word_frequency:
+        kl = set(key)
+        if kl.issubset(letters):
+            continue
+        invalid_chars.append(key)
+    for misfit in invalid_chars:
+        word_frequency.pop(misfit)
+
+    # remove words that start with a double a ("aa")
+    double_a = list()
+    for key in word_frequency:
+        if key.startswith("aa"):
+            double_a.append(key)
+    for misfit in double_a:
+        word_frequency.pop(misfit)
+
+    # TODO: other possible fixes?
+
+    # remove small numbers
+    small_frequency = list()
+    for key in word_frequency:
+        if word_frequency[key] <= MINIMUM_FREQUENCY:
+            small_frequency.append(key)
+    for misfit in small_frequency:
+        word_frequency.pop(misfit)
+
+    # remove flagged misspellings
+    with load_file(filepath_exclude) as fobj:
+        for line in fobj:
+            line = line.strip()
+            if line in word_frequency:
+                word_frequency.pop(line)
+
+    # Add known missing words back in (ugh)
+    with load_file(filepath_include) as fobj:
+        for line in fobj:
+            line = line.strip()
+            if line in word_frequency:
+                print("{} is already found in the dictionary! Skipping!")
+            else:
+                word_frequency[line] = MINIMUM_FREQUENCY
+
+    return word_frequency
 
 def _parse_args():
     """parse arguments for command-line usage"""
@@ -655,7 +711,7 @@ def _parse_args():
         description="Build a new dictionary (word frequency) using the OpenSubtitles2018 project"
     )
     parser.add_argument(
-        "-l", "--language", required=True, help="The language being built", choices=["en", "es", "de", "fr", "pt", "ru", "ar"]
+        "-l", "--language", required=True, help="The language being built", choices=["en", "es", "de", "fr", "pt", "ru", "ar", "eu"]
     )
     parser.add_argument(
         "-f", "--file-path", help="The path to the downloaded text file OR the saved word frequency json"
@@ -731,6 +787,8 @@ if __name__ == "__main__":
         word_frequency = clean_russian(word_frequency, exclude_filepath, include_filepath)
     elif args.language == "ar":
         word_frequency = clean_arabic(word_frequency, exclude_filepath, include_filepath)
+    elif args.language == "eu":
+        word_frequency = clean_basque(word_frequency, exclude_filepath, include_filepath)
 
     # export word frequency for review!
     word_frequency_path = os.path.join(script_path, "{}.json".format(args.language))
