@@ -13,6 +13,7 @@
             Russian Input:    http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.ru.gz
             Arabic Input:     http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.ar.gz
             Basque Input:     http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.au.gz
+            Latvian Input:    https://huggingface.co/datasets/RaivisDejus/latvian-text
     Requirements:
             The script requires more than the standard library to run in its
             entirety. You will also need to install the NLTK package to build a
@@ -703,6 +704,91 @@ def clean_basque(word_frequency, filepath_exclude, filepath_include):
 
     return word_frequency
 
+def clean_latvian(word_frequency, filepath_exclude, filepath_include):
+    """Clean a Latvian word frequency list
+
+    Args:
+        word_frequency (Counter):
+        filepath_exclude (str):
+        filepath_include (str):
+    """
+    letters = set("aābcčdeēfgģhiījkķlļmnņoprsštuūvzž")
+
+    # remove words with invalid characters
+    invalid_chars = list()
+
+    for key in word_frequency:
+        kl = set(key)
+        if kl.issubset(letters):
+            continue
+        invalid_chars.append(key)
+    for misfit in invalid_chars:
+        word_frequency.pop(misfit)
+
+    # remove words without a vowel
+    no_vowels = list()
+    vowels = set("aāiīeēouū")
+    for key in word_frequency:
+        if vowels.isdisjoint(key):
+            no_vowels.append(key)
+    for misfit in no_vowels:
+        word_frequency.pop(misfit)
+
+    # remove ellipses
+    ellipses = list()
+    for key in word_frequency:
+        if ".." in key:
+            ellipses.append(key)
+    for misfit in ellipses:
+        word_frequency.pop(misfit)
+
+    # leading or trailing doubles aa or ii
+    doubles = list()
+    for key in word_frequency:
+        if key.startswith("аа"):
+            doubles.append(key)
+        elif key.startswith("ii"):
+            doubles.append(key)
+    for misfit in doubles:
+        word_frequency.pop(misfit)
+
+    # remove single letters
+    single_letters = list()
+    for key in word_frequency:
+        if len(key) == 1:
+            single_letters.append(key)
+    for misfit in single_letters:
+        word_frequency.pop(misfit)
+
+    # TODO: other possible fixes?
+
+    # remove small numbers
+    small_frequency = list()
+    for key in word_frequency:
+        if word_frequency[key] <= MINIMUM_FREQUENCY:
+            small_frequency.append(key)
+    for misfit in small_frequency:
+        word_frequency.pop(misfit)
+
+    # remove flagged misspellings
+    with load_file(filepath_exclude) as fobj:
+        for line in fobj:
+            line = line.strip()
+            if line in word_frequency:
+                word_frequency.pop(line)
+
+    # Add known missing words back in (ugh)
+    with load_file(filepath_include) as fobj:
+        for line in fobj:
+            line = line.strip()
+            if line in word_frequency:
+                print("{} is already found in the dictionary! Skipping!")
+            else:
+                word_frequency[line] = MINIMUM_FREQUENCY
+
+    return word_frequency
+
+
 def _parse_args():
     """parse arguments for command-line usage"""
     import argparse
@@ -711,7 +797,7 @@ def _parse_args():
         description="Build a new dictionary (word frequency) using the OpenSubtitles2018 project"
     )
     parser.add_argument(
-        "-l", "--language", required=True, help="The language being built", choices=["en", "es", "de", "fr", "pt", "ru", "ar", "eu"]
+        "-l", "--language", required=True, help="The language being built", choices=["en", "es", "de", "fr", "pt", "ru", "ar", "lv", "eu"]
     )
     parser.add_argument(
         "-f", "--file-path", help="The path to the downloaded text file OR the saved word frequency json"
@@ -789,9 +875,12 @@ if __name__ == "__main__":
         word_frequency = clean_arabic(word_frequency, exclude_filepath, include_filepath)
     elif args.language == "eu":
         word_frequency = clean_basque(word_frequency, exclude_filepath, include_filepath)
+    elif args.language == "lv":
+        word_frequency = clean_latvian(word_frequency, exclude_filepath, include_filepath)
 
     # export word frequency for review!
     word_frequency_path = os.path.join(script_path, "{}.json".format(args.language))
+    print(word_frequency_path)
     export_word_frequency(word_frequency_path, word_frequency)
 
     if args.misfit_file:

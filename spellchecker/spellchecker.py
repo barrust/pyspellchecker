@@ -18,7 +18,7 @@ class SpellChecker:
 
     Args:
         language (str): The language of the dictionary to load or None for no dictionary. Supported languages are \
-            `en`, `es`, `de`, `fr`, `pt` and `ru`. Defaults to `en`. A list of languages may be provided and all \
+            `en`, `es`, `de`, `fr`, `pt`, `ru` and `lv`. Defaults to `en`. A list of languages may be provided and all \
                 languages will be loaded.
         local_dictionary (str): The path to a locally stored word frequency dictionary; if provided, no language \
             will be loaded
@@ -82,7 +82,7 @@ class SpellChecker:
     @classmethod
     def languages(cls) -> typing.Iterable[str]:
         """list: A list of all official languages supported by the library"""
-        return ["de", "en", "es", "fr", "pt", "ru", "ar"]
+        return ["de", "en", "es", "fr", "pt", "ru", "ar", "lv"]
 
     @property
     def word_frequency(self) -> "WordFrequency":

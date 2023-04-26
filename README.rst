@@ -148,6 +148,7 @@ The currently supported dictionaries are:
 * Russian       - 'ru'
 * Arabic        - 'ar'
 * Basque        - 'eu'
+* Latvian       - 'lv'
 
 Dictionary Creation and Updating
 -------------------------------------------------------------------------------
