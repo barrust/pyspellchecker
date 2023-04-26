@@ -1,5 +1,9 @@
 # pyspellchecker
 
+## Version 0.7.2
+* Added `Latvian` language support; see [#145](https://github.com/barrust/pyspellchecker/pull/145)
+* Added `Basque` language support; see [#146](https://github.com/barrust/pyspellchecker/pull/146)
+
 ## Version 0.7.1
 * Add `py.typed` to enable mypy support
 
