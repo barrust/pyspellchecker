@@ -6,7 +6,8 @@ import re
 import typing
 import warnings
 
-from .info import __version__
+#from .info import __version__
+import info
 
 KeyT = typing.Union[str, bytes]
 
@@ -21,7 +22,7 @@ def fail_after(version: str) -> typing.Callable:
     def decorator_wrapper(func):
         @functools.wraps(func)
         def test_inner(*args, **kwargs):
-            if [int(x) for x in version.split(".")] <= [int(x) for x in __version__.split(".")]:
+            if [int(x) for x in version.split(".")] <= [int(x) for x in info.__version__.split(".")]:
                 msg = (
                     f"The function {func.__name__} must be fully removed as it is depricated"
                     f" and must be removed by version {version}"
