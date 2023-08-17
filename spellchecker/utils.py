@@ -102,6 +102,7 @@ def load_file(filename: str, encoding: str) -> typing.Generator[KeyT, None, None
     Yields:
         str: The string data from the file read
     """
+    filename = str(filename)
     if filename[-3:].lower() == ".gz":
         with __gzip_read(filename, mode="rt", encoding=encoding) as data:
             yield data
