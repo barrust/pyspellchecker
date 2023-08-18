@@ -160,7 +160,26 @@ class SpellChecker:
             return None
         return max(sorted(list(candidates)), key=self.__getitem__)
 
-    def candidates(self, word: KeyT) -> typing.Optional[typing.Set[str]]:
+    def ranked_candidates (self, word: KeyT, always=False, quick=False) -> typing.List[str]:
+        """
+        Return a list of possible spelling corrections, ranked in decreasing
+        order of likelihood.
+
+        For now, just return in order of frequency, but should consider
+        the likelihood of the change (transposition errors are common,
+        -ible/-able errors are common, etc.)
+        """
+        cand = self.candidates(word, always)
+        if cand == None :
+            return cand
+
+        cand = list(cand)
+        if always :
+            return sorted(cand, key = lambda x: (-self.__getitem__(x) if x != word else 0))
+        else :
+            return sorted(cand, key = lambda x: -self.__getitem__(x))
+
+    def candidates(self, word: KeyT, always = False) -> typing.Optional[typing.Set[str]]:
         """Generate possible spelling corrections for the provided word up to
         an edit distance of two, if and only when needed
 
@@ -169,7 +188,7 @@ class SpellChecker:
         Returns:
             set: The set of words that are possible candidates or None if there are no candidates"""
         word = ensure_unicode(word)
-        if self.known([word]):  # short-cut if word is correct already
+        if not always and self.known([word]):  # short-cut if word is correct already
             return {word}
 
         if not self._check_if_should_check(word):
