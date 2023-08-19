@@ -5,8 +5,9 @@ import gzip
 import re
 import typing
 import warnings
+from pathlib import Path
 
-from .info import __version__
+from spellchecker.info import __version__
 
 KeyT = typing.Union[str, bytes]
 
@@ -77,7 +78,7 @@ def ensure_unicode(_str: KeyT, encoding: str = "utf-8") -> str:
 
 
 @contextlib.contextmanager
-def __gzip_read(filename: str, mode: str = "rb", encoding: str = "UTF-8") -> typing.Generator[KeyT, None, None]:
+def __gzip_read(filename: str|Path, mode: str = "rb", encoding: str = "UTF-8") -> typing.Generator[KeyT, None, None]:
     """Context manager to correctly handle the decoding of the output of the gzip file
 
     Args:
@@ -92,7 +93,7 @@ def __gzip_read(filename: str, mode: str = "rb", encoding: str = "UTF-8") -> typ
 
 
 @contextlib.contextmanager
-def load_file(filename: str, encoding: str) -> typing.Generator[KeyT, None, None]:
+def load_file(filename: str|Path, encoding: str) -> typing.Generator[KeyT, None, None]:
     """Context manager to handle opening a gzip or text file correctly and
     reading all the data
 
@@ -102,6 +103,9 @@ def load_file(filename: str, encoding: str) -> typing.Generator[KeyT, None, None
     Yields:
         str: The string data from the file read
     """
+    if isinstance(filename, Path):
+        filename = str(filename)
+
     if filename[-3:].lower() == ".gz":
         with __gzip_read(filename, mode="rt", encoding=encoding) as data:
             yield data
@@ -110,7 +114,7 @@ def load_file(filename: str, encoding: str) -> typing.Generator[KeyT, None, None
             yield fobj.read()
 
 
-def write_file(filepath: str, encoding: str, gzipped: bool, data: str) -> None:
+def write_file(filepath: str|Path, encoding: str, gzipped: bool, data: str) -> None:
     """Write the data to file either as a gzip file or text based on the
     gzipped parameter
 
@@ -130,7 +134,7 @@ def write_file(filepath: str, encoding: str, gzipped: bool, data: str) -> None:
 
 def _parse_into_words(text: str) -> typing.Iterable[str]:
     """Parse the text into words; currently removes punctuation except for
-    apostrophies.
+    apostrophizes.
 
     Args:
         text (str): The text to split into words

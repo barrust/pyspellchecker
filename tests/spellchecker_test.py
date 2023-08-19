@@ -1,7 +1,8 @@
 """ Unittest class """
 
-import unittest
 import os
+import unittest
+from pathlib import Path
 
 from spellchecker import SpellChecker
 
@@ -171,6 +172,14 @@ class TestSpellChecker(unittest.TestCase):
         """test loading a local dictionary"""
         here = os.path.dirname(__file__)
         filepath = f"{here}/resources/small_dictionary.json"
+        spell = SpellChecker(language=None, local_dictionary=filepath)
+        self.assertEqual(spell["a"], 1)
+        self.assertTrue("apple" in spell)
+
+    def test_load_external_dictionary_path(self):
+        """test loading a local dictionary"""
+        here = os.path.dirname(__file__)
+        filepath = Path(f"{here}/resources/small_dictionary.json")
         spell = SpellChecker(language=None, local_dictionary=filepath)
         self.assertEqual(spell["a"], 1)
         self.assertTrue("apple" in spell)

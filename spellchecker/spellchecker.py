@@ -7,8 +7,9 @@ import string
 import typing
 from collections import Counter
 from collections.abc import Iterable
+from pathlib import Path
 
-from .utils import KeyT, _parse_into_words, ensure_unicode, load_file, write_file
+from spellchecker.utils import KeyT, _parse_into_words, ensure_unicode, load_file, write_file
 
 
 class SpellChecker:
@@ -33,7 +34,7 @@ class SpellChecker:
     def __init__(
         self,
         language: typing.Union[str, typing.Iterable[str]] = "en",
-        local_dictionary: typing.Optional[str] = None,
+        local_dictionary: typing.Optional[str|Path] = None,
         distance: int = 2,
         tokenizer: typing.Optional[typing.Callable[[str], typing.Iterable[str]]] = None,
         case_sensitive: bool = False,
@@ -122,7 +123,7 @@ class SpellChecker:
         text = ensure_unicode(text)
         return self._tokenizer(text)
 
-    def export(self, filepath: str, encoding: str = "utf-8", gzipped: bool = True) -> None:
+    def export(self, filepath: str|Path, encoding: str = "utf-8", gzipped: bool = True) -> None:
         """Export the word frequency list for import in the future
 
         Args:
@@ -401,7 +402,7 @@ class WordFrequency:
             This is the same as `dict.items()`"""
         yield from self._dictionary.items()
 
-    def load_dictionary(self, filename: str, encoding: str = "utf-8") -> None:
+    def load_dictionary(self, filename: str|Path, encoding: str = "utf-8") -> None:
         """Load in a pre-built word frequency list
 
         Args:
@@ -422,7 +423,7 @@ class WordFrequency:
 
     def load_text_file(
         self,
-        filename: str,
+        filename: str|Path,
         encoding: str = "utf-8",
         tokenizer: typing.Optional[typing.Callable[[str], typing.Iterable[str]]] = None,
     ) -> None:

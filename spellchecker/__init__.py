@@ -1,6 +1,6 @@
 """ SpellChecker Module """
-from .spellchecker import SpellChecker, WordFrequency
-from .info import (
+from spellchecker.spellchecker import SpellChecker, WordFrequency
+from spellchecker.info import (
     __author__,
     __maintainer__,
     __email__,
