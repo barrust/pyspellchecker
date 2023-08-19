@@ -226,6 +226,18 @@ class TestSpellChecker(unittest.TestCase):
         self.assertTrue(spell["whale"])
         self.assertTrue("waves" in spell)
 
+    def test_load_text_file_path(self):
+        """test loading a text file"""
+        here = os.path.dirname(__file__)
+        filepath = Path(f"{here}/resources/small_doc.txt")
+        spell = SpellChecker(language=None)  # just from this doc!
+        spell.word_frequency.load_text_file(filepath)
+        self.assertEqual(spell["a"], 3)
+        self.assertEqual(spell["storm"], 2)
+        self.assertFalse("awesome" in spell)
+        self.assertTrue(spell["whale"])
+        self.assertTrue("waves" in spell)
+
     def test_remove_words(self):
         """test is a word is removed"""
         spell = SpellChecker()
@@ -431,6 +443,23 @@ class TestSpellChecker(unittest.TestCase):
 
         here = os.path.dirname(__file__)
         filepath = f"{here}/resources/small_doc.txt"
+        spell = SpellChecker(language=None)  # just from this doc!
+        spell.word_frequency.load_text_file(filepath, tokenizer=tokens)
+        self.assertEqual(spell["a"], 3)
+        self.assertEqual(spell["storm"], 1)
+        self.assertEqual(spell["storm."], 1)
+        self.assertFalse("awesome" in spell)
+        self.assertTrue(spell["whale"])
+        self.assertTrue("sea." in spell)
+
+    def test_tokenizer_file_path(self):
+        """def using a custom tokenizer for file loading"""
+
+        def tokens(txt):
+            yield from txt.split()
+
+        here = os.path.dirname(__file__)
+        filepath = Path(f"{here}/resources/small_doc.txt")
         spell = SpellChecker(language=None)  # just from this doc!
         spell.word_frequency.load_text_file(filepath, tokenizer=tokens)
         self.assertEqual(spell["a"], 3)
