@@ -10,6 +10,7 @@ from pathlib import Path
 from spellchecker.info import __version__
 
 KeyT = typing.Union[str, bytes]
+PathOrStr = typing.Union[Path, str]
 
 
 def fail_after(version: str) -> typing.Callable:
@@ -78,7 +79,7 @@ def ensure_unicode(_str: KeyT, encoding: str = "utf-8") -> str:
 
 
 @contextlib.contextmanager
-def __gzip_read(filename: str|Path, mode: str = "rb", encoding: str = "UTF-8") -> typing.Generator[KeyT, None, None]:
+def __gzip_read(filename: PathOrStr, mode: str = "rb", encoding: str = "UTF-8") -> typing.Generator[KeyT, None, None]:
     """Context manager to correctly handle the decoding of the output of the gzip file
 
     Args:
@@ -93,7 +94,7 @@ def __gzip_read(filename: str|Path, mode: str = "rb", encoding: str = "UTF-8") -
 
 
 @contextlib.contextmanager
-def load_file(filename: str|Path, encoding: str) -> typing.Generator[KeyT, None, None]:
+def load_file(filename: PathOrStr, encoding: str) -> typing.Generator[KeyT, None, None]:
     """Context manager to handle opening a gzip or text file correctly and
     reading all the data
 
@@ -114,7 +115,7 @@ def load_file(filename: str|Path, encoding: str) -> typing.Generator[KeyT, None,
             yield fobj.read()
 
 
-def write_file(filepath: str|Path, encoding: str, gzipped: bool, data: str) -> None:
+def write_file(filepath: PathOrStr, encoding: str, gzipped: bool, data: str) -> None:
     """Write the data to file either as a gzip file or text based on the
     gzipped parameter
 
