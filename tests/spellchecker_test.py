@@ -1,7 +1,8 @@
 """ Unittest class """
 
-import unittest
 import os
+import unittest
+from pathlib import Path
 
 from spellchecker import SpellChecker
 
@@ -175,6 +176,14 @@ class TestSpellChecker(unittest.TestCase):
         self.assertEqual(spell["a"], 1)
         self.assertTrue("apple" in spell)
 
+    def test_load_external_dictionary_path(self):
+        """test loading a local dictionary"""
+        here = os.path.dirname(__file__)
+        filepath = Path(f"{here}/resources/small_dictionary.json")
+        spell = SpellChecker(language=None, local_dictionary=filepath)
+        self.assertEqual(spell["a"], 1)
+        self.assertTrue("apple" in spell)
+
     def test_edit_distance_one(self):
         """test a case where edit distance must be one"""
         here = os.path.dirname(__file__)
@@ -209,6 +218,18 @@ class TestSpellChecker(unittest.TestCase):
         """test loading a text file"""
         here = os.path.dirname(__file__)
         filepath = f"{here}/resources/small_doc.txt"
+        spell = SpellChecker(language=None)  # just from this doc!
+        spell.word_frequency.load_text_file(filepath)
+        self.assertEqual(spell["a"], 3)
+        self.assertEqual(spell["storm"], 2)
+        self.assertFalse("awesome" in spell)
+        self.assertTrue(spell["whale"])
+        self.assertTrue("waves" in spell)
+
+    def test_load_text_file_path(self):
+        """test loading a text file"""
+        here = os.path.dirname(__file__)
+        filepath = Path(f"{here}/resources/small_doc.txt")
         spell = SpellChecker(language=None)  # just from this doc!
         spell.word_frequency.load_text_file(filepath)
         self.assertEqual(spell["a"], 3)
@@ -422,6 +443,23 @@ class TestSpellChecker(unittest.TestCase):
 
         here = os.path.dirname(__file__)
         filepath = f"{here}/resources/small_doc.txt"
+        spell = SpellChecker(language=None)  # just from this doc!
+        spell.word_frequency.load_text_file(filepath, tokenizer=tokens)
+        self.assertEqual(spell["a"], 3)
+        self.assertEqual(spell["storm"], 1)
+        self.assertEqual(spell["storm."], 1)
+        self.assertFalse("awesome" in spell)
+        self.assertTrue(spell["whale"])
+        self.assertTrue("sea." in spell)
+
+    def test_tokenizer_file_path(self):
+        """def using a custom tokenizer for file loading"""
+
+        def tokens(txt):
+            yield from txt.split()
+
+        here = os.path.dirname(__file__)
+        filepath = Path(f"{here}/resources/small_doc.txt")
         spell = SpellChecker(language=None)  # just from this doc!
         spell.word_frequency.load_text_file(filepath, tokenizer=tokens)
         self.assertEqual(spell["a"], 3)
