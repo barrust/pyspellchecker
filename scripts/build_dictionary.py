@@ -14,6 +14,7 @@
             Arabic Input:     http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.ar.gz
             Basque Input:     http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.au.gz
             Latvian Input:    https://huggingface.co/datasets/RaivisDejus/latvian-text
+            Dutch Input:      http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.nl.gz
     Requirements:
             The script requires more than the standard library to run in its
             entirety. You will also need to install the NLTK package to build a
@@ -82,9 +83,11 @@ def build_word_frequency(filepath, language, output_path):
         from nltk.tag import pos_tag
         from nltk.tokenize import WhitespaceTokenizer
         from nltk.tokenize.toktok import ToktokTokenizer
+        import nltk
     except ImportError as ex:
         raise ImportError("To build a dictioary from scratch, NLTK is required!\n{}".format(ex.message))
 
+    nltk.download("averaged_perceptron_tagger")
     word_frequency = Counter()
     if language == "es":
         tok = ToktokTokenizer()
@@ -648,6 +651,7 @@ def clean_arabic(word_frequency, filepath_exclude, filepath_include):
 
     return word_frequency
 
+
 def clean_basque(word_frequency, filepath_exclude, filepath_include):
     """Clean a Basque word frequency list
 
@@ -703,6 +707,7 @@ def clean_basque(word_frequency, filepath_exclude, filepath_include):
                 word_frequency[line] = MINIMUM_FREQUENCY
 
     return word_frequency
+
 
 def clean_latvian(word_frequency, filepath_exclude, filepath_include):
     """Clean a Latvian word frequency list
@@ -789,6 +794,121 @@ def clean_latvian(word_frequency, filepath_exclude, filepath_include):
     return word_frequency
 
 
+def clean_dutch(word_frequency, filepath_exclude, filepath_include):
+    """Clean a Dutch word frequency list
+
+    Args:
+        word_frequency (Counter):
+        filepath_exclude (str):
+        filepath_include (str):
+    """
+    letters = set("abcdefghijklmnopqrstuvwxyz'")
+
+    # remove words with invalid characters
+    invalid_chars = list()
+    for key in word_frequency:
+        kl = set(key)
+        if kl.issubset(letters):
+            continue
+        invalid_chars.append(key)
+    for misfit in invalid_chars:
+        word_frequency.pop(misfit)
+
+    # remove words without a vowel
+    no_vowels = list()
+    vowels = set("aeiouy")
+    for key in word_frequency:
+        if vowels.isdisjoint(key):
+            no_vowels.append(key)
+    for misfit in no_vowels:
+        word_frequency.pop(misfit)
+
+    # Remove double punctuations (a-a-a-able) or (a'whoppinganda'whumping)
+    double_punc = list()
+    for key in word_frequency:
+        if key.count("'") > 1 or key.count("-") > 1 or key.count(".") > 2:
+            double_punc.append(key)
+    for misfit in double_punc:
+        word_frequency.pop(misfit)
+
+    # remove ellipses
+    ellipses = list()
+    for key in word_frequency:
+        if ".." in key:
+            ellipses.append(key)
+    for misfit in ellipses:
+        word_frequency.pop(misfit)
+
+    # leading or trailing doubles a, "a'", "zz", ending y's
+    doubles = list()
+    for key in word_frequency:
+        if key.startswith("aa") and key not in ("aardvark", "aardvarks"):
+            doubles.append(key)
+        elif key.startswith("a'"):
+            doubles.append(key)
+        elif key.startswith("zz"):
+            doubles.append(key)
+        elif key.endswith("yy"):
+            doubles.append(key)
+        elif key.endswith("hh"):
+            doubles.append(key)
+    for misfit in doubles:
+        word_frequency.pop(misfit)
+
+    # common missing spaces
+    missing_spaces = list()
+    for key in word_frequency:
+        if key.startswith("about") and key != "about":
+            missing_spaces.append(key)
+        elif key.startswith("above") and key != "above":
+            missing_spaces.append(key)
+        elif key.startswith("after") and key != "after":
+            missing_spaces.append(key)
+        elif key.startswith("against") and key != "against":
+            missing_spaces.append(key)
+        elif key.startswith("all") and word_frequency[key] < 15:
+            missing_spaces.append(key)
+        elif key.startswith("almost") and key != "almost":
+            missing_spaces.append(key)
+        # This one has LOTS of possibilities...
+        elif key.startswith("to") and word_frequency[key] < 25:
+            missing_spaces.append(key)
+        elif key.startswith("can't") and key != "can't":
+            missing_spaces.append(key)
+        elif key.startswith("i'm") and key != "i'm":
+            missing_spaces.append(key)
+    for misfit in missing_spaces:
+        word_frequency.pop(misfit)
+
+    # TODO: other possible fixes?
+
+    # remove small numbers
+    small_frequency = list()
+    for key in word_frequency:
+        if word_frequency[key] <= MINIMUM_FREQUENCY:
+            small_frequency.append(key)
+    for misfit in small_frequency:
+        word_frequency.pop(misfit)
+
+    # remove flagged misspellings
+    with load_file(filepath_exclude) as fobj:
+        for line in fobj:
+            line = line.strip()
+            if line in word_frequency:
+                word_frequency.pop(line)
+
+    # Add known missing words back in (ugh)
+    with load_file(filepath_include) as fobj:
+        for line in fobj:
+            line = line.strip()
+            if line in word_frequency:
+                print("{} is already found in the dictionary! Skipping!")
+            else:
+                word_frequency[line] = MINIMUM_FREQUENCY
+
+    return word_frequency
+
+
 def _parse_args():
     """parse arguments for command-line usage"""
     import argparse
@@ -797,7 +917,11 @@ def _parse_args():
         description="Build a new dictionary (word frequency) using the OpenSubtitles2018 project"
     )
     parser.add_argument(
-        "-l", "--language", required=True, help="The language being built", choices=["en", "es", "de", "fr", "pt", "ru", "ar", "lv", "eu"]
+        "-l",
+        "--language",
+        required=True,
+        help="The language being built",
+        choices=["en", "es", "de", "fr", "pt", "ru", "ar", "lv", "eu", "nl"],
     )
     parser.add_argument(
         "-f", "--file-path", help="The path to the downloaded text file OR the saved word frequency json"
@@ -877,6 +1001,8 @@ if __name__ == "__main__":
         word_frequency = clean_basque(word_frequency, exclude_filepath, include_filepath)
     elif args.language == "lv":
         word_frequency = clean_latvian(word_frequency, exclude_filepath, include_filepath)
+    elif args.language == "nl":
+        word_frequency = clean_dutch(word_frequency, exclude_filepath, include_filepath)
 
     # export word frequency for review!
     word_frequency_path = os.path.join(script_path, "{}.json".format(args.language))
