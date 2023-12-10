@@ -149,6 +149,7 @@ The currently supported dictionaries are:
 * Arabic        - 'ar'
 * Basque        - 'eu'
 * Latvian       - 'lv'
+* Dutch         - 'nl'
 
 Dictionary Creation and Updating
 -------------------------------------------------------------------------------
