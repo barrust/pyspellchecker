@@ -63,19 +63,19 @@ def deprecated(message: str = "") -> typing.Callable:
     return decorator_wrapper
 
 
-def ensure_unicode(_str: KeyT, encoding: str = "utf-8") -> str:
+def ensure_unicode(value: KeyT, encoding: str = "utf-8") -> str:
     """Simplify checking if passed in data are bytes or a string and decode
     bytes into unicode.
 
     Args:
-        _str (str): The input string (possibly bytes)
+        value (str): The input string (possibly bytes)
         encoding (str): The encoding to use if input is bytes
     Returns:
         str: The encoded string
     """
-    if isinstance(_str, bytes):
-        return _str.decode(encoding)
-    return _str
+    if isinstance(value, bytes):
+        return value.decode(encoding)
+    return value
 
 
 @contextlib.contextmanager
