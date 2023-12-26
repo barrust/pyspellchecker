@@ -33,7 +33,7 @@ class SpellChecker:
 
     def __init__(
         self,
-        language: typing.Union[str, typing.Iterable[str]] = "en",
+        language: typing.Union[str, typing.Iterable[str], None] = "en",
         local_dictionary: typing.Optional[PathOrStr] = None,
         distance: int = 2,
         tokenizer: typing.Optional[typing.Callable[[str], typing.Iterable[str]]] = None,
@@ -54,7 +54,7 @@ class SpellChecker:
             self._word_frequency.load_dictionary(local_dictionary)
         elif language:
             if not isinstance(language, Iterable) or isinstance(language, (str, bytes)):
-                language = [language]  # type: ignore
+                language = [language]
             for lang in language:
                 filename = f"resources/{lang.lower()}.json.gz"
                 try:
@@ -282,7 +282,11 @@ class WordFrequency:
         "_longest_word_length",
     ]
 
-    def __init__(self, tokenizer=None, case_sensitive=False):
+    def __init__(
+        self,
+        tokenizer: typing.Optional[typing.Callable[[str], typing.Iterable[str]]] = None,
+        case_sensitive: bool = False
+    ) -> None:
         self._dictionary = Counter()
         self._total_words = 0
         self._unique_words = 0
@@ -452,7 +456,7 @@ class WordFrequency:
         if tokenizer:
             words = [x if self._case_sensitive else x.lower() for x in tokenizer(text)]
         else:
-            words = self.tokenize(text)  # type: ignore
+            words = self.tokenize(text)  # type: ignore[assignment]
 
         self._dictionary.update(words)
         self._update_dictionary()
