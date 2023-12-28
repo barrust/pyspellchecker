@@ -145,6 +145,7 @@ The currently supported dictionaries are:
 * French        - 'fr'
 * Portuguese    - 'pt'
 * German        - 'de'
+* Italian       - 'it'
 * Russian       - 'ru'
 * Arabic        - 'ar'
 * Basque        - 'eu'
