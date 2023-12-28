@@ -285,7 +285,7 @@ class WordFrequency:
     def __init__(
         self,
         tokenizer: typing.Optional[typing.Callable[[str], typing.Iterable[str]]] = None,
-        case_sensitive: bool = False
+        case_sensitive: bool = False,
     ) -> None:
         self._dictionary = Counter()
         self._total_words = 0

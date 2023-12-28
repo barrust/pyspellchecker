@@ -1,5 +1,9 @@
 # pyspellchecker
 
+## Version 0.7.4
+
+* Leveraged the dictionary files from [levidromelist](https://www.levidromelist.com/levidrome-list/dictionary) to attempt to clean up the `en`, `es`, `fr`, `pt`, `'de`, and `nl`dictionaries; Attempts to resolve issues #164, #155, #150, #140, #115, and #107; see [issue #126](https://github.com/barrust/pyspellchecker/issues/126)
+
 ## Version 0.7.3
 
 * Remove relative imports in favor of absolute imports
