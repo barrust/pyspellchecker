@@ -15,6 +15,7 @@
             Basque Input:     http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.au.gz
             Latvian Input:    https://huggingface.co/datasets/RaivisDejus/latvian-text
             Dutch Input:      http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.nl.gz
+            Italian Input:    http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.it.gz
     Requirements:
             The script requires more than the standard library to run in its
             entirety. You will also need to install the NLTK package to build a
@@ -88,7 +89,7 @@ def build_word_frequency(filepath, language, output_path):
 
     nltk.download("averaged_perceptron_tagger")
     word_frequency = Counter()
-    if language == "es":
+    if language in ["es", "it"]:
         tok = ToktokTokenizer()
     else:
         tok = WhitespaceTokenizer()
@@ -346,6 +347,67 @@ def clean_spanish(word_frequency, filepath_exclude, filepath_include, filepath_d
             small_frequency.append(key)
     for misfit in small_frequency:
         word_frequency.pop(misfit)
+
+    # remove flagged misspellings
+    with load_file(filepath_exclude) as fobj:
+        for line in fobj:
+            line = line.strip()
+            if line in word_frequency:
+                word_frequency.pop(line)
+
+    # Use a dictionary to clean up everything else...
+    final_words_to_remove = []
+    with load_file(filepath_dictionary) as fobj:
+        dictionary_words = []
+        for line in fobj:
+            if line[0] in letters and line.islower():
+                line = line.strip()
+                dictionary_words.append(line)
+
+    for word in word_frequency:
+        if word not in dictionary_words:
+            final_words_to_remove.append(word)
+    for word in final_words_to_remove:
+        word_frequency.pop(word)
+
+    for word in dictionary_words:
+        if word not in word_frequency:
+            word_frequency[word] = MINIMUM_FREQUENCY
+
+    # Add known missing words back in (ugh)
+    with load_file(filepath_include) as fobj:
+        for line in fobj:
+            line = line.strip().lower()
+            if line in word_frequency:
+                print("{} is already found in the dictionary! Skipping!".format(line))
+            else:
+                word_frequency[line] = MINIMUM_FREQUENCY
+
+    return word_frequency
+
+
+def clean_italian(word_frequency, filepath_exclude, filepath_include, filepath_dictionary):
+    letters = set("abcdefghijklmnopqrstuvwxyzáéíóúüàèìòù")
+
+    # fix issues with words containing other characters
+    invalid_chars = list()
+    for key in word_frequency:
+        kl = set(key)
+        if kl.issubset(letters):
+            continue
+        invalid_chars.append(key)
+    for misfit in invalid_chars:
+        word_frequency.pop(misfit)
+
+    # remove small numbers
+    small_frequency = list()
+    for key in word_frequency:
+        if word_frequency[key] <= MINIMUM_FREQUENCY:
+            small_frequency.append(key)
+    for misfit in small_frequency:
+        word_frequency.pop(misfit)
+
+    # TODO: other possible fixes?
 
     # remove flagged misspellings
     with load_file(filepath_exclude) as fobj:
@@ -1034,7 +1096,7 @@ def _parse_args():
         "--language",
         required=True,
         help="The language being built",
-        choices=["en", "es", "de", "fr", "pt", "ru", "ar", "lv", "eu", "nl"],
+        choices=["en", "es", "de", "fr", "pt", "ru", "ar", "lv", "eu", "nl", "it"],
     )
     parser.add_argument(
         "-f", "--file-path", help="The path to the downloaded text file OR the saved word frequency json"
@@ -1102,6 +1164,9 @@ if __name__ == "__main__":
     elif args.language == "es":
         dict_path = os.path.abspath("{}/levidromelist-dicts/spanish.txt".format(data_path))
         word_frequency = clean_spanish(word_frequency, exclude_filepath, include_filepath, dict_path)
+    elif args.language == "it":
+        dict_path = os.path.abspath("{}/levidromelist-dicts/italian.txt".format(data_path))
+        word_frequency = clean_italian(word_frequency, exclude_filepath, include_filepath, dict_path)
     elif args.language == "de":
         dict_path = os.path.abspath("{}/levidromelist-dicts/new_german.txt".format(data_path))
         word_frequency = clean_german(word_frequency, exclude_filepath, include_filepath, dict_path)

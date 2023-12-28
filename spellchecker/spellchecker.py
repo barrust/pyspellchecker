@@ -7,7 +7,6 @@ import string
 import typing
 from collections import Counter
 from collections.abc import Iterable
-from pathlib import Path
 
 from spellchecker.utils import KeyT, PathOrStr, _parse_into_words, ensure_unicode, load_file, write_file
 
@@ -19,8 +18,8 @@ class SpellChecker:
 
     Args:
         language (str): The language of the dictionary to load or None for no dictionary. Supported languages are \
-            `en`, `es`, `de`, `fr`, `pt`, `ru`, `lv`, `eu`, and `nl`. Defaults to `en`. A list of languages may be provided and all \
-                languages will be loaded.
+            `en`, `es`, `it`, `de`, `fr`, `pt`, `ru`, `lv`, `eu`, and `nl`. Defaults to `en`. A list of languages \
+            may be provided and all languages will be loaded.
         local_dictionary (str): The path to a locally stored word frequency dictionary; if provided, no language \
             will be loaded
         distance (int): The edit distance to use. Defaults to 2.
@@ -83,7 +82,7 @@ class SpellChecker:
     @classmethod
     def languages(cls) -> typing.Iterable[str]:
         """list: A list of all official languages supported by the library"""
-        return ["de", "en", "es", "fr", "pt", "ru", "ar", "lv", "eu", "nl"]
+        return ["en", "es", "fr", "it", "pt", "de", "ru", "ar", "lv", "eu", "nl"]
 
     @property
     def word_frequency(self) -> "WordFrequency":
