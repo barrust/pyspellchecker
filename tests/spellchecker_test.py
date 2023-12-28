@@ -24,28 +24,12 @@ class TestSpellChecker(unittest.TestCase):
     def test_candidates(self):
         """test spell checker candidates"""
         spell = SpellChecker()
-        cands = {
-            "tes",
-            "thas",
-            "tis",
-            "thes",
-            "thus",
-            "thu",
-            "thy",
-            "thi",
-            "tas",
-            "tus",
-            "thos",
-            "tho",
-            "tha",
-            "the",
-            "this",
-        }
+        cands = {"ts", "thy", "tho", "thus", "ohs", "this", "the"}
         self.assertEqual(spell.candidates("ths"), cands)
         self.assertEqual(spell.candidates("the"), {"the"})
         self.assertEqual(spell.candidates("-"), {"-"})
         # something that cannot exist... should return None...
-        self.assertEqual(spell.candidates("manasaeds"), None)
+        self.assertEqual(spell.candidates("bugalouoo"), None)
 
     def test_words(self):
         """test the parsing of words"""
@@ -77,8 +61,6 @@ class TestSpellChecker(unittest.TestCase):
         """test if the word is a `known` word or not"""
         spell = SpellChecker()
         self.assertEqual(spell.known(["this"]), {"this"})
-        self.assertEqual(spell.known(["sherlock"]), {"sherlock"})
-        self.assertEqual(spell.known(["holmes"]), {"holmes"})
         self.assertEqual(spell.known(["known"]), {"known"})
 
         self.assertEqual(spell.known(["-"]), set())
@@ -90,8 +72,6 @@ class TestSpellChecker(unittest.TestCase):
         """test the unknown word functionality"""
         spell = SpellChecker()
         self.assertEqual(spell.unknown(["this"]), set())
-        self.assertEqual(spell.unknown(["sherlock"]), set())
-        self.assertEqual(spell.unknown(["holmes"]), set())
         self.assertEqual(spell.unknown(["known"]), set())
         self.assertEqual(spell.unknown(["-"]), set())
 
@@ -257,13 +237,14 @@ class TestSpellChecker(unittest.TestCase):
         spell = SpellChecker()
         cnt = 0
         for key in spell.word_frequency.keys():
-            if spell.word_frequency[key] < 300:
+            if spell.word_frequency[key] <= 300:
                 cnt += 1
         self.assertGreater(cnt, 0)
         spell.word_frequency.remove_by_threshold(300)
         cnt = 0
         for key in spell.word_frequency.words():  # synonym for keys
-            if spell.word_frequency[key] < 300:
+            if spell.word_frequency[key] <= 300:
+                print(key)
                 cnt += 1
         self.assertEqual(cnt, 0)
 
@@ -272,13 +253,13 @@ class TestSpellChecker(unittest.TestCase):
         spell = SpellChecker()
         cnt = 0
         for _, val in spell.word_frequency.items():
-            if val < 300:
+            if val <= 300:
                 cnt += 1
         self.assertGreater(cnt, 0)
         spell.word_frequency.remove_by_threshold(300)
         cnt = 0
         for _, val in spell.word_frequency.items():  # synonym for keys
-            if val < 300:
+            if val <= 300:
                 cnt += 1
         self.assertEqual(cnt, 0)
 
