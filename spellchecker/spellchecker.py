@@ -285,7 +285,7 @@ class WordFrequency:
     def __init__(
         self,
         tokenizer: typing.Optional[typing.Callable[[str], typing.Iterable[str]]] = None,
-        case_sensitive: bool = False
+        case_sensitive: bool = False,
     ) -> None:
         self._dictionary = Counter()
         self._total_words = 0
@@ -503,6 +503,7 @@ class WordFrequency:
         Args:
             threshold (int): The threshold at which a word is to be removed"""
         to_remove = [k for k, v in self._dictionary.items() if v <= threshold]
+        print(len(to_remove))
         self.remove_words(to_remove)
 
     def _update_dictionary(self) -> None:

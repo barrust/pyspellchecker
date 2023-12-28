@@ -22,12 +22,11 @@
             required.
 """
 import contextlib
-import json
 import gzip
+import json
 import os
 import string
 from collections import Counter
-
 
 STRING_PUNCTUATION = tuple(string.punctuation)
 DIGETS = tuple(string.digits)
@@ -80,10 +79,10 @@ def build_word_frequency(filepath, language, output_path):
     """
     # NLTK is only needed in this portion of the project
     try:
+        import nltk
         from nltk.tag import pos_tag
         from nltk.tokenize import WhitespaceTokenizer
         from nltk.tokenize.toktok import ToktokTokenizer
-        import nltk
     except ImportError as ex:
         raise ImportError("To build a dictioary from scratch, NLTK is required!\n{}".format(ex.message))
 
@@ -140,7 +139,7 @@ def export_misfit_words(misfit_filepath, word_freq_filepath, word_frequency):
             file.write("\n")
 
 
-def clean_english(word_frequency, filepath_exclude, filepath_include):
+def clean_english(word_frequency, filepath_exclude, filepath_include, filepath_dictionary):
     """Clean an English word frequency list
 
     Args:
@@ -243,19 +242,38 @@ def clean_english(word_frequency, filepath_exclude, filepath_include):
             if line in word_frequency:
                 word_frequency.pop(line)
 
-    # Add known missing words back in (ugh)
+    # Use a dictionary to clean up everything else...
+    final_words_to_remove = []
+    with load_file(filepath_dictionary) as fobj:
+        dictionary_words = []
+        for line in fobj:
+            if line[0] in letters and line.islower():
+                line = line.strip()
+                dictionary_words.append(line)
+
+    for word in word_frequency:
+        if word not in dictionary_words:
+            final_words_to_remove.append(word)
+    for word in final_words_to_remove:
+        word_frequency.pop(word)
+
+    for word in dictionary_words:
+        if word not in word_frequency:
+            word_frequency[word] = MINIMUM_FREQUENCY
+
+        # Add known missing words back in (ugh)
     with load_file(filepath_include) as fobj:
         for line in fobj:
             line = line.strip()
             if line in word_frequency:
-                print("{} is already found in the dictionary! Skipping!")
+                print("{} is already found in the dictionary! Skipping!".format(line))
             else:
                 word_frequency[line] = MINIMUM_FREQUENCY
 
     return word_frequency
 
 
-def clean_spanish(word_frequency, filepath_exclude, filepath_include):
+def clean_spanish(word_frequency, filepath_exclude, filepath_include, filepath_dictionary):
     """Clean a Spanish word frequency list
 
     Args:
@@ -336,19 +354,38 @@ def clean_spanish(word_frequency, filepath_exclude, filepath_include):
             if line in word_frequency:
                 word_frequency.pop(line)
 
+    # Use a dictionary to clean up everything else...
+    final_words_to_remove = []
+    with load_file(filepath_dictionary) as fobj:
+        dictionary_words = []
+        for line in fobj:
+            if line[0] in letters and line.islower():
+                line = line.strip()
+                dictionary_words.append(line)
+
+    for word in word_frequency:
+        if word not in dictionary_words:
+            final_words_to_remove.append(word)
+    for word in final_words_to_remove:
+        word_frequency.pop(word)
+
+    for word in dictionary_words:
+        if word not in word_frequency:
+            word_frequency[word] = MINIMUM_FREQUENCY
+
     # Add known missing words back in (ugh)
     with load_file(filepath_include) as fobj:
         for line in fobj:
             line = line.strip()
             if line in word_frequency:
-                print("{} is already found in the dictionary! Skipping!")
+                print("{} is already found in the dictionary! Skipping!".format(line))
             else:
                 word_frequency[line] = MINIMUM_FREQUENCY
 
     return word_frequency
 
 
-def clean_german(word_frequency, filepath_exclude, filepath_include):
+def clean_german(word_frequency, filepath_exclude, filepath_include, filepath_dictionary):
     """Clean a German word frequency list
 
     Args:
@@ -393,19 +430,38 @@ def clean_german(word_frequency, filepath_exclude, filepath_include):
             if line in word_frequency:
                 word_frequency.pop(line)
 
+    # Use a dictionary to clean up everything else...
+    final_words_to_remove = []
+    with load_file(filepath_dictionary) as fobj:
+        dictionary_words = []
+        for line in fobj:
+            if line[0] in letters and line.islower():
+                line = line.strip()
+                dictionary_words.append(line)
+
+    for word in word_frequency:
+        if word not in dictionary_words:
+            final_words_to_remove.append(word)
+    for word in final_words_to_remove:
+        word_frequency.pop(word)
+
+    for word in dictionary_words:
+        if word not in word_frequency:
+            word_frequency[word] = MINIMUM_FREQUENCY
+
     # Add known missing words back in (ugh)
     with load_file(filepath_include) as fobj:
         for line in fobj:
             line = line.strip()
             if line in word_frequency:
-                print("{} is already found in the dictionary! Skipping!")
+                print("{} is already found in the dictionary! Skipping!".format(line))
             else:
                 word_frequency[line] = MINIMUM_FREQUENCY
 
     return word_frequency
 
 
-def clean_french(word_frequency, filepath_exclude, filepath_include):
+def clean_french(word_frequency, filepath_exclude, filepath_include, filepath_dictionary):
     """Clean a French word frequency list
 
     Args:
@@ -450,19 +506,38 @@ def clean_french(word_frequency, filepath_exclude, filepath_include):
             if line in word_frequency:
                 word_frequency.pop(line)
 
+    # Use a dictionary to clean up everything else...
+    final_words_to_remove = []
+    with load_file(filepath_dictionary) as fobj:
+        dictionary_words = []
+        for line in fobj:
+            if line[0] in letters and line.islower():
+                line = line.strip()
+                dictionary_words.append(line)
+
+    for word in word_frequency:
+        if word not in dictionary_words:
+            final_words_to_remove.append(word)
+    for word in final_words_to_remove:
+        word_frequency.pop(word)
+
+    for word in dictionary_words:
+        if word not in word_frequency:
+            word_frequency[word] = MINIMUM_FREQUENCY
+
     # Add known missing words back in (ugh)
     with load_file(filepath_include) as fobj:
         for line in fobj:
             line = line.strip()
             if line in word_frequency:
-                print("{} is already found in the dictionary! Skipping!")
+                print("{} is already found in the dictionary! Skipping!".format(line))
             else:
                 word_frequency[line] = MINIMUM_FREQUENCY
 
     return word_frequency
 
 
-def clean_portuguese(word_frequency, filepath_exclude, filepath_include):
+def clean_portuguese(word_frequency, filepath_exclude, filepath_include, filepath_dictionary):
     """Clean a Portuguese word frequency list
 
     Args:
@@ -507,12 +582,31 @@ def clean_portuguese(word_frequency, filepath_exclude, filepath_include):
             if line in word_frequency:
                 word_frequency.pop(line)
 
+    # Use a dictionary to clean up everything else...
+    final_words_to_remove = []
+    with load_file(filepath_dictionary, encoding="latin-1") as fobj:
+        dictionary_words = []
+        for line in fobj:
+            if line[0] in letters and line.islower():
+                line = line.strip()
+                dictionary_words.append(line)
+
+    for word in word_frequency:
+        if word not in dictionary_words:
+            final_words_to_remove.append(word)
+    for word in final_words_to_remove:
+        word_frequency.pop(word)
+
+    for word in dictionary_words:
+        if word not in word_frequency:
+            word_frequency[word] = MINIMUM_FREQUENCY
+
     # Add known missing words back in (ugh)
     with load_file(filepath_include) as fobj:
         for line in fobj:
             line = line.strip()
             if line in word_frequency:
-                print("{} is already found in the dictionary! Skipping!")
+                print("{} is already found in the dictionary! Skipping!".format(line))
             else:
                 word_frequency[line] = MINIMUM_FREQUENCY
 
@@ -588,7 +682,7 @@ def clean_russian(word_frequency, filepath_exclude, filepath_include):
         for line in fobj:
             line = line.strip()
             if line in word_frequency:
-                print("{} is already found in the dictionary! Skipping!")
+                print("{} is already found in the dictionary! Skipping!".format(line))
             else:
                 word_frequency[line] = MINIMUM_FREQUENCY
 
@@ -645,7 +739,7 @@ def clean_arabic(word_frequency, filepath_exclude, filepath_include):
         for line in fobj:
             line = line.strip()
             if line in word_frequency:
-                print("{} is already found in the dictionary! Skipping!")
+                print("{} is already found in the dictionary! Skipping!".format(line))
             else:
                 word_frequency[line] = MINIMUM_FREQUENCY
 
@@ -702,7 +796,7 @@ def clean_basque(word_frequency, filepath_exclude, filepath_include):
         for line in fobj:
             line = line.strip()
             if line in word_frequency:
-                print("{} is already found in the dictionary! Skipping!")
+                print("{} is already found in the dictionary! Skipping!".format(line))
             else:
                 word_frequency[line] = MINIMUM_FREQUENCY
 
@@ -787,14 +881,14 @@ def clean_latvian(word_frequency, filepath_exclude, filepath_include):
         for line in fobj:
             line = line.strip()
             if line in word_frequency:
-                print("{} is already found in the dictionary! Skipping!")
+                print("{} is already found in the dictionary! Skipping!".format(line))
             else:
                 word_frequency[line] = MINIMUM_FREQUENCY
 
     return word_frequency
 
 
-def clean_dutch(word_frequency, filepath_exclude, filepath_include):
+def clean_dutch(word_frequency, filepath_exclude, filepath_include, filepath_dictionary):
     """Clean a Dutch word frequency list
 
     Args:
@@ -897,12 +991,31 @@ def clean_dutch(word_frequency, filepath_exclude, filepath_include):
             if line in word_frequency:
                 word_frequency.pop(line)
 
+    # Use a dictionary to clean up everything else...
+    final_words_to_remove = []
+    with load_file(filepath_dictionary) as fobj:
+        dictionary_words = []
+        for line in fobj:
+            if line[0] in letters and line.islower():
+                line = line.strip()
+                dictionary_words.append(line)
+
+    for word in word_frequency:
+        if word not in dictionary_words:
+            final_words_to_remove.append(word)
+    for word in final_words_to_remove:
+        word_frequency.pop(word)
+
+    for word in dictionary_words:
+        if word not in word_frequency:
+            word_frequency[word] = MINIMUM_FREQUENCY
+
     # Add known missing words back in (ugh)
     with load_file(filepath_include) as fobj:
         for line in fobj:
             line = line.strip()
             if line in word_frequency:
-                print("{} is already found in the dictionary! Skipping!")
+                print("{} is already found in the dictionary! Skipping!".format(line))
             else:
                 word_frequency[line] = MINIMUM_FREQUENCY
 
@@ -984,15 +1097,20 @@ if __name__ == "__main__":
 
     # clean up the dictionary
     if args.language == "en":
-        word_frequency = clean_english(word_frequency, exclude_filepath, include_filepath)
+        dict_path = os.path.abspath("{}/levidromelist-dicts/american-english-large.txt".format(data_path))
+        word_frequency = clean_english(word_frequency, exclude_filepath, include_filepath, dict_path)
     elif args.language == "es":
-        word_frequency = clean_spanish(word_frequency, exclude_filepath, include_filepath)
+        dict_path = os.path.abspath("{}/levidromelist-dicts/spanish.txt".format(data_path))
+        word_frequency = clean_spanish(word_frequency, exclude_filepath, include_filepath, dict_path)
     elif args.language == "de":
-        word_frequency = clean_german(word_frequency, exclude_filepath, include_filepath)
+        dict_path = os.path.abspath("{}/levidromelist-dicts/new_german.txt".format(data_path))
+        word_frequency = clean_german(word_frequency, exclude_filepath, include_filepath, dict_path)
     elif args.language == "fr":
-        word_frequency = clean_french(word_frequency, exclude_filepath, include_filepath)
+        dict_path = os.path.abspath("{}/levidromelist-dicts/french.txt".format(data_path))
+        word_frequency = clean_french(word_frequency, exclude_filepath, include_filepath, dict_path)
     elif args.language == "pt":
-        word_frequency = clean_portuguese(word_frequency, exclude_filepath, include_filepath)
+        dict_path = os.path.abspath("{}/levidromelist-dicts/portuguese.txt".format(data_path))
+        word_frequency = clean_portuguese(word_frequency, exclude_filepath, include_filepath, dict_path)
     elif args.language == "ru":
         word_frequency = clean_russian(word_frequency, exclude_filepath, include_filepath)
     elif args.language == "ar":
@@ -1002,7 +1120,8 @@ if __name__ == "__main__":
     elif args.language == "lv":
         word_frequency = clean_latvian(word_frequency, exclude_filepath, include_filepath)
     elif args.language == "nl":
-        word_frequency = clean_dutch(word_frequency, exclude_filepath, include_filepath)
+        dict_path = os.path.abspath("{}/levidromelist-dicts/dutch.txt".format(data_path))
+        word_frequency = clean_dutch(word_frequency, exclude_filepath, include_filepath, dict_path)
 
     # export word frequency for review!
     word_frequency_path = os.path.join(script_path, "{}.json".format(args.language))
