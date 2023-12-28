@@ -261,10 +261,10 @@ def clean_english(word_frequency, filepath_exclude, filepath_include, filepath_d
         if word not in word_frequency:
             word_frequency[word] = MINIMUM_FREQUENCY
 
-        # Add known missing words back in (ugh)
+    # Add known missing words back in (ugh)
     with load_file(filepath_include) as fobj:
         for line in fobj:
-            line = line.strip()
+            line = line.strip().lower()
             if line in word_frequency:
                 print("{} is already found in the dictionary! Skipping!".format(line))
             else:
@@ -376,7 +376,7 @@ def clean_spanish(word_frequency, filepath_exclude, filepath_include, filepath_d
     # Add known missing words back in (ugh)
     with load_file(filepath_include) as fobj:
         for line in fobj:
-            line = line.strip()
+            line = line.strip().lower()
             if line in word_frequency:
                 print("{} is already found in the dictionary! Skipping!".format(line))
             else:
@@ -452,7 +452,7 @@ def clean_german(word_frequency, filepath_exclude, filepath_include, filepath_di
     # Add known missing words back in (ugh)
     with load_file(filepath_include) as fobj:
         for line in fobj:
-            line = line.strip()
+            line = line.strip().lower()
             if line in word_frequency:
                 print("{} is already found in the dictionary! Skipping!".format(line))
             else:
@@ -528,7 +528,7 @@ def clean_french(word_frequency, filepath_exclude, filepath_include, filepath_di
     # Add known missing words back in (ugh)
     with load_file(filepath_include) as fobj:
         for line in fobj:
-            line = line.strip()
+            line = line.strip().lower()
             if line in word_frequency:
                 print("{} is already found in the dictionary! Skipping!".format(line))
             else:
@@ -604,7 +604,7 @@ def clean_portuguese(word_frequency, filepath_exclude, filepath_include, filepat
     # Add known missing words back in (ugh)
     with load_file(filepath_include) as fobj:
         for line in fobj:
-            line = line.strip()
+            line = line.strip().lower()
             if line in word_frequency:
                 print("{} is already found in the dictionary! Skipping!".format(line))
             else:
@@ -680,7 +680,7 @@ def clean_russian(word_frequency, filepath_exclude, filepath_include):
     # Add known missing words back in (ugh)
     with load_file(filepath_include) as fobj:
         for line in fobj:
-            line = line.strip()
+            line = line.strip().lower()
             if line in word_frequency:
                 print("{} is already found in the dictionary! Skipping!".format(line))
             else:
@@ -737,7 +737,7 @@ def clean_arabic(word_frequency, filepath_exclude, filepath_include):
     # Add known missing words back in (ugh)
     with load_file(filepath_include) as fobj:
         for line in fobj:
-            line = line.strip()
+            line = line.strip().lower()
             if line in word_frequency:
                 print("{} is already found in the dictionary! Skipping!".format(line))
             else:
@@ -794,7 +794,7 @@ def clean_basque(word_frequency, filepath_exclude, filepath_include):
     # Add known missing words back in (ugh)
     with load_file(filepath_include) as fobj:
         for line in fobj:
-            line = line.strip()
+            line = line.strip().lower()
             if line in word_frequency:
                 print("{} is already found in the dictionary! Skipping!".format(line))
             else:
@@ -879,7 +879,7 @@ def clean_latvian(word_frequency, filepath_exclude, filepath_include):
     # Add known missing words back in (ugh)
     with load_file(filepath_include) as fobj:
         for line in fobj:
-            line = line.strip()
+            line = line.strip().lower()
             if line in word_frequency:
                 print("{} is already found in the dictionary! Skipping!".format(line))
             else:
@@ -1013,7 +1013,7 @@ def clean_dutch(word_frequency, filepath_exclude, filepath_include, filepath_dic
     # Add known missing words back in (ugh)
     with load_file(filepath_include) as fobj:
         for line in fobj:
-            line = line.strip()
+            line = line.strip().lower()
             if line in word_frequency:
                 print("{} is already found in the dictionary! Skipping!".format(line))
             else:

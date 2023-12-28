@@ -503,7 +503,6 @@ class WordFrequency:
         Args:
             threshold (int): The threshold at which a word is to be removed"""
         to_remove = [k for k, v in self._dictionary.items() if v <= threshold]
-        print(len(to_remove))
         self.remove_words(to_remove)
 
     def _update_dictionary(self) -> None:

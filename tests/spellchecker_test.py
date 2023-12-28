@@ -244,7 +244,6 @@ class TestSpellChecker(unittest.TestCase):
         cnt = 0
         for key in spell.word_frequency.words():  # synonym for keys
             if spell.word_frequency[key] <= 300:
-                print(key)
                 cnt += 1
         self.assertEqual(cnt, 0)
 
