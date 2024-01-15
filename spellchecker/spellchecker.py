@@ -286,16 +286,16 @@ class WordFrequency:
         tokenizer: typing.Optional[typing.Callable[[str], typing.Iterable[str]]] = None,
         case_sensitive: bool = False,
     ) -> None:
-        self._dictionary = Counter()
+        self._dictionary: typing.Counter = Counter()
         self._total_words = 0
         self._unique_words = 0
-        self._letters = set()
+        self._letters: typing.Set[str] = set()
         self._case_sensitive = case_sensitive
         self._longest_word_length = 0
 
         self._tokenizer = _parse_into_words
         if tokenizer is not None:
-            self._tokenizer = tokenizer
+            self._tokenizer = tokenizer  # type:  ignore
 
     def __contains__(self, key: KeyT) -> bool:
         """turn on contains"""
@@ -313,13 +313,15 @@ class WordFrequency:
         """turn on iter support"""
         yield from self._dictionary
 
-    def pop(self, key: KeyT, default: typing.Optional[int] = None) -> int:
+    def pop(self, key: KeyT, default: typing.Optional[int] = None) -> typing.Optional[int]:
         """Remove the key and return the associated value or default if not
         found
 
         Args:
             key (str): The key to remove
-            default (obj): The value to return if key is not present"""
+            default (obj): The value to return if key is not present
+        Returns:
+            int | None: Returns the number of instances of key, or None if not in the dictionary"""
         key = ensure_unicode(key)
         return self._dictionary.pop(key if self._case_sensitive else key.lower(), default)
 
@@ -364,7 +366,7 @@ class WordFrequency:
             Not settable"""
         return self._longest_word_length
 
-    def tokenize(self, text: KeyT) -> typing.Generator[str, None, None]:
+    def tokenize(self, text: KeyT) -> typing.Iterator[str]:
         """Tokenize the provided string object into individual words
 
         Args:
@@ -377,7 +379,7 @@ class WordFrequency:
         for word in self._tokenizer(tmp_text):
             yield word if self._case_sensitive else word.lower()
 
-    def keys(self) -> typing.Generator[str, None, None]:
+    def keys(self) -> typing.Iterator[str]:
         """Iterator over the key of the dictionary
 
         Yields:
@@ -386,7 +388,7 @@ class WordFrequency:
             This is the same as `spellchecker.words()`"""
         yield from self._dictionary.keys()
 
-    def words(self) -> typing.Generator[str, None, None]:
+    def words(self) -> typing.Iterator[str]:
         """Iterator over the words in the dictionary
 
         Yields:

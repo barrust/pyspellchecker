@@ -1,8 +1,8 @@
 [project]
 name = "pyspellchecker"
 dynamic = ["version"]
-authors = [{name = "Tyler Barrus", email = "barrust@gmail.com"}]
-license = {text = "MIT"}
+authors = [{ name = "Tyler Barrus", email = "barrust@gmail.com" }]
+license = { text = "MIT" }
 description = "Pure python spell checker based on work by Peter Norvig"
 keywords = [
     "python",
@@ -30,12 +30,13 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
 ]
 requires-python = ">=3.6"
 
 
 [tool.setuptools.dynamic]
-version = {attr = "spellchecker.__version__"}
+version = { attr = "spellchecker.__version__" }
 
 
 [project.urls]
@@ -45,16 +46,14 @@ documentation = "https://pyspellchecker.readthedocs.io/"
 
 
 [tool.poetry]
-packages = [
-        {include = "spellchecker"},
-]
+packages = [{ include = "spellchecker" }]
 
 [tool.poetry.dev-dependencies]
-pre-commit = {version = ">=2.18.1", python = "^3.6.1"}
-black = {version = "^20.8b1", python = "^3.6"}
-isort = {version = "^5.6.4", python = "^3.6"}
-pytest = {version = "^6.1.1", python = "^3.6"}
-flake8 = {version = "^3.6.0", python = "^3.6"}
+pre-commit = { version = ">=2.18.1", python = "^3.6.1" }
+black = { version = "^20.8b1", python = "^3.6" }
+isort = { version = "^5.6.4", python = "^3.6" }
+pytest = { version = "^6.1.1", python = "^3.6" }
+flake8 = { version = "^3.6.0", python = "^3.6" }
 
 [tool.setuptools.packages.find]
 include = ["spellchecker", "spellchecker.*"]
@@ -89,5 +88,3 @@ max-args = 6
 [build-system]
 requires = ["setuptools>=61.2.0", "wheel"]
 build-backend = "setuptools.build_meta"
-
-
