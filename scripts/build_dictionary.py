@@ -53,6 +53,16 @@ def load_file(filename, encoding="utf-8"):
             yield fobj
 
 
+def load_include_exclude(filename, encoding="utf-8"):
+    with load_file(filename=filename, encoding=encoding) as f:
+        for line in f:
+            if line[0] == "#":
+                continue
+            line = line.strip().split()
+            for l in line:
+                yield l.strip().lower()
+
+
 def export_word_frequency(filepath, word_frequency):
     """Export a word frequency as a json object
 
@@ -80,10 +90,10 @@ def build_word_frequency(filepath, language, output_path):
     """
     # NLTK is only needed in this portion of the project
     try:
-        import nltk
-        from nltk.tag import pos_tag
-        from nltk.tokenize import WhitespaceTokenizer
-        from nltk.tokenize.toktok import ToktokTokenizer
+        import nltk  # type: ignore
+        from nltk.tag import pos_tag  # type: ignore
+        from nltk.tokenize import WhitespaceTokenizer  # type: ignore
+        from nltk.tokenize.toktok import ToktokTokenizer  # type: ignore
     except ImportError as ex:
         raise ImportError("To build a dictioary from scratch, NLTK is required!\n{}".format(ex.message))
 
@@ -237,11 +247,9 @@ def clean_english(word_frequency, filepath_exclude, filepath_include, filepath_d
         word_frequency.pop(misfit)
 
     # remove flagged misspellings
-    with load_file(filepath_exclude) as fobj:
-        for line in fobj:
-            line = line.strip()
-            if line in word_frequency:
-                word_frequency.pop(line)
+    for line in load_include_exclude(filepath_exclude):
+        if line in word_frequency:
+            word_frequency.pop(line)
 
     # Use a dictionary to clean up everything else...
     final_words_to_remove = []
@@ -263,13 +271,11 @@ def clean_english(word_frequency, filepath_exclude, filepath_include, filepath_d
             word_frequency[word] = MINIMUM_FREQUENCY
 
     # Add known missing words back in (ugh)
-    with load_file(filepath_include) as fobj:
-        for line in fobj:
-            line = line.strip().lower()
-            if line in word_frequency:
-                print("{} is already found in the dictionary! Skipping!".format(line))
-            else:
-                word_frequency[line] = MINIMUM_FREQUENCY
+    for line in load_include_exclude(filepath_include):
+        if line in word_frequency:
+            print("{} is already found in the dictionary! Skipping!".format(line))
+        else:
+            word_frequency[line] = MINIMUM_FREQUENCY
 
     return word_frequency
 
@@ -349,11 +355,9 @@ def clean_spanish(word_frequency, filepath_exclude, filepath_include, filepath_d
         word_frequency.pop(misfit)
 
     # remove flagged misspellings
-    with load_file(filepath_exclude) as fobj:
-        for line in fobj:
-            line = line.strip()
-            if line in word_frequency:
-                word_frequency.pop(line)
+    for line in load_include_exclude(filepath_exclude):
+        if line in word_frequency:
+            word_frequency.pop(line)
 
     # Use a dictionary to clean up everything else...
     final_words_to_remove = []
@@ -375,13 +379,11 @@ def clean_spanish(word_frequency, filepath_exclude, filepath_include, filepath_d
             word_frequency[word] = MINIMUM_FREQUENCY
 
     # Add known missing words back in (ugh)
-    with load_file(filepath_include) as fobj:
-        for line in fobj:
-            line = line.strip().lower()
-            if line in word_frequency:
-                print("{} is already found in the dictionary! Skipping!".format(line))
-            else:
-                word_frequency[line] = MINIMUM_FREQUENCY
+    for line in load_include_exclude(filepath_include):
+        if line in word_frequency:
+            print("{} is already found in the dictionary! Skipping!".format(line))
+        else:
+            word_frequency[line] = MINIMUM_FREQUENCY
 
     return word_frequency
 
@@ -410,11 +412,9 @@ def clean_italian(word_frequency, filepath_exclude, filepath_include, filepath_d
     # TODO: other possible fixes?
 
     # remove flagged misspellings
-    with load_file(filepath_exclude) as fobj:
-        for line in fobj:
-            line = line.strip()
-            if line in word_frequency:
-                word_frequency.pop(line)
+    for line in load_include_exclude(filepath_exclude):
+        if line in word_frequency:
+            word_frequency.pop(line)
 
     # Use a dictionary to clean up everything else...
     final_words_to_remove = []
@@ -436,13 +436,11 @@ def clean_italian(word_frequency, filepath_exclude, filepath_include, filepath_d
             word_frequency[word] = MINIMUM_FREQUENCY
 
     # Add known missing words back in (ugh)
-    with load_file(filepath_include) as fobj:
-        for line in fobj:
-            line = line.strip().lower()
-            if line in word_frequency:
-                print("{} is already found in the dictionary! Skipping!".format(line))
-            else:
-                word_frequency[line] = MINIMUM_FREQUENCY
+    for line in load_include_exclude(filepath_include):
+        if line in word_frequency:
+            print("{} is already found in the dictionary! Skipping!".format(line))
+        else:
+            word_frequency[line] = MINIMUM_FREQUENCY
 
     return word_frequency
 
@@ -486,11 +484,9 @@ def clean_german(word_frequency, filepath_exclude, filepath_include, filepath_di
         word_frequency.pop(misfit)
 
     # remove flagged misspellings
-    with load_file(filepath_exclude) as fobj:
-        for line in fobj:
-            line = line.strip()
-            if line in word_frequency:
-                word_frequency.pop(line)
+    for line in load_include_exclude(filepath_exclude):
+        if line in word_frequency:
+            word_frequency.pop(line)
 
     # Use a dictionary to clean up everything else...
     final_words_to_remove = []
@@ -512,13 +508,11 @@ def clean_german(word_frequency, filepath_exclude, filepath_include, filepath_di
             word_frequency[word] = MINIMUM_FREQUENCY
 
     # Add known missing words back in (ugh)
-    with load_file(filepath_include) as fobj:
-        for line in fobj:
-            line = line.strip().lower()
-            if line in word_frequency:
-                print("{} is already found in the dictionary! Skipping!".format(line))
-            else:
-                word_frequency[line] = MINIMUM_FREQUENCY
+    for line in load_include_exclude(filepath_include):
+        if line in word_frequency:
+            print("{} is already found in the dictionary! Skipping!".format(line))
+        else:
+            word_frequency[line] = MINIMUM_FREQUENCY
 
     return word_frequency
 
@@ -562,11 +556,9 @@ def clean_french(word_frequency, filepath_exclude, filepath_include, filepath_di
         word_frequency.pop(misfit)
 
     # remove flagged misspellings
-    with load_file(filepath_exclude) as fobj:
-        for line in fobj:
-            line = line.strip()
-            if line in word_frequency:
-                word_frequency.pop(line)
+    for line in load_include_exclude(filepath_exclude):
+        if line in word_frequency:
+            word_frequency.pop(line)
 
     # Use a dictionary to clean up everything else...
     final_words_to_remove = []
@@ -588,13 +580,11 @@ def clean_french(word_frequency, filepath_exclude, filepath_include, filepath_di
             word_frequency[word] = MINIMUM_FREQUENCY
 
     # Add known missing words back in (ugh)
-    with load_file(filepath_include) as fobj:
-        for line in fobj:
-            line = line.strip().lower()
-            if line in word_frequency:
-                print("{} is already found in the dictionary! Skipping!".format(line))
-            else:
-                word_frequency[line] = MINIMUM_FREQUENCY
+    for line in load_include_exclude(filepath_include):
+        if line in word_frequency:
+            print("{} is already found in the dictionary! Skipping!".format(line))
+        else:
+            word_frequency[line] = MINIMUM_FREQUENCY
 
     return word_frequency
 
@@ -638,11 +628,9 @@ def clean_portuguese(word_frequency, filepath_exclude, filepath_include, filepat
         word_frequency.pop(misfit)
 
     # remove flagged misspellings
-    with load_file(filepath_exclude) as fobj:
-        for line in fobj:
-            line = line.strip()
-            if line in word_frequency:
-                word_frequency.pop(line)
+    for line in load_include_exclude(filepath_exclude):
+        if line in word_frequency:
+            word_frequency.pop(line)
 
     # Use a dictionary to clean up everything else...
     final_words_to_remove = []
@@ -664,13 +652,11 @@ def clean_portuguese(word_frequency, filepath_exclude, filepath_include, filepat
             word_frequency[word] = MINIMUM_FREQUENCY
 
     # Add known missing words back in (ugh)
-    with load_file(filepath_include) as fobj:
-        for line in fobj:
-            line = line.strip().lower()
-            if line in word_frequency:
-                print("{} is already found in the dictionary! Skipping!".format(line))
-            else:
-                word_frequency[line] = MINIMUM_FREQUENCY
+    for line in load_include_exclude(filepath_include):
+        if line in word_frequency:
+            print("{} is already found in the dictionary! Skipping!".format(line))
+        else:
+            word_frequency[line] = MINIMUM_FREQUENCY
 
     return word_frequency
 
@@ -733,20 +719,16 @@ def clean_russian(word_frequency, filepath_exclude, filepath_include):
         word_frequency.pop(misfit)
 
     # remove flagged misspellings
-    with load_file(filepath_exclude) as fobj:
-        for line in fobj:
-            line = line.strip()
-            if line in word_frequency:
-                word_frequency.pop(line)
+    for line in load_include_exclude(filepath_exclude):
+        if line in word_frequency:
+            word_frequency.pop(line)
 
     # Add known missing words back in (ugh)
-    with load_file(filepath_include) as fobj:
-        for line in fobj:
-            line = line.strip().lower()
-            if line in word_frequency:
-                print("{} is already found in the dictionary! Skipping!".format(line))
-            else:
-                word_frequency[line] = MINIMUM_FREQUENCY
+    for line in load_include_exclude(filepath_include):
+        if line in word_frequency:
+            print("{} is already found in the dictionary! Skipping!".format(line))
+        else:
+            word_frequency[line] = MINIMUM_FREQUENCY
 
     return word_frequency
 
@@ -790,20 +772,16 @@ def clean_arabic(word_frequency, filepath_exclude, filepath_include):
         word_frequency.pop(misfit)
 
     # remove flagged misspellings
-    with load_file(filepath_exclude) as fobj:
-        for line in fobj:
-            line = line.strip()
-            if line in word_frequency:
-                word_frequency.pop(line)
+    for line in load_include_exclude(filepath_exclude):
+        if line in word_frequency:
+            word_frequency.pop(line)
 
     # Add known missing words back in (ugh)
-    with load_file(filepath_include) as fobj:
-        for line in fobj:
-            line = line.strip().lower()
-            if line in word_frequency:
-                print("{} is already found in the dictionary! Skipping!".format(line))
-            else:
-                word_frequency[line] = MINIMUM_FREQUENCY
+    for line in load_include_exclude(filepath_include):
+        if line in word_frequency:
+            print("{} is already found in the dictionary! Skipping!".format(line))
+        else:
+            word_frequency[line] = MINIMUM_FREQUENCY
 
     return word_frequency
 
@@ -847,20 +825,16 @@ def clean_basque(word_frequency, filepath_exclude, filepath_include):
         word_frequency.pop(misfit)
 
     # remove flagged misspellings
-    with load_file(filepath_exclude) as fobj:
-        for line in fobj:
-            line = line.strip()
-            if line in word_frequency:
-                word_frequency.pop(line)
+    for line in load_include_exclude(filepath_exclude):
+        if line in word_frequency:
+            word_frequency.pop(line)
 
     # Add known missing words back in (ugh)
-    with load_file(filepath_include) as fobj:
-        for line in fobj:
-            line = line.strip().lower()
-            if line in word_frequency:
-                print("{} is already found in the dictionary! Skipping!".format(line))
-            else:
-                word_frequency[line] = MINIMUM_FREQUENCY
+    for line in load_include_exclude(filepath_include):
+        if line in word_frequency:
+            print("{} is already found in the dictionary! Skipping!".format(line))
+        else:
+            word_frequency[line] = MINIMUM_FREQUENCY
 
     return word_frequency
 
@@ -932,20 +906,16 @@ def clean_latvian(word_frequency, filepath_exclude, filepath_include):
         word_frequency.pop(misfit)
 
     # remove flagged misspellings
-    with load_file(filepath_exclude) as fobj:
-        for line in fobj:
-            line = line.strip()
-            if line in word_frequency:
-                word_frequency.pop(line)
+    for line in load_include_exclude(filepath_exclude):
+        if line in word_frequency:
+            word_frequency.pop(line)
 
     # Add known missing words back in (ugh)
-    with load_file(filepath_include) as fobj:
-        for line in fobj:
-            line = line.strip().lower()
-            if line in word_frequency:
-                print("{} is already found in the dictionary! Skipping!".format(line))
-            else:
-                word_frequency[line] = MINIMUM_FREQUENCY
+    for line in load_include_exclude(filepath_include):
+        if line in word_frequency:
+            print("{} is already found in the dictionary! Skipping!".format(line))
+        else:
+            word_frequency[line] = MINIMUM_FREQUENCY
 
     return word_frequency
 
@@ -1047,11 +1017,9 @@ def clean_dutch(word_frequency, filepath_exclude, filepath_include, filepath_dic
         word_frequency.pop(misfit)
 
     # remove flagged misspellings
-    with load_file(filepath_exclude) as fobj:
-        for line in fobj:
-            line = line.strip()
-            if line in word_frequency:
-                word_frequency.pop(line)
+    for line in load_include_exclude(filepath_exclude):
+        if line in word_frequency:
+            word_frequency.pop(line)
 
     # Use a dictionary to clean up everything else...
     final_words_to_remove = []
@@ -1073,13 +1041,11 @@ def clean_dutch(word_frequency, filepath_exclude, filepath_include, filepath_dic
             word_frequency[word] = MINIMUM_FREQUENCY
 
     # Add known missing words back in (ugh)
-    with load_file(filepath_include) as fobj:
-        for line in fobj:
-            line = line.strip().lower()
-            if line in word_frequency:
-                print("{} is already found in the dictionary! Skipping!".format(line))
-            else:
-                word_frequency[line] = MINIMUM_FREQUENCY
+    for line in load_include_exclude(filepath_include):
+        if line in word_frequency:
+            print("{} is already found in the dictionary! Skipping!".format(line))
+        else:
+            word_frequency[line] = MINIMUM_FREQUENCY
 
     return word_frequency
 
