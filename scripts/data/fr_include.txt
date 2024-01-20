@@ -1,0 +1,196 @@
+# country names
+Albanie
+Alemagne
+Andorre
+Autriche
+Belgique
+Biélorussie
+Bosnie Herzégovine
+Bulgarie
+Chypre
+Croatie
+Danemark
+Espagne
+Estonie
+Finlande
+France
+Grèce
+Hongrie
+Irlande
+Islande
+Italie
+Lettonie
+Liechtenstein
+Lituanie
+Luxembourg
+Macédoine
+Malte
+Moldavie
+Monaco
+Monténégro
+Norvège
+Pays Bas
+Pologne
+Portugal
+République tchèque
+Roumanie
+Royaume uni
+Russie
+Saint Marin
+Serbie
+Slovaquie
+Slovénie
+Suède
+Suisse
+Ukraine
+Vatican
+Afghanistan
+Arménie
+Azerbaïdjan
+Bahreïn
+Bangladesh
+Bhoutan
+Brunei
+Cambodge
+Chine
+Timor Oriental
+Géorgie
+Inde
+Indonésie
+Iran
+Irak
+Israël
+Japon
+Jordanie
+Kazakhstan
+Koweït
+Kirghizistan
+Laos
+Liban
+Malaisie
+Maldives
+Mongolie
+Birmanie
+Népal
+Corée du nord
+Oman
+Pakistan
+Philippines
+Qatar
+Arabie saoudite
+Singapour
+Corée du sud
+Sri Lanka
+Syrie
+Taïwan
+Tadjikistan
+Thaïlande
+Turquie
+Turkménistan
+Émirats arabes unis
+Ouzbékistan
+Viêt nam
+Yémen
+Antigua et Barbuda
+Argentine
+Bahamas
+Barbade
+Belize
+Bolivie
+Brésil
+Canada
+Chili
+Colombie
+Costa Rica
+Cuba
+République dominicaine
+Dominique
+Équateur
+États Unis
+Grenade
+Guatemala
+Guyana
+Haïti
+Honduras
+Jamaïque
+Mexique
+Nicaragua
+Panama
+Paraguay
+Pérou
+Saint Christophe et Niévès
+Sainte Lucie
+Saint Vincent et les Grenadines
+Salvador
+Suriname
+Trinité et Tobago
+Uruguay
+Venezuela
+Algérie
+Angola
+Bénin
+Botswana
+Burkina Faso
+Burundi
+Cap vert
+Cameroun
+République centrafricaine
+Tchad
+Comores
+République démocratique du congo
+République du congo
+Côte d’ivoire
+Djibouti
+Égypte
+Guinée équatoriale
+Érythrée
+Éthiopie
+Gabon
+Gambie
+Ghana
+Guinée
+Guinée bissau
+Kenya
+Lesotho
+Liberia
+Libye
+Madagascar
+Malawi
+Mali
+Mauritanie
+Maurice
+Maroc
+Mozambique
+Namibie
+Niger
+Nigeria
+Rwanda
+Sao Tomé et Principe
+Sénégal
+Seychelles
+Sierra Leone
+Somalie
+Afrique du sud
+Soudan du sud
+Soudan
+Swaziland
+Tanzanie
+Togo
+Tunisie
+Ouganda
+Zambie
+Zimbabwe
+Australie
+Fidji
+Kiribati
+Marshall
+Micronésie
+Nauru
+Nouvelle Zélande
+Palaos
+Papouasie Nouvelle Guinée
+Samoa
+Salomon
+Tonga
+Tuvalu
+Vanuatu

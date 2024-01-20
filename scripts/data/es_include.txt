@@ -1,0 +1,194 @@
+# country names
+Afganistán
+Albania
+Argelia
+Andorra
+Angola
+Antigua y Barbuda
+Argentina
+Armenia
+Australia
+Austria
+Azerbaiyán
+Bahamas
+Baréin
+Bangladés
+Barbados
+Bielorrusia
+Bélgica
+Belice
+Benín
+Bután
+Bolivia
+Bosnia Herzegovina
+Botsuana
+Brasil
+Brunéi
+Bulgaria
+Burkina Faso
+Burundi
+Camboya
+Camerún
+Canadá
+Cabo Verde
+República Centroafricana
+Chad
+Chile
+China
+Colombia
+Comoras
+Costa Rica
+Costa de Marfil
+Croacia
+Cuba
+Chipre
+República Checa
+República Democrática del Congo
+Dinamarca
+Yibuti
+Dominica
+República Dominicana
+Timor Oriental
+Ecuador
+Egipto
+El Salvador
+Guinea Ecuatorial
+Eritrea
+Estonia
+Etiopía
+Fiyi
+Finlandia
+Francia
+Gabón
+Gambia
+Georgia
+Alemania
+Ghana
+Grecia
+Granada
+Guatemala
+Guinea
+Guinea Bisáu
+Guyana
+Haití
+Honduras
+Hungría
+Islandia
+India
+Indonesia
+Irán
+Irak
+Irlanda
+Israel
+Italia
+Jamaica
+Japón
+Jordania
+Kazajistán
+Kenia
+Kiribati
+Kuwait
+Kirguistán
+Laos
+Letonia
+Líbano
+Lesoto
+Liberia
+Libia
+Liechtenstein
+Lituania
+Luxemburgo
+Madagascar
+Malaui
+Malasia
+Maldivas
+Malí
+Malta
+Islas Marshall
+Mauritania
+Mauricio
+México
+Micronesia
+Moldavia
+Mónaco
+Mongolia
+Montenegro
+Marruecos
+Mozambique
+Birmania
+Namibia
+Nauru
+Nepal
+Países Bajos
+Nueva Zelanda
+Nicaragua
+Níger
+Nigeria
+Corea del Norte
+Noruega
+Omán
+Pakistán
+Palaos
+Panamá
+Papúa Nueva Guinea
+Paraguay
+Perú
+Filipinas
+Polonia
+Portugal
+Catar
+República del Congo
+República de Macedonia
+Rumania
+Rusia
+Ruanda
+San Cristóbal y Nieves
+Santa Lucía
+San Vicente y las Granadinas
+Samoa
+San Marino
+Sao Tomé y Príncipe
+Arabia Saudita
+Senegal
+Serbia
+Seychelles
+Sierra Leona
+Singapur
+Eslovaquia
+Eslovenia
+Islas Salomón
+Somalia
+Sudáfrica
+Corea del Sur
+Sudán del Sur
+España
+Sri Lanka
+Sudán
+Surinam
+Suazilandia
+Suecia
+Suiza
+Siria
+Tayikistán
+Tanzania
+Tailandia
+Togo
+Tonga
+Trinidad y Tobago
+Túnez
+Turquía
+Turkmenistán
+Tuvalu
+Uganda
+Ucrania
+Emiratos Árabes Unidos
+Reino Unido
+Estados Unidos
+Uruguay
+Uzbekistán
+Vanuatu
+Venezuela
+Vietnam
+Yemen
+Zambia
+Zimbabue
