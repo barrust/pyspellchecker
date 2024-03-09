@@ -24,7 +24,7 @@ class TestSpellChecker(unittest.TestCase):
     def test_candidates(self):
         """test spell checker candidates"""
         spell = SpellChecker()
-        cands = {"ts", "thy", "tho", "thus", "ohs", "this", "the"}
+        cands = {"ts", "thy", "tho", "thus", "ohs", "this", "the", "th's", "thu", "t's", "hts", "th"}
         self.assertEqual(spell.candidates("ths"), cands)
         self.assertEqual(spell.candidates("the"), {"the"})
         self.assertEqual(spell.candidates("-"), {"-"})
