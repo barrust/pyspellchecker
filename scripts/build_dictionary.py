@@ -12,7 +12,7 @@
             Portuguese Input: http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.pt.gz
             Russian Input:    http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.ru.gz
             Arabic Input:     http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.ar.gz
-            Basque Input:     http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.au.gz
+            Basque Input:     http://opus.nlpl.eu/download.php?f=tiOpenSubtles/v2018/mono/OpenSubtitles.raw.eu.gz
             Latvian Input:    https://huggingface.co/datasets/RaivisDejus/latvian-text
             Dutch Input:      http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.nl.gz
             Italian Input:    http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.it.gz
@@ -22,6 +22,7 @@
             dictionary from scratch. Otherwise, no additional packages are
             required.
 """
+
 import contextlib
 import gzip
 import json
@@ -256,8 +257,8 @@ def clean_english(word_frequency, filepath_exclude, filepath_include, filepath_d
     with load_file(filepath_dictionary) as fobj:
         dictionary_words = []
         for line in fobj:
-            if line[0] in letters and line.islower():
-                line = line.strip()
+            if line[0].lower() in letters:
+                line = line.lower().strip()
                 dictionary_words.append(line)
 
     for word in word_frequency:
@@ -364,8 +365,8 @@ def clean_spanish(word_frequency, filepath_exclude, filepath_include, filepath_d
     with load_file(filepath_dictionary) as fobj:
         dictionary_words = []
         for line in fobj:
-            if line[0] in letters and line.islower():
-                line = line.strip()
+            if line[0].lower() in letters:
+                line = line.lower().strip()
                 dictionary_words.append(line)
 
     for word in word_frequency:
@@ -421,8 +422,8 @@ def clean_italian(word_frequency, filepath_exclude, filepath_include, filepath_d
     with load_file(filepath_dictionary) as fobj:
         dictionary_words = []
         for line in fobj:
-            if line[0] in letters and line.islower():
-                line = line.strip()
+            if line[0].lower() in letters:
+                line = line.lower().strip()
                 dictionary_words.append(line)
 
     for word in word_frequency:
@@ -493,8 +494,8 @@ def clean_german(word_frequency, filepath_exclude, filepath_include, filepath_di
     with load_file(filepath_dictionary) as fobj:
         dictionary_words = []
         for line in fobj:
-            if line[0] in letters and line.islower():
-                line = line.strip()
+            if line[0].lower() in letters:
+                line = line.lower().strip()
                 dictionary_words.append(line)
 
     for word in word_frequency:
@@ -565,8 +566,8 @@ def clean_french(word_frequency, filepath_exclude, filepath_include, filepath_di
     with load_file(filepath_dictionary) as fobj:
         dictionary_words = []
         for line in fobj:
-            if line[0] in letters and line.islower():
-                line = line.strip()
+            if line[0].lower() in letters:
+                line = line.lower().strip()
                 dictionary_words.append(line)
 
     for word in word_frequency:
@@ -637,8 +638,8 @@ def clean_portuguese(word_frequency, filepath_exclude, filepath_include, filepat
     with load_file(filepath_dictionary, encoding="latin-1") as fobj:
         dictionary_words = []
         for line in fobj:
-            if line[0] in letters and line.islower():
-                line = line.strip()
+            if line[0].lower() in letters:
+                line = line.lower().strip()
                 dictionary_words.append(line)
 
     for word in word_frequency:
@@ -1026,8 +1027,8 @@ def clean_dutch(word_frequency, filepath_exclude, filepath_include, filepath_dic
     with load_file(filepath_dictionary) as fobj:
         dictionary_words = []
         for line in fobj:
-            if line[0] in letters and line.islower():
-                line = line.strip()
+            if line[0].lower() in letters:
+                line = line.lower().strip()
                 dictionary_words.append(line)
 
     for word in word_frequency:

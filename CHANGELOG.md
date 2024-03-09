@@ -1,5 +1,9 @@
 # pyspellchecker
 
+## Version 0.8.2
+
+* Update dictionaries; see [issue #171](https://github.com/barrust/pyspellchecker/issues/171) and [discussion 172](https://github.com/barrust/pyspellchecker/discussions/172)
+
 ## Version 0.8.1
 
 * Update `en`, `es`, `fr`, and `it` to include country names; see [issue #168](https://github.com/barrust/pyspellchecker/issues/168)
