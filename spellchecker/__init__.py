@@ -1,15 +1,15 @@
-""" SpellChecker Module """
-from spellchecker.spellchecker import SpellChecker, WordFrequency
-from spellchecker.info import (
+"""SpellChecker Module"""
+
+from spellchecker.info import (  # noqa: F401
     __author__,
-    __maintainer__,
+    __bugtrack_url__,
+    __credits__,
     __email__,
     __license__,
-    __version__,
-    __credits__,
+    __maintainer__,
     __url__,
-    __bugtrack_url__
+    __version__,
 )
-
+from spellchecker.spellchecker import SpellChecker, WordFrequency
 
 __all__ = ["SpellChecker", "WordFrequency"]

@@ -1,4 +1,4 @@
-""" SpellChecker Information """
+"""SpellChecker Information"""
 
 __author__ = "Tyler Barrus"
 __maintainer__ = "Tyler Barrus"
