@@ -1,26 +1,26 @@
-""" Desc:   A script to automate the building of multiple dictionaries based on
-            known areas of concern due to the original source of the data. The
-            script can be run from the source directly (-P and -p) once a
-            sutable text file is obtained. It can also be run on a previously
-            generated word frequency list to remove known problem areas.
-    Author: Tyler Barrus
-    Notes:  The original inputs are from OpenSubtitles (http://opus.nlpl.eu/OpenSubtitles2018.php):
-            English Input:    http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.en.gz
-            Spanish Input:    http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.es.gz
-            German Input:     http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.de.gz
-            French Input:     http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.fr.gz
-            Portuguese Input: http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.pt.gz
-            Russian Input:    http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.ru.gz
-            Arabic Input:     http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.ar.gz
-            Basque Input:     http://opus.nlpl.eu/download.php?f=tiOpenSubtles/v2018/mono/OpenSubtitles.raw.eu.gz
-            Latvian Input:    https://huggingface.co/datasets/RaivisDejus/latvian-text
-            Dutch Input:      http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.nl.gz
-            Italian Input:    http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.it.gz
-    Requirements:
-            The script requires more than the standard library to run in its
-            entirety. You will also need to install the NLTK package to build a
-            dictionary from scratch. Otherwise, no additional packages are
-            required.
+"""Desc:   A script to automate the building of multiple dictionaries based on
+        known areas of concern due to the original source of the data. The
+        script can be run from the source directly (-P and -p) once a
+        sutable text file is obtained. It can also be run on a previously
+        generated word frequency list to remove known problem areas.
+Author: Tyler Barrus
+Notes:  The original inputs are from OpenSubtitles (http://opus.nlpl.eu/OpenSubtitles2018.php):
+        English Input:    http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.en.gz
+        Spanish Input:    http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.es.gz
+        German Input:     http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.de.gz
+        French Input:     http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.fr.gz
+        Portuguese Input: http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.pt.gz
+        Russian Input:    http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.ru.gz
+        Arabic Input:     http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.ar.gz
+        Basque Input:     http://opus.nlpl.eu/download.php?f=tiOpenSubtles/v2018/mono/OpenSubtitles.raw.eu.gz
+        Latvian Input:    https://huggingface.co/datasets/RaivisDejus/latvian-text
+        Dutch Input:      http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.nl.gz
+        Italian Input:    http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.it.gz
+Requirements:
+        The script requires more than the standard library to run in its
+        entirety. You will also need to install the NLTK package to build a
+        dictionary from scratch. Otherwise, no additional packages are
+        required.
 """
 
 import contextlib
@@ -60,8 +60,8 @@ def load_include_exclude(filename, encoding="utf-8"):
             if line[0] == "#":
                 continue
             line = line.strip().split()
-            for l in line:
-                yield l.strip().lower()
+            for ln in line:
+                yield ln.strip().lower()
 
 
 def export_word_frequency(filepath, word_frequency):
@@ -314,7 +314,7 @@ def clean_spanish(word_frequency, filepath_exclude, filepath_include, filepath_d
     # NOTE: the ü must be just after a g and before an e or i only (with or without accent)!
     misplaced_u = list()
     for key in word_frequency:
-        if not "ü" in key:
+        if "ü" not in key:
             continue
         idx = key.index("ü")
         if idx == 0 or idx == len(key) - 1:  # first or last letter
