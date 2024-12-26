@@ -11,5 +11,5 @@ jobs:
           python-version: "3.13"
       - uses: astral-sh/ruff-action@v2
         with:
-            args: "format --check --output-format github"
+            args: "check --output-format=github"
         continue-on-error: false
