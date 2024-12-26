@@ -11,5 +11,5 @@ jobs:
           python-version: "3.13"
       - uses: astral-sh/ruff-action@v3
         with:
-          args: "format --check"
+          args: "check --fix"
         continue-on-error: false
