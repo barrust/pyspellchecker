@@ -20,4 +20,3 @@ jobs:
       - name: Run Ruff format
         run: ruff format --check .
         continue-on-error: false
-
