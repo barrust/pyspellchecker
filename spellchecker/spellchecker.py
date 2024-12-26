@@ -513,7 +513,7 @@ class WordFrequency:
         self._total_words = sum(self._dictionary.values())
         self._unique_words = len(self._dictionary.keys())
         self._letters = set()
-        for key in self._dictionary:
-            if len(key) > self._longest_word_length:
-                self._longest_word_length = len(key)
-            self._letters.update(key)
+        for l in self._dictionary:
+            if len(l) > self._longest_word_length:
+                self._longest_word_length = len(l)
+            self._letters.update(l)
