@@ -16,6 +16,7 @@
             Latvian Input:    https://huggingface.co/datasets/RaivisDejus/latvian-text
             Dutch Input:      http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.nl.gz
             Italian Input:    http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.it.gz
+            Persian Input:    https://jon.dehdari.org/corpora/
     Requirements:
             The script requires more than the standard library to run in its
             entirety. You will also need to install the NLTK package to build a
@@ -1051,6 +1052,59 @@ def clean_dutch(word_frequency, filepath_exclude, filepath_include, filepath_dic
     return word_frequency
 
 
+def clean_persian(word_frequency, filepath_exclude, filepath_include):
+    """Clean a Persian word frequency list
+
+    Args:
+        word_frequency (Counter):
+        filepath_exclude (str):
+        filepath_include (str):
+    """
+    letters = set("آابپتثجچحخدذرزژسشصضطظعغفقکگلمنوهی")
+
+    # remove words with invalid characters
+    invalid_chars = list()
+    for key in word_frequency:
+        kl = set(key)
+        if kl.issubset(letters):
+            continue
+        invalid_chars.append(key)
+    for misfit in invalid_chars:
+        word_frequency.pop(misfit)
+
+    # remove ellipses
+    ellipses = list()
+    for key in word_frequency:
+        if ".." in key:
+            ellipses.append(key)
+    for misfit in ellipses:
+        word_frequency.pop(misfit)
+
+    # TODO: other possible fixes?
+
+    # remove small numbers
+    small_frequency = list()
+    for key in word_frequency:
+        if word_frequency[key] <= MINIMUM_FREQUENCY:
+            small_frequency.append(key)
+    for misfit in small_frequency:
+        word_frequency.pop(misfit)
+
+    # remove flagged misspellings
+    for line in load_include_exclude(filepath_exclude):
+        if line in word_frequency:
+            word_frequency.pop(line)
+
+    # Add known missing words back in (ugh)
+    for line in load_include_exclude(filepath_include):
+        if line in word_frequency:
+            print("{} is already found in the dictionary! Skipping!".format(line))
+        else:
+            word_frequency[line] = MINIMUM_FREQUENCY
+
+    return word_frequency
+
+
 def _parse_args():
     """parse arguments for command-line usage"""
     import argparse
@@ -1063,7 +1117,7 @@ def _parse_args():
         "--language",
         required=True,
         help="The language being built",
-        choices=["en", "es", "de", "fr", "pt", "ru", "ar", "lv", "eu", "nl", "it"],
+        choices=["en", "es", "de", "fr", "pt", "ru", "ar", "lv", "eu", "nl", "it", "fa"],
     )
     parser.add_argument(
         "-f", "--file-path", help="The path to the downloaded text file OR the saved word frequency json"
@@ -1154,6 +1208,8 @@ if __name__ == "__main__":
     elif args.language == "nl":
         dict_path = os.path.abspath("{}/levidromelist-dicts/dutch.txt".format(data_path))
         word_frequency = clean_dutch(word_frequency, exclude_filepath, include_filepath, dict_path)
+    elif args.language == "fa":
+        word_frequency = clean_persian(word_frequency, exclude_filepath, include_filepath)
 
     # export word frequency for review!
     word_frequency_path = os.path.join(script_path, "{}.json".format(args.language))
