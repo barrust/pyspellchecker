@@ -16,7 +16,7 @@
             Latvian Input:    https://huggingface.co/datasets/RaivisDejus/latvian-text
             Dutch Input:      http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.nl.gz
             Italian Input:    http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.it.gz
-            Persian Input:    https://jon.dehdari.org/corpora/
+            Persian Input:    https://drive.google.com/open?id=1mBeSSrEnajB2qxYs67tQbEDWmpRMZ0U0
     Requirements:
             The script requires more than the standard library to run in its
             entirety. You will also need to install the NLTK package to build a
