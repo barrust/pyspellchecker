@@ -76,7 +76,7 @@ def ensure_unicode(value: KeyT, encoding: str = "utf-8") -> str:
     if isinstance(value, bytes):
         return value.decode(encoding)
     elif isinstance(value, list):
-        raise TypeError(f"the provided value {value} is a list")
+        raise TypeError(f"The provided value {value} is a not of type str or bytes")
     return value
 
 
