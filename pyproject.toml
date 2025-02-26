@@ -24,14 +24,14 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 
 
 [tool.setuptools.dynamic]
@@ -43,22 +43,8 @@ homepage = "https://github.com/barrust/pyspellchecker"
 bug-tracker = "https://github.com/barrust/pyspellchecker/issues"
 documentation = "https://pyspellchecker.readthedocs.io/"
 
-
-[tool.poetry]
-packages = [{ include = "spellchecker" }]
-
-[tool.poetry.dev-dependencies]
-pre-commit = { version = ">=2.18.1", python = "^3.6.1" }
-black = { version = "^20.8b1", python = "^3.6" }
-isort = { version = "^5.6.4", python = "^3.6" }
-pytest = { version = "^6.1.1", python = "^3.6" }
-flake8 = { version = "^3.6.0", python = "^3.6" }
-
 [tool.setuptools.packages.find]
 include = ["spellchecker", "spellchecker.*"]
-
-[tool.flit.module]
-name = "spellchecker"
 
 [tool.distutils.bdist_wheel]
 universal = 0
