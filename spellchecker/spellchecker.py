@@ -1,5 +1,6 @@
 """ SpellChecker Module; simple, intuitive spell checker based on the post by
     Peter Norvig. See: https://norvig.com/spell-correct.html """
+
 import gzip
 import json
 import pkgutil
@@ -18,8 +19,8 @@ class SpellChecker:
 
     Args:
         language (str): The language of the dictionary to load or None for no dictionary. Supported languages are \
-            `en`, `es`, `it`, `de`, `fr`, `pt`, `ru`, `lv`, `eu`, and `nl`. Defaults to `en`. A list of languages \
-            may be provided and all languages will be loaded.
+            `en`, `es`, `it`, `de`, `fr`, `pt`, `ru`, `lv`, `eu`, `nl` and `fa`. Defaults to `en`. A list of \
+            languages may be provided and all languages will be loaded.
         local_dictionary (str): The path to a locally stored word frequency dictionary; if provided, no language \
             will be loaded
         distance (int): The edit distance to use. Defaults to 2.
@@ -82,7 +83,7 @@ class SpellChecker:
     @classmethod
     def languages(cls) -> typing.Iterable[str]:
         """list: A list of all official languages supported by the library"""
-        return ["en", "es", "fr", "it", "pt", "de", "ru", "ar", "lv", "eu", "nl"]
+        return ["en", "es", "fr", "it", "pt", "de", "ru", "ar", "lv", "eu", "nl", "fa"]
 
     @property
     def word_frequency(self) -> "WordFrequency":
