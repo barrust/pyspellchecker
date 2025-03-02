@@ -151,6 +151,7 @@ The currently supported dictionaries are:
 * Basque        - 'eu'
 * Latvian       - 'lv'
 * Dutch         - 'nl'
+* Persian       - 'fa'
 
 Dictionary Creation and Updating
 -------------------------------------------------------------------------------
