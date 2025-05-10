@@ -1,6 +1,3 @@
-""" SpellChecker Module; simple, intuitive spell checker based on the post by
-    Peter Norvig. See: https://norvig.com/spell-correct.html """
-
 import gzip
 import json
 import pkgutil
@@ -509,11 +506,14 @@ class WordFrequency:
 
     def _update_dictionary(self) -> None:
         """Update the word frequency object"""
-        self._longest_word_length = 0
+        if not self._dictionary:
+            self._longest_word_length = 0
+            self._total_words = 0
+            self._unique_words = 0
+            self._letters = set()
+            return
+        keys = self._dictionary.keys()
+        self._longest_word_length = max(map(len, keys))
         self._total_words = sum(self._dictionary.values())
-        self._unique_words = len(self._dictionary.keys())
-        self._letters = set()
-        for key in self._dictionary:
-            if len(key) > self._longest_word_length:
-                self._longest_word_length = len(key)
-            self._letters.update(key)
+        self._unique_words = len(keys)
+        self._letters = set().union(*keys)
