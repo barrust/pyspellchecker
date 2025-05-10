@@ -1,3 +1,6 @@
+""" SpellChecker Module; simple, intuitive spell checker based on the post by
+    Peter Norvig. See: https://norvig.com/spell-correct.html """
+
 import gzip
 import json
 import pkgutil
