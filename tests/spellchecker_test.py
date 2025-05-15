@@ -540,3 +540,11 @@ class TestSpellChecker(unittest.TestCase):
             self.assertEqual(spell.candidates("nan"), {"nan"})
             spell.word_frequency.remove("nan")
         self.assertNotEqual(spell.candidates("nan"), {"nan"})
+
+    def test_empty_dictionary(self):
+        """ """
+        spell = SpellChecker(language=None)
+        spell.word_frequency.remove("something")
+        self.assertEqual(spell.word_frequency.longest_word_length, 0)
+        self.assertEqual(spell.word_frequency.total_words, 0)
+        self.assertEqual(spell.word_frequency.letters, set())
