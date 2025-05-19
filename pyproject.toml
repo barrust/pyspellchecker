@@ -2,7 +2,7 @@
 name = "pyspellchecker"
 dynamic = ["version"]
 authors = [{ name = "Tyler Barrus", email = "barrust@gmail.com" }]
-license = { text = "MIT" }
+license = "MIT"
 description = "Pure python spell checker based on work by Peter Norvig"
 keywords = [
     "python",
@@ -20,8 +20,6 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "Topic :: Software Development :: Libraries",
     "Topic :: Utilities",
-    "License :: OSI Approved",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
@@ -46,9 +44,6 @@ documentation = "https://pyspellchecker.readthedocs.io/"
 [tool.setuptools.packages.find]
 include = ["spellchecker", "spellchecker.*"]
 
-[tool.distutils.bdist_wheel]
-universal = 0
-
 [tool.pep8]
 max-line-length = 120
 
@@ -71,5 +66,5 @@ max-line-length = 120
 max-args = 6
 
 [build-system]
-requires = ["setuptools>=61.2.0", "wheel"]
+requires = ["setuptools>=77.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
