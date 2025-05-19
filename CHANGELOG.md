@@ -1,9 +1,10 @@
 # pyspellchecker
 
-## Future Release
+## Version 0.8.3
 
 * Add `Persian` dictionary; thanks [@ashkanfeyzollahi](https://github.com/ashkanfeyzollahi)
 * Add type check for data being passed to `spell.known` and `spell.unknown` functions; thanks [@arvinnick](https://github.com/arvinnick)
+* Minor optimization on updating dictionaries; thanks [@RDxR10](https://github.com/RDxR10)
 
 ## Version 0.8.2
 
