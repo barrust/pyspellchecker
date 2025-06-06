@@ -1,7 +1,7 @@
 """ Desc:   A script to automate the building of multiple dictionaries based on
             known areas of concern due to the original source of the data. The
             script can be run from the source directly (-P and -p) once a
-            sutable text file is obtained. It can also be run on a previously
+            suitable text file is obtained. It can also be run on a previously
             generated word frequency list to remove known problem areas.
     Author: Tyler Barrus
     Notes:  The original inputs are from OpenSubtitles (http://opus.nlpl.eu/OpenSubtitles2018.php):
@@ -97,7 +97,7 @@ def build_word_frequency(filepath, language, output_path):
         from nltk.tokenize import WhitespaceTokenizer  # type: ignore
         from nltk.tokenize.toktok import ToktokTokenizer  # type: ignore
     except ImportError as ex:
-        raise ImportError("To build a dictioary from scratch, NLTK is required!\n{}".format(ex.message))
+        raise ImportError("To build a dictionary from scratch, NLTK is required!\n{}".format(ex.message))
 
     nltk.download("averaged_perceptron_tagger")
     word_frequency = Counter()
@@ -181,7 +181,7 @@ def clean_english(word_frequency, filepath_exclude, filepath_include, filepath_d
     for misfit in no_vowels:
         word_frequency.pop(misfit)
 
-    # Remove double punctuations (a-a-a-able) or (a'whoppinganda'whumping)
+    # Remove double punctuation (a-a-a-able) or (a'whoppinganda'whumping)
     double_punc = list()
     for key in word_frequency:
         if key.count("'") > 1 or key.count("-") > 1 or key.count(".") > 2:
@@ -303,7 +303,7 @@ def clean_spanish(word_frequency, filepath_exclude, filepath_include, filepath_d
         word_frequency.pop(misfit)
 
     # fix issues with more than one accent marks
-    # NOTE: Not sure there are any occurances but this is not possible as a valid word!
+    # NOTE: Not sure there are any occurrences but this is not possible as a valid word!
     duplicate_accents = list()
     for key in word_frequency:
         if (key.count("á") + key.count("é") + key.count("í") + key.count("ó") + key.count("ú")) > 1:
@@ -951,7 +951,7 @@ def clean_dutch(word_frequency, filepath_exclude, filepath_include, filepath_dic
     for misfit in no_vowels:
         word_frequency.pop(misfit)
 
-    # Remove double punctuations (a-a-a-able) or (a'whoppinganda'whumping)
+    # Remove double punctuation (a-a-a-able) or (a'whoppinganda'whumping)
     double_punc = list()
     for key in word_frequency:
         if key.count("'") > 1 or key.count("-") > 1 or key.count(".") > 2:
