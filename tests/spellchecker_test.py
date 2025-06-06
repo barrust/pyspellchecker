@@ -356,7 +356,7 @@ class TestSpellChecker(unittest.TestCase):
         self.assertIsNone(spell.correction("bobbys"))
 
     def test_extremely_large_words(self):
-        """test when a word is just extreamly large"""
+        """test when a word is just extremely large"""
         spell = SpellChecker()
         horrible_word = "thisisnotarealisticwordthisisnotarealisticwordthisisnotarealisticwordthisisnotarealisticword"
         self.assertEqual(spell.correction(horrible_word), horrible_word)
