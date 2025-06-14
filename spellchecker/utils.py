@@ -1,66 +1,14 @@
 """ Additional utility functions """
 import contextlib
-import functools
 import gzip
 import re
 import typing
-import warnings
 from pathlib import Path
 
 from spellchecker.info import __version__
 
 KeyT = typing.Union[str, bytes]
 PathOrStr = typing.Union[Path, str]
-
-
-def fail_after(version: str) -> typing.Callable:
-    """Decorator to add to tests to ensure that they fail if a deprecated
-    feature is not removed before the specified version
-
-    Args:
-        version (str): The version to check against"""
-
-    def decorator_wrapper(func):
-        @functools.wraps(func)
-        def test_inner(*args, **kwargs):
-            if [int(x) for x in version.split(".")] <= [int(x) for x in __version__.split(".")]:
-                msg = (
-                    f"The function {func.__name__} must be fully removed as it is deprecated"
-                    f" and must be removed by version {version}"
-                )
-                raise AssertionError(msg)
-            return func(*args, **kwargs)
-
-        return test_inner
-
-    return decorator_wrapper
-
-
-def deprecated(message: str = "") -> typing.Callable:
-    """A simplistic decorator to mark functions as deprecated. The function
-    will pass a message to the user on the first use of the function
-
-    Args:
-        message (str): The message to display if the function is deprecated
-    """
-
-    def decorator_wrapper(func):
-        @functools.wraps(func)
-        def function_wrapper(*args, **kwargs):
-            func_name = func.__name__
-            if func_name not in function_wrapper.deprecated_items:
-                msg = f"Function {func.__name__} is now deprecated! {message}"
-                warnings.warn(msg, category=DeprecationWarning, stacklevel=2)
-                function_wrapper.deprecated_items.add(func_name)
-
-            return func(*args, **kwargs)
-
-        # set this up the first time the decorator is called
-        function_wrapper.deprecated_items = set()
-
-        return function_wrapper
-
-    return decorator_wrapper
 
 
 def ensure_unicode(value: KeyT, encoding: str = "utf-8") -> str:
