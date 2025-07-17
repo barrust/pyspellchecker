@@ -553,5 +553,9 @@ class TestSpellChecker(unittest.TestCase):
         """Test diacritics mismatch"""
         spell = SpellChecker(language="fr")
         self.assertEqual(spell.correction("emission"), "émission")
-        # without diacritics check, mission would be returned
+        self.assertEqual(spell.correction("edit"), "édit")
+        self.assertEqual(spell.correction("emoi"), "émoi")
+        self.assertEqual(spell.correction("evite"), "évite")
+        # show that the diacritics are preferred over larger word frequency
+        # both are valid corrections with edit distance 1
         self.assertLess(spell.word_frequency["émission"], spell.word_frequency["mission"])
