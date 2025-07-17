@@ -542,9 +542,20 @@ class TestSpellChecker(unittest.TestCase):
         self.assertNotEqual(spell.candidates("nan"), {"nan"})
 
     def test_empty_dictionary(self):
-        """ """
+        """ Test empty dictionary properties """
         spell = SpellChecker(language=None)
         spell.word_frequency.remove("something")
         self.assertEqual(spell.word_frequency.longest_word_length, 0)
         self.assertEqual(spell.word_frequency.total_words, 0)
         self.assertEqual(spell.word_frequency.letters, set())
+
+    def test_diacritics_mismatch(self):
+        """Test diacritics mismatch"""
+        spell = SpellChecker(language="fr")
+        self.assertEqual(spell.correction("emission"), "émission")
+        self.assertEqual(spell.correction("edit"), "édit")
+        self.assertEqual(spell.correction("emoi"), "émoi")
+        self.assertEqual(spell.correction("evite"), "évite")
+        # show that the diacritics are preferred over larger word frequency
+        # both are valid corrections with edit distance 1
+        self.assertLess(spell.word_frequency["émission"], spell.word_frequency["mission"])
