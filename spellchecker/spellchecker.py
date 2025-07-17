@@ -8,6 +8,7 @@ import string
 import typing
 from collections import Counter
 from collections.abc import Iterable
+import unicodedata
 
 from spellchecker.utils import KeyT, PathOrStr, _parse_into_words, ensure_unicode, load_file, write_file
 
@@ -155,10 +156,17 @@ class SpellChecker:
             word (str): The word to correct
         Returns:
             str: The most likely candidate or None if no correction is present"""
+        def remove_accents(input_str):  # source: https://stackoverflow.com/a/517974
+            nfkd_form = unicodedata.normalize('NFKD', input_str)
+            return u"".join([c for c in nfkd_form if not unicodedata.combining(c)])
         word = ensure_unicode(word)
         candidates = self.candidates(word)
         if not candidates:
             return None
+        # Prefer exact matches with incorrect diacritics
+        diacritics_candidates = [c for c in candidates if remove_accents(c) == remove_accents(word)]
+        if diacritics_candidates:
+            return max(sorted(list(diacritics_candidates)), key=self.__getitem__)
         return max(sorted(list(candidates)), key=self.__getitem__)
 
     def candidates(self, word: KeyT) -> typing.Optional[typing.Set[str]]:
