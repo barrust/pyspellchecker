@@ -156,18 +156,16 @@ class SpellChecker:
             word (str): The word to correct
         Returns:
             str: The most likely candidate or None if no correction is present"""
-        def remove_accents(input_str):  # source: https://stackoverflow.com/a/517974
-            nfkd_form = unicodedata.normalize('NFKD', input_str)
-            return u"".join([c for c in nfkd_form if not unicodedata.combining(c)])
         word = ensure_unicode(word)
         candidates = self.candidates(word)
         if not candidates:
             return None
         # Prefer exact matches with incorrect diacritics
-        diacritics_candidates = [c for c in candidates if remove_accents(c) == remove_accents(word)]
+        word_no_accents = self._remove_diacritics(word)
+        diacritics_candidates = [c for c in candidates if self._remove_diacritics(c) == word_no_accents]
         if diacritics_candidates:
-            return max(sorted(list(diacritics_candidates)), key=self.__getitem__)
-        return max(sorted(list(candidates)), key=self.__getitem__)
+            return max(diacritics_candidates, key=self.__getitem__)
+        return max(candidates, key=self.__getitem__)
 
     def candidates(self, word: KeyT) -> typing.Optional[typing.Set[str]]:
         """Generate possible spelling corrections for the provided word up to
@@ -259,6 +257,16 @@ class SpellChecker:
         tmp_words = [ensure_unicode(w) for w in words]
         tmp = [w if self._case_sensitive else w.lower() for w in tmp_words if self._check_if_should_check(w)]
         return [e2 for e1 in tmp for e2 in self.known(self.edit_distance_1(e1))]
+
+    def _remove_diacritics(self, input_str: KeyT) -> str:
+        """Remove diacritics from the input string
+
+        Args:
+            input_str (str): The string from which to remove diacritics
+        Returns:
+            str: The string with diacritics removed"""
+        nfkd_form = unicodedata.normalize('NFKD', ensure_unicode(input_str))
+        return "".join([c for c in nfkd_form if not unicodedata.combining(c)])
 
     def _check_if_should_check(self, word: str) -> bool:
         if len(word) == 1 and word in string.punctuation:
