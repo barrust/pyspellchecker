@@ -1,5 +1,9 @@
 # pyspellchecker
 
+## Version 0.8.4
+
+* Prefer diacritics fix over pure word frequency; see [issue #188](https://github.com/barrust/pyspellchecker/issues/188); thanks [@7heo](https://github.com/7heo)
+
 ## Version 0.8.3
 
 * Add `Persian` dictionary; thanks [@ashkanfeyzollahi](https://github.com/ashkanfeyzollahi)
