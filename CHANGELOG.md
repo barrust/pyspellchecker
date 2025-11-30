@@ -1,5 +1,9 @@
 # pyspellchecker
 
+## Version 0.8.4
+
+* Support diacritics; see [PR #189](https://github.com/barrust/pyspellchecker/pull/189); thanks [7heo](https://github.com/7heo)
+
 ## Version 0.8.3
 
 * Add `Persian` dictionary; thanks [@ashkanfeyzollahi](https://github.com/ashkanfeyzollahi)
