@@ -1,4 +1,4 @@
-""" Unittest class """
+"""Unittest class"""
 
 import os
 import unittest
@@ -147,6 +147,30 @@ class TestSpellChecker(unittest.TestCase):
         except ValueError as ex:
             msg = "The provided dictionary language (no) does not exist!"
             self.assertEqual(str(ex), msg)
+
+    def test_case_sensitive_validation(self):
+        """test that case_sensitive raises ValueError when language is not None"""
+        with self.assertRaises(ValueError) as cm:
+            SpellChecker(language="en", case_sensitive=True)
+        self.assertEqual(str(cm.exception), "case_sensitive can only be True when not using a language dictionary.")
+
+        # Test that it works with language=None
+        spell = SpellChecker(language=None, case_sensitive=True)
+        self.assertTrue(spell._case_sensitive)
+
+        # Test with local_dictionary and language=None
+        here = os.path.dirname(__file__)
+        filepath = f"{here}/resources/small_dictionary.json"
+        spell = SpellChecker(language=None, local_dictionary=filepath, case_sensitive=True)
+        self.assertTrue(spell._case_sensitive)
+
+    def test_mutual_exclusive_language_local_dictionary(self):
+        """test that language and local_dictionary are mutually exclusive"""
+        here = os.path.dirname(__file__)
+        filepath = f"{here}/resources/small_dictionary.json"
+        with self.assertRaises(ValueError) as cm:
+            SpellChecker(language="en", local_dictionary=filepath)
+        self.assertEqual(str(cm.exception), "Cannot specify both 'language' and 'local_dictionary'. Choose one.")
 
     def test_load_external_dictionary(self):
         """test loading a local dictionary"""
@@ -542,7 +566,7 @@ class TestSpellChecker(unittest.TestCase):
         self.assertNotEqual(spell.candidates("nan"), {"nan"})
 
     def test_empty_dictionary(self):
-        """ Test empty dictionary properties """
+        """Test empty dictionary properties"""
         spell = SpellChecker(language=None)
         spell.word_frequency.remove("something")
         self.assertEqual(spell.word_frequency.longest_word_length, 0)
