@@ -1,27 +1,27 @@
-""" Desc:   A script to automate the building of multiple dictionaries based on
-            known areas of concern due to the original source of the data. The
-            script can be run from the source directly (-P and -p) once a
-            suitable text file is obtained. It can also be run on a previously
-            generated word frequency list to remove known problem areas.
-    Author: Tyler Barrus
-    Notes:  The original inputs are from OpenSubtitles (http://opus.nlpl.eu/OpenSubtitles2018.php):
-            English Input:    http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.en.gz
-            Spanish Input:    http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.es.gz
-            German Input:     http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.de.gz
-            French Input:     http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.fr.gz
-            Portuguese Input: http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.pt.gz
-            Russian Input:    http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.ru.gz
-            Arabic Input:     http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.ar.gz
-            Basque Input:     http://opus.nlpl.eu/download.php?f=tiOpenSubtles/v2018/mono/OpenSubtitles.raw.eu.gz
-            Latvian Input:    https://huggingface.co/datasets/RaivisDejus/latvian-text
-            Dutch Input:      http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.nl.gz
-            Italian Input:    http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.it.gz
-            Persian Input:    https://drive.google.com/open?id=1mBeSSrEnajB2qxYs67tQbEDWmpRMZ0U0
-    Requirements:
-            The script requires more than the standard library to run in its
-            entirety. You will also need to install the NLTK package to build a
-            dictionary from scratch. Otherwise, no additional packages are
-            required.
+"""Desc:   A script to automate the building of multiple dictionaries based on
+        known areas of concern due to the original source of the data. The
+        script can be run from the source directly (-P and -p) once a
+        suitable text file is obtained. It can also be run on a previously
+        generated word frequency list to remove known problem areas.
+Author: Tyler Barrus
+Notes:  The original inputs are from OpenSubtitles (http://opus.nlpl.eu/OpenSubtitles2018.php):
+        English Input:    http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.en.gz
+        Spanish Input:    http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.es.gz
+        German Input:     http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.de.gz
+        French Input:     http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.fr.gz
+        Portuguese Input: http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.pt.gz
+        Russian Input:    http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.ru.gz
+        Arabic Input:     http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.ar.gz
+        Basque Input:     http://opus.nlpl.eu/download.php?f=tiOpenSubtles/v2018/mono/OpenSubtitles.raw.eu.gz
+        Latvian Input:    https://huggingface.co/datasets/RaivisDejus/latvian-text
+        Dutch Input:      http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.nl.gz
+        Italian Input:    http://opus.nlpl.eu/download.php?f=OpenSubtitles/v2018/mono/OpenSubtitles.raw.it.gz
+        Persian Input:    https://drive.google.com/open?id=1mBeSSrEnajB2qxYs67tQbEDWmpRMZ0U0
+Requirements:
+        The script requires more than the standard library to run in its
+        entirety. You will also need to install the NLTK package to build a
+        dictionary from scratch. Otherwise, no additional packages are
+        required.
 """
 
 import contextlib
@@ -51,7 +51,7 @@ def load_file(filename, encoding="utf-8"):
         with gzip.open(filename, mode="rt", encoding=encoding) as fobj:
             yield fobj
     else:
-        with open(filename, mode="r", encoding=encoding) as fobj:
+        with open(filename, encoding=encoding) as fobj:
             yield fobj
 
 
@@ -61,8 +61,8 @@ def load_include_exclude(filename, encoding="utf-8"):
             if line[0] == "#":
                 continue
             line = line.strip().split()
-            for l in line:
-                yield l.strip().lower()
+            for ln in line:
+                yield ln.strip().lower()
 
 
 def export_word_frequency(filepath, word_frequency):
@@ -97,14 +97,11 @@ def build_word_frequency(filepath, language, output_path):
         from nltk.tokenize import WhitespaceTokenizer  # type: ignore
         from nltk.tokenize.toktok import ToktokTokenizer  # type: ignore
     except ImportError as ex:
-        raise ImportError("To build a dictionary from scratch, NLTK is required!\n{}".format(ex.message))
+        raise ImportError(f"To build a dictionary from scratch, NLTK is required!\n{ex}") from ex
 
     nltk.download("averaged_perceptron_tagger")
     word_frequency = Counter()
-    if language in ["es", "it"]:
-        tok = ToktokTokenizer()
-    else:
-        tok = WhitespaceTokenizer()
+    tok = ToktokTokenizer() if language in ["es", "it"] else WhitespaceTokenizer()
 
     idx = 0
     with load_file(filepath, "utf-8") as fobj:
@@ -118,7 +115,7 @@ def build_word_frequency(filepath, language, output_path):
             words = [
                 word[0].lower()
                 for word in tagged_sent
-                if word[0] and not word[1] == "NNP" and word[0][0].isalpha() and word[0][-1].isalpha()
+                if word[0] and word[1] != "NNP" and word[0][0].isalpha() and word[0][-1].isalpha()
             ]
 
             # print(words)
@@ -128,9 +125,9 @@ def build_word_frequency(filepath, language, output_path):
             idx += 1
 
             if idx % 100000 == 0:
-                print("completed: {} rows".format(idx))
+                print(f"completed: {idx} rows")
         # end file loop
-    print("completed: {} rows".format(idx))
+    print(f"completed: {idx} rows")
     export_word_frequency(output_path, word_frequency)
 
     return word_frequency
@@ -200,15 +197,14 @@ def clean_english(word_frequency, filepath_exclude, filepath_include, filepath_d
     # leading or trailing doubles a, "a'", "zz", ending y's
     doubles = list()
     for key in word_frequency:
-        if key.startswith("aa") and key not in ("aardvark", "aardvarks"):
-            doubles.append(key)
-        elif key.startswith("a'"):
-            doubles.append(key)
-        elif key.startswith("zz"):
-            doubles.append(key)
-        elif key.endswith("yy"):
-            doubles.append(key)
-        elif key.endswith("hh"):
+        if (
+            key.startswith("aa")
+            and key not in ("aardvark", "aardvarks")
+            or key.startswith("a'")
+            or key.startswith("zz")
+            or key.endswith("yy")
+            or key.endswith("hh")
+        ):
             doubles.append(key)
     for misfit in doubles:
         word_frequency.pop(misfit)
@@ -216,24 +212,26 @@ def clean_english(word_frequency, filepath_exclude, filepath_include, filepath_d
     # common missing spaces
     missing_spaces = list()
     for key in word_frequency:
-        if key.startswith("about") and key != "about":
-            missing_spaces.append(key)
-        elif key.startswith("above") and key != "above":
-            missing_spaces.append(key)
-        elif key.startswith("after") and key != "after":
-            missing_spaces.append(key)
-        elif key.startswith("against") and key != "against":
-            missing_spaces.append(key)
-        elif key.startswith("all") and word_frequency[key] < 15:
-            missing_spaces.append(key)
-        elif key.startswith("almost") and key != "almost":
-            missing_spaces.append(key)
-        # This one has LOTS of possibilities...
-        elif key.startswith("to") and word_frequency[key] < 25:
-            missing_spaces.append(key)
-        elif key.startswith("can't") and key != "can't":
-            missing_spaces.append(key)
-        elif key.startswith("i'm") and key != "i'm":
+        if (
+            key.startswith("about")
+            and key != "about"
+            or key.startswith("above")
+            and key != "above"
+            or key.startswith("after")
+            and key != "after"
+            or key.startswith("against")
+            and key != "against"
+            or key.startswith("all")
+            and word_frequency[key] < 15
+            or key.startswith("almost")
+            and key != "almost"
+            or key.startswith("to")
+            and word_frequency[key] < 25
+            or key.startswith("can't")
+            and key != "can't"
+            or key.startswith("i'm")
+            and key != "i'm"
+        ):
             missing_spaces.append(key)
     for misfit in missing_spaces:
         word_frequency.pop(misfit)
@@ -275,7 +273,7 @@ def clean_english(word_frequency, filepath_exclude, filepath_include, filepath_d
     # Add known missing words back in (ugh)
     for line in load_include_exclude(filepath_include):
         if line in word_frequency:
-            print("{} is already found in the dictionary! Skipping!".format(line))
+            print(f"{line} is already found in the dictionary! Skipping!")
         else:
             word_frequency[line] = MINIMUM_FREQUENCY
 
@@ -315,7 +313,7 @@ def clean_spanish(word_frequency, filepath_exclude, filepath_include, filepath_d
     # NOTE: the ü must be just after a g and before an e or i only (with or without accent)!
     misplaced_u = list()
     for key in word_frequency:
-        if not "ü" in key:
+        if "ü" not in key:
             continue
         idx = key.index("ü")
         if idx == 0 or idx == len(key) - 1:  # first or last letter
@@ -332,7 +330,7 @@ def clean_spanish(word_frequency, filepath_exclude, filepath_include, filepath_d
         if not key.endswith("cion"):
             continue
         base = key[:-4]
-        n_key = "{}ción".format(base)
+        n_key = f"{base}ción"
         if n_key in word_frequency:
             cion_issues.append(key)
     for misfit in cion_issues:
@@ -383,7 +381,7 @@ def clean_spanish(word_frequency, filepath_exclude, filepath_include, filepath_d
     # Add known missing words back in (ugh)
     for line in load_include_exclude(filepath_include):
         if line in word_frequency:
-            print("{} is already found in the dictionary! Skipping!".format(line))
+            print(f"{line} is already found in the dictionary! Skipping!")
         else:
             word_frequency[line] = MINIMUM_FREQUENCY
 
@@ -440,7 +438,7 @@ def clean_italian(word_frequency, filepath_exclude, filepath_include, filepath_d
     # Add known missing words back in (ugh)
     for line in load_include_exclude(filepath_include):
         if line in word_frequency:
-            print("{} is already found in the dictionary! Skipping!".format(line))
+            print(f"{line} is already found in the dictionary! Skipping!")
         else:
             word_frequency[line] = MINIMUM_FREQUENCY
 
@@ -512,7 +510,7 @@ def clean_german(word_frequency, filepath_exclude, filepath_include, filepath_di
     # Add known missing words back in (ugh)
     for line in load_include_exclude(filepath_include):
         if line in word_frequency:
-            print("{} is already found in the dictionary! Skipping!".format(line))
+            print(f"{line} is already found in the dictionary! Skipping!")
         else:
             word_frequency[line] = MINIMUM_FREQUENCY
 
@@ -584,7 +582,7 @@ def clean_french(word_frequency, filepath_exclude, filepath_include, filepath_di
     # Add known missing words back in (ugh)
     for line in load_include_exclude(filepath_include):
         if line in word_frequency:
-            print("{} is already found in the dictionary! Skipping!".format(line))
+            print(f"{line} is already found in the dictionary! Skipping!")
         else:
             word_frequency[line] = MINIMUM_FREQUENCY
 
@@ -656,7 +654,7 @@ def clean_portuguese(word_frequency, filepath_exclude, filepath_include, filepat
     # Add known missing words back in (ugh)
     for line in load_include_exclude(filepath_include):
         if line in word_frequency:
-            print("{} is already found in the dictionary! Skipping!".format(line))
+            print(f"{line} is already found in the dictionary! Skipping!")
         else:
             word_frequency[line] = MINIMUM_FREQUENCY
 
@@ -703,9 +701,12 @@ def clean_russian(word_frequency, filepath_exclude, filepath_include):
     # leading or trailing doubles a, "a'", "zz", ending y's
     doubles = list()
     for key in word_frequency:
-        if key.startswith("аа") and key not in ("аарон", "аарона", "аарону"):
-            doubles.append(key)
-        elif key.startswith("ээ") and key not in ("ээг"):
+        if (
+            key.startswith("аа")
+            and key not in ("аарон", "аарона", "аарону")
+            or key.startswith("ээ")
+            and key not in ("ээг")
+        ):
             doubles.append(key)
     for misfit in doubles:
         word_frequency.pop(misfit)
@@ -728,7 +729,7 @@ def clean_russian(word_frequency, filepath_exclude, filepath_include):
     # Add known missing words back in (ugh)
     for line in load_include_exclude(filepath_include):
         if line in word_frequency:
-            print("{} is already found in the dictionary! Skipping!".format(line))
+            print(f"{line} is already found in the dictionary! Skipping!")
         else:
             word_frequency[line] = MINIMUM_FREQUENCY
 
@@ -781,7 +782,7 @@ def clean_arabic(word_frequency, filepath_exclude, filepath_include):
     # Add known missing words back in (ugh)
     for line in load_include_exclude(filepath_include):
         if line in word_frequency:
-            print("{} is already found in the dictionary! Skipping!".format(line))
+            print(f"{line} is already found in the dictionary! Skipping!")
         else:
             word_frequency[line] = MINIMUM_FREQUENCY
 
@@ -834,7 +835,7 @@ def clean_basque(word_frequency, filepath_exclude, filepath_include):
     # Add known missing words back in (ugh)
     for line in load_include_exclude(filepath_include):
         if line in word_frequency:
-            print("{} is already found in the dictionary! Skipping!".format(line))
+            print(f"{line} is already found in the dictionary! Skipping!")
         else:
             word_frequency[line] = MINIMUM_FREQUENCY
 
@@ -882,9 +883,7 @@ def clean_latvian(word_frequency, filepath_exclude, filepath_include):
     # leading or trailing doubles aa or ii
     doubles = list()
     for key in word_frequency:
-        if key.startswith("аа"):
-            doubles.append(key)
-        elif key.startswith("ii"):
+        if key.startswith("аа") or key.startswith("ii"):
             doubles.append(key)
     for misfit in doubles:
         word_frequency.pop(misfit)
@@ -915,7 +914,7 @@ def clean_latvian(word_frequency, filepath_exclude, filepath_include):
     # Add known missing words back in (ugh)
     for line in load_include_exclude(filepath_include):
         if line in word_frequency:
-            print("{} is already found in the dictionary! Skipping!".format(line))
+            print(f"{line} is already found in the dictionary! Skipping!")
         else:
             word_frequency[line] = MINIMUM_FREQUENCY
 
@@ -970,15 +969,14 @@ def clean_dutch(word_frequency, filepath_exclude, filepath_include, filepath_dic
     # leading or trailing doubles a, "a'", "zz", ending y's
     doubles = list()
     for key in word_frequency:
-        if key.startswith("aa") and key not in ("aardvark", "aardvarks"):
-            doubles.append(key)
-        elif key.startswith("a'"):
-            doubles.append(key)
-        elif key.startswith("zz"):
-            doubles.append(key)
-        elif key.endswith("yy"):
-            doubles.append(key)
-        elif key.endswith("hh"):
+        if (
+            key.startswith("aa")
+            and key not in ("aardvark", "aardvarks")
+            or key.startswith("a'")
+            or key.startswith("zz")
+            or key.endswith("yy")
+            or key.endswith("hh")
+        ):
             doubles.append(key)
     for misfit in doubles:
         word_frequency.pop(misfit)
@@ -986,24 +984,26 @@ def clean_dutch(word_frequency, filepath_exclude, filepath_include, filepath_dic
     # common missing spaces
     missing_spaces = list()
     for key in word_frequency:
-        if key.startswith("about") and key != "about":
-            missing_spaces.append(key)
-        elif key.startswith("above") and key != "above":
-            missing_spaces.append(key)
-        elif key.startswith("after") and key != "after":
-            missing_spaces.append(key)
-        elif key.startswith("against") and key != "against":
-            missing_spaces.append(key)
-        elif key.startswith("all") and word_frequency[key] < 15:
-            missing_spaces.append(key)
-        elif key.startswith("almost") and key != "almost":
-            missing_spaces.append(key)
-        # This one has LOTS of possibilities...
-        elif key.startswith("to") and word_frequency[key] < 25:
-            missing_spaces.append(key)
-        elif key.startswith("can't") and key != "can't":
-            missing_spaces.append(key)
-        elif key.startswith("i'm") and key != "i'm":
+        if (
+            key.startswith("about")
+            and key != "about"
+            or key.startswith("above")
+            and key != "above"
+            or key.startswith("after")
+            and key != "after"
+            or key.startswith("against")
+            and key != "against"
+            or key.startswith("all")
+            and word_frequency[key] < 15
+            or key.startswith("almost")
+            and key != "almost"
+            or key.startswith("to")
+            and word_frequency[key] < 25
+            or key.startswith("can't")
+            and key != "can't"
+            or key.startswith("i'm")
+            and key != "i'm"
+        ):
             missing_spaces.append(key)
     for misfit in missing_spaces:
         word_frequency.pop(misfit)
@@ -1045,7 +1045,7 @@ def clean_dutch(word_frequency, filepath_exclude, filepath_include, filepath_dic
     # Add known missing words back in (ugh)
     for line in load_include_exclude(filepath_include):
         if line in word_frequency:
-            print("{} is already found in the dictionary! Skipping!".format(line))
+            print(f"{line} is already found in the dictionary! Skipping!")
         else:
             word_frequency[line] = MINIMUM_FREQUENCY
 
@@ -1098,7 +1098,7 @@ def clean_persian(word_frequency, filepath_exclude, filepath_include):
     # Add known missing words back in (ugh)
     for line in load_include_exclude(filepath_include):
         if line in word_frequency:
-            print("{} is already found in the dictionary! Skipping!".format(line))
+            print(f"{line} is already found in the dictionary! Skipping!")
         else:
             word_frequency[line] = MINIMUM_FREQUENCY
 
@@ -1132,9 +1132,8 @@ def _parse_args():
     args = parser.parse_args()
 
     # validate that we have a path, if needed!
-    if args.parse_input:
-        if not args.file_path:
-            raise Exception("A path is required if parsing a text file!")
+    if args.parse_input and not args.file_path:
+        raise Exception("A path is required if parsing a text file!")
 
     if args.file_path:
         args.file_path = os.path.abspath(os.path.realpath(args.file_path))
@@ -1150,11 +1149,11 @@ if __name__ == "__main__":
 
     # get current path to find where the script is currently
     script_path = os.path.dirname(os.path.abspath(__file__))
-    module_path = os.path.abspath("{}/../".format(script_path))
-    resources_path = os.path.abspath("{}/resources/".format(module_path))
-    data_path = os.path.abspath("{}/data/".format(script_path))
-    exclude_filepath = os.path.abspath("{}/{}_exclude.txt".format(data_path, args.language))
-    include_filepath = os.path.abspath("{}/{}_include.txt".format(data_path, args.language))
+    module_path = os.path.abspath(f"{script_path}/../")
+    resources_path = os.path.abspath(f"{module_path}/resources/")
+    data_path = os.path.abspath(f"{script_path}/data/")
+    exclude_filepath = os.path.abspath(f"{data_path}/{args.language}_exclude.txt")
+    include_filepath = os.path.abspath(f"{data_path}/{args.language}_include.txt")
 
     print(script_path)
     print(module_path)
@@ -1164,11 +1163,11 @@ if __name__ == "__main__":
 
     # Should we re-process a file?
     if args.parse_input:
-        json_path = os.path.join(script_path, "data", "{}_full.json".format(args.language))
+        json_path = os.path.join(script_path, "data", f"{args.language}_full.json")
         print(json_path)
         word_frequency = build_word_frequency(args.file_path, args.language, json_path)
     else:
-        json_path = os.path.join(script_path, "data", "{}_full.json.gz".format(args.language))
+        json_path = os.path.join(script_path, "data", f"{args.language}_full.json.gz")
         print(json_path)
         with load_file(json_path, "utf-8") as f:
             word_frequency = json.load(f)
@@ -1180,22 +1179,22 @@ if __name__ == "__main__":
 
     # clean up the dictionary
     if args.language == "en":
-        dict_path = os.path.abspath("{}/levidromelist-dicts/american-english-large.txt".format(data_path))
+        dict_path = os.path.abspath(f"{data_path}/levidromelist-dicts/american-english-large.txt")
         word_frequency = clean_english(word_frequency, exclude_filepath, include_filepath, dict_path)
     elif args.language == "es":
-        dict_path = os.path.abspath("{}/levidromelist-dicts/spanish.txt".format(data_path))
+        dict_path = os.path.abspath(f"{data_path}/levidromelist-dicts/spanish.txt")
         word_frequency = clean_spanish(word_frequency, exclude_filepath, include_filepath, dict_path)
     elif args.language == "it":
-        dict_path = os.path.abspath("{}/levidromelist-dicts/italian.txt".format(data_path))
+        dict_path = os.path.abspath(f"{data_path}/levidromelist-dicts/italian.txt")
         word_frequency = clean_italian(word_frequency, exclude_filepath, include_filepath, dict_path)
     elif args.language == "de":
-        dict_path = os.path.abspath("{}/levidromelist-dicts/new_german.txt".format(data_path))
+        dict_path = os.path.abspath(f"{data_path}/levidromelist-dicts/new_german.txt")
         word_frequency = clean_german(word_frequency, exclude_filepath, include_filepath, dict_path)
     elif args.language == "fr":
-        dict_path = os.path.abspath("{}/levidromelist-dicts/french.txt".format(data_path))
+        dict_path = os.path.abspath(f"{data_path}/levidromelist-dicts/french.txt")
         word_frequency = clean_french(word_frequency, exclude_filepath, include_filepath, dict_path)
     elif args.language == "pt":
-        dict_path = os.path.abspath("{}/levidromelist-dicts/portuguese.txt".format(data_path))
+        dict_path = os.path.abspath(f"{data_path}/levidromelist-dicts/portuguese.txt")
         word_frequency = clean_portuguese(word_frequency, exclude_filepath, include_filepath, dict_path)
     elif args.language == "ru":
         word_frequency = clean_russian(word_frequency, exclude_filepath, include_filepath)
@@ -1206,16 +1205,16 @@ if __name__ == "__main__":
     elif args.language == "lv":
         word_frequency = clean_latvian(word_frequency, exclude_filepath, include_filepath)
     elif args.language == "nl":
-        dict_path = os.path.abspath("{}/levidromelist-dicts/dutch.txt".format(data_path))
+        dict_path = os.path.abspath(f"{data_path}/levidromelist-dicts/dutch.txt")
         word_frequency = clean_dutch(word_frequency, exclude_filepath, include_filepath, dict_path)
     elif args.language == "fa":
         word_frequency = clean_persian(word_frequency, exclude_filepath, include_filepath)
 
     # export word frequency for review!
-    word_frequency_path = os.path.join(script_path, "{}.json".format(args.language))
+    word_frequency_path = os.path.join(script_path, f"{args.language}.json")
     print(word_frequency_path)
     export_word_frequency(word_frequency_path, word_frequency)
 
     if args.misfit_file:
-        misfit_filepath = os.path.abspath("{}/{}_misfit.txt".format(data_path, args.language))
+        misfit_filepath = os.path.abspath(f"{data_path}/{args.language}_misfit.txt")
         export_misfit_words(misfit_filepath, json_path, word_frequency)

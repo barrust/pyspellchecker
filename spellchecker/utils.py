@@ -1,4 +1,5 @@
-""" Additional utility functions """
+"""Additional utility functions"""
+
 import contextlib
 import functools
 import gzip

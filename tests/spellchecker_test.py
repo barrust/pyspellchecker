@@ -260,7 +260,7 @@ class TestSpellChecker(unittest.TestCase):
         """test removing everything below a certain threshold"""
         spell = SpellChecker()
         cnt = 0
-        for key in spell.word_frequency.keys():
+        for key in spell.word_frequency:
             if spell.word_frequency[key] <= 300:
                 cnt += 1
         self.assertGreater(cnt, 0)
@@ -506,7 +506,7 @@ class TestSpellChecker(unittest.TestCase):
         """test using split_words"""
         spell = SpellChecker()
         res = spell.split_words("This isn't a good test, but it is a test!!!!")
-        self.assertEqual(set(res), {"This", "isn't", "a", "good", "test", "but", "it", "is", "a", "test"})
+        self.assertEqual(set(res), {"This", "isn't", "a", "good", "test", "but", "it", "is"})
 
     def test_iter_spellchecker(self):
         """Test using the iterator on the SpellChecker"""
