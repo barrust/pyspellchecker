@@ -1,14 +1,14 @@
-""" SpellChecker Module; simple, intuitive spell checker based on the post by
-    Peter Norvig. See: https://norvig.com/spell-correct.html """
+"""SpellChecker Module; simple, intuitive spell checker based on the post by
+Peter Norvig. See: https://norvig.com/spell-correct.html"""
 
 import gzip
 import json
 import pkgutil
 import string
 import typing
+import unicodedata
 from collections import Counter
 from collections.abc import Iterable
-import unicodedata
 
 from spellchecker.utils import KeyT, PathOrStr, _parse_into_words, ensure_unicode, load_file, write_file
 
@@ -28,7 +28,10 @@ class SpellChecker:
         case_sensitive (bool): Flag to use a case sensitive dictionary or not, only available when not using a \
             language dictionary.
     Note:
-        Using a case sensitive dictionary can be slow to correct words."""
+        Using a case sensitive dictionary can be slow to correct words.
+    Raises:
+        ValueError: If the provided language dictionary does not exist, if case_sensitive is True with a language \
+            dictionary, or if both language and local_dictionary are specified."""
 
     __slots__ = ["_distance", "_word_frequency", "_tokenizer", "_case_sensitive"]
 
@@ -47,6 +50,12 @@ class SpellChecker:
             self._tokenizer = tokenizer
         else:
             self._tokenizer = _parse_into_words
+
+        if language is not None and local_dictionary is not None:
+            raise ValueError("Cannot specify both 'language' and 'local_dictionary'. Choose one.")
+
+        if language is not None and case_sensitive:
+            raise ValueError("case_sensitive can only be True when not using a language dictionary.")
 
         self._case_sensitive = case_sensitive if not language else False
         self._word_frequency = WordFrequency(self._tokenizer, self._case_sensitive)
@@ -265,7 +274,7 @@ class SpellChecker:
             input_str (str): The string from which to remove diacritics
         Returns:
             str: The string with diacritics removed"""
-        nfkd_form = unicodedata.normalize('NFKD', ensure_unicode(input_str))
+        nfkd_form = unicodedata.normalize("NFKD", ensure_unicode(input_str))
         return "".join([c for c in nfkd_form if not unicodedata.combining(c)])
 
     def _check_if_should_check(self, word: str) -> bool:
