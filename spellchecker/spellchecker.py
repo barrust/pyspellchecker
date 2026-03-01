@@ -37,10 +37,10 @@ class SpellChecker:
 
     def __init__(
         self,
-        language: typing.Union[str, typing.Iterable[str], None] = "en",
-        local_dictionary: typing.Optional[PathOrStr] = None,
+        language: str | typing.Iterable[str] | None = "en",
+        local_dictionary: PathOrStr | None = None,
         distance: int = 2,
-        tokenizer: typing.Optional[typing.Callable[[str], typing.Iterable[str]]] = None,
+        tokenizer: typing.Callable[[str], typing.Iterable[str]] | None = None,
         case_sensitive: bool = False,
     ) -> None:
         self._distance = 2  # default
@@ -63,7 +63,7 @@ class SpellChecker:
         if local_dictionary:
             self._word_frequency.load_dictionary(local_dictionary)
         elif language:
-            if not isinstance(language, Iterable) or isinstance(language, (str, bytes)):
+            if not isinstance(language, Iterable) or isinstance(language, KeyT):
                 language = [language]
             for lang in language:
                 filename = f"resources/{lang.lower()}.json.gz"
@@ -143,7 +143,7 @@ class SpellChecker:
         data = json.dumps(self.word_frequency.dictionary, sort_keys=True)
         write_file(filepath, encoding, gzipped, data)
 
-    def word_usage_frequency(self, word: KeyT, total_words: typing.Optional[int] = None) -> float:
+    def word_usage_frequency(self, word: KeyT, total_words: int | None = None) -> float:
         """Calculate the frequency to the `word` provided as seen across the
         entire dictionary
 
@@ -158,7 +158,7 @@ class SpellChecker:
         word = ensure_unicode(word)
         return self._word_frequency.dictionary[word] / total_words
 
-    def correction(self, word: KeyT) -> typing.Optional[str]:
+    def correction(self, word: KeyT) -> str | None:
         """The most probable correct spelling for the word
 
         Args:
@@ -176,7 +176,7 @@ class SpellChecker:
             return max(diacritics_candidates, key=self.__getitem__)
         return max(candidates, key=self.__getitem__)
 
-    def candidates(self, word: KeyT) -> typing.Optional[typing.Set[str]]:
+    def candidates(self, word: KeyT) -> set[str] | None:
         """Generate possible spelling corrections for the provided word up to
         an edit distance of two, if and only when needed
 
@@ -203,7 +203,7 @@ class SpellChecker:
                 return tmp
         return None
 
-    def known(self, words: typing.Iterable[KeyT]) -> typing.Set[str]:
+    def known(self, words: typing.Iterable[KeyT]) -> set[str]:
         """The subset of `words` that appear in the dictionary of words
 
         Args:
@@ -214,7 +214,7 @@ class SpellChecker:
         tmp = [w if self._case_sensitive else w.lower() for w in tmp_words]
         return {w for w in tmp if w in self._word_frequency.dictionary and self._check_if_should_check(w)}
 
-    def unknown(self, words: typing.Iterable[KeyT]) -> typing.Set[str]:
+    def unknown(self, words: typing.Iterable[KeyT]) -> set[str]:
         """The subset of `words` that do not appear in the dictionary
 
         Args:
@@ -225,7 +225,7 @@ class SpellChecker:
         tmp = [w if self._case_sensitive else w.lower() for w in tmp_words if self._check_if_should_check(w)]
         return {w for w in tmp if w not in self._word_frequency.dictionary}
 
-    def edit_distance_1(self, word: KeyT) -> typing.Set[str]:
+    def edit_distance_1(self, word: KeyT) -> set[str]:
         """Compute all strings that are one edit away from `word` using only
         the letters in the corpus
 
@@ -244,7 +244,7 @@ class SpellChecker:
         inserts = [L + c + R for L, R in splits for c in letters]
         return set(deletes + transposes + replaces + inserts)
 
-    def edit_distance_2(self, word: KeyT) -> typing.List[str]:
+    def edit_distance_2(self, word: KeyT) -> list[str]:
         """Compute all strings that are two edits away from `word` using only
         the letters in the corpus
 
@@ -255,7 +255,7 @@ class SpellChecker:
         word = ensure_unicode(word).lower() if not self._case_sensitive else ensure_unicode(word)
         return [e2 for e1 in self.edit_distance_1(word) for e2 in self.edit_distance_1(e1)]
 
-    def __edit_distance_alt(self, words: typing.Iterable[KeyT]) -> typing.List[str]:
+    def __edit_distance_alt(self, words: typing.Iterable[KeyT]) -> list[str]:
         """Compute all strings that are 1 edits away from all the words using
         only the letters in the corpus
 
@@ -309,13 +309,13 @@ class WordFrequency:
 
     def __init__(
         self,
-        tokenizer: typing.Optional[typing.Callable[[str], typing.Iterable[str]]] = None,
+        tokenizer: typing.Callable[[str], typing.Iterable[str]] | None = None,
         case_sensitive: bool = False,
     ) -> None:
         self._dictionary: typing.Counter = Counter()
         self._total_words = 0
         self._unique_words = 0
-        self._letters: typing.Set[str] = set()
+        self._letters: set[str] = set()
         self._case_sensitive = case_sensitive
         self._longest_word_length = 0
 
@@ -339,7 +339,7 @@ class WordFrequency:
         """turn on iter support"""
         yield from self._dictionary
 
-    def pop(self, key: KeyT, default: typing.Optional[int] = None) -> typing.Optional[int]:
+    def pop(self, key: KeyT, default: int | None = None) -> int | None:
         """Remove the key and return the associated value or default if not
         found
 
@@ -352,7 +352,7 @@ class WordFrequency:
         return self._dictionary.pop(key if self._case_sensitive else key.lower(), default)
 
     @property
-    def dictionary(self) -> typing.Dict[str, int]:
+    def dictionary(self) -> dict[str, int]:
         """Counter: A counting dictionary of all words in the corpus and the number
         of times each has been seen
 
@@ -377,7 +377,7 @@ class WordFrequency:
         return self._unique_words
 
     @property
-    def letters(self) -> typing.Set[str]:
+    def letters(self) -> set[str]:
         """set: The listing of all letters found within the corpus
 
         Note:
@@ -423,7 +423,7 @@ class WordFrequency:
             This is the same as `spellchecker.keys()`"""
         yield from self._dictionary.keys()
 
-    def items(self) -> typing.Generator[typing.Tuple[str, int], None, None]:
+    def items(self) -> typing.Generator[tuple[str, int], None, None]:
         """Iterator over the words in the dictionary
 
         Yields:
@@ -444,7 +444,7 @@ class WordFrequency:
             self._dictionary.update(json.loads(data))
             self._update_dictionary()
 
-    def load_json(self, data: typing.Dict[str, int]) -> None:
+    def load_json(self, data: dict[str, int]) -> None:
         """Load in a pre-built word frequency list
 
         Args:
@@ -456,7 +456,7 @@ class WordFrequency:
         self,
         filename: PathOrStr,
         encoding: str = "utf-8",
-        tokenizer: typing.Optional[typing.Callable[[str], typing.Iterable[str]]] = None,
+        tokenizer: typing.Callable[[str], typing.Iterable[str]] | None = None,
     ) -> None:
         """Load in a text file from which to generate a word frequency list
 
@@ -471,7 +471,7 @@ class WordFrequency:
     def load_text(
         self,
         text: KeyT,
-        tokenizer: typing.Optional[typing.Callable[[str], typing.Iterable[str]]] = None,
+        tokenizer: typing.Callable[[str], typing.Iterable[str]] | None = None,
     ) -> None:
         """Load text from which to generate a word frequency list
 

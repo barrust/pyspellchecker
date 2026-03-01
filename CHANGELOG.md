@@ -1,5 +1,10 @@
 # pyspellchecker
 
+## Version 0.9.0
+
+* Raise `ValueError` if user uses `language` and `case_sensitive` or `language` and `local_dictionary` as they are mutually exclusive options
+* Remove Python 3.8 and 3.9 support
+
 ## Version 0.8.4
 
 * Support diacritics; see [PR #189](https://github.com/barrust/pyspellchecker/pull/189); thanks [7heo](https://github.com/7heo)

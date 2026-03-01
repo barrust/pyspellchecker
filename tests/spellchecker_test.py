@@ -260,7 +260,7 @@ class TestSpellChecker(unittest.TestCase):
         """test removing everything below a certain threshold"""
         spell = SpellChecker()
         cnt = 0
-        for key in spell.word_frequency:
+        for key in spell.word_frequency:  # synonym for words
             if spell.word_frequency[key] <= 300:
                 cnt += 1
         self.assertGreater(cnt, 0)
