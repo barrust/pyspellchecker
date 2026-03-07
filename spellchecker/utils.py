@@ -10,8 +10,8 @@ from pathlib import Path
 
 from spellchecker.info import __version__
 
-KeyT = typing.Union[str, bytes]
-PathOrStr = typing.Union[Path, str]
+KeyT = str | bytes
+PathOrStr = Path | str
 
 
 def fail_after(version: str) -> typing.Callable:

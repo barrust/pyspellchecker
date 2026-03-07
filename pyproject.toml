@@ -22,15 +22,13 @@ classifiers = [
     "Topic :: Utilities",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 
 
 [tool.setuptools.dynamic]
@@ -59,7 +57,7 @@ profile = "black"
 
 [tool.black]
 line-length = 120
-target-version = ['py38']
+target-version = ['py310']
 include = '\.pyi?$'
 
 [tool.pylint.'MESSAGES CONTROL']
@@ -67,7 +65,15 @@ max-line-length = 120
 max-args = 6
 
 [tool.ruff]
-include = ["pyproject.toml", "spellchecker/**/*.py", "spellchecker/*.py", "scripts/**/*.py", "scripts/*.py", "tests/**/*.py", "tests/*.py"]
+include = [
+    "pyproject.toml",
+    "spellchecker/**/*.py",
+    "spellchecker/*.py",
+    "scripts/**/*.py",
+    "scripts/*.py",
+    "tests/**/*.py",
+    "tests/*.py",
+]
 exclude = [
     ".bzr",
     ".direnv",
@@ -98,7 +104,7 @@ exclude = [
 ]
 line-length = 120
 indent-width = 4
-target-version = "py38"
+target-version = "py310"
 
 [tool.ruff.lint]
 # Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
