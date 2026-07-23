@@ -216,7 +216,7 @@ class TestSpellChecker(unittest.TestCase):
         spell.distance = 1
         self.assertEqual(spell.distance, 1)
         spell.distance = "string"
-        self.assertEqual(spell.distance, 2)
+        self.assertEqual(spell.distance, 1)
 
     def test_load_text_file(self):
         """test loading a text file"""

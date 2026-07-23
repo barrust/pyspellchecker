@@ -114,7 +114,7 @@ class SpellChecker:
     @distance.setter
     def distance(self, val: int) -> None:
         """set the distance parameter"""
-        tmp = 2
+        tmp = self._distance
         try:
             if 0 < int(val) <= 2:
                 tmp = val
