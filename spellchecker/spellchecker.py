@@ -449,6 +449,13 @@ class WordFrequency:
 
         Args:
             data (dict): The dictionary to be loaded"""
+        if not self._case_sensitive:
+            lowered = {key.lower(): val for key, val in data.items()}
+            if len(lowered) != len(data):  # sum the counts of words that differ only in case
+                lowered = Counter()
+                for key, val in data.items():
+                    lowered[key.lower()] += val
+            data = lowered
         self._dictionary.update(data)
         self._update_dictionary()
 

@@ -300,6 +300,25 @@ class TestSpellChecker(unittest.TestCase):
         spell.word_frequency.add("appt", 5000)
         self.assertEqual(spell["appt"], 5000)
 
+    def test_load_json_case_insensitive(self):
+        """test that load_json lowercases the words when not case sensitive."""
+        spell = SpellChecker(language=None)
+        spell.word_frequency.load_json({"Python": 10, "python": 5, "NumPy": 2})
+        self.assertEqual(spell["python"], 15)
+        self.assertEqual(spell["Python"], 15)
+        self.assertEqual(spell.known(["NumPy"]), {"numpy"})
+        self.assertEqual(spell.word_frequency.total_words, 17)
+        self.assertEqual(spell.word_frequency.unique_words, 2)
+        self.assertNotIn("P", spell.word_frequency.letters)
+
+    def test_load_json_case_sensitive(self):
+        """test that load_json keeps the words as is when case sensitive."""
+        spell = SpellChecker(language=None, case_sensitive=True)
+        spell.word_frequency.load_json({"Python": 10, "python": 5})
+        self.assertEqual(spell["Python"], 10)
+        self.assertEqual(spell["python"], 5)
+        self.assertEqual(spell.word_frequency.unique_words, 2)
+
     def test_checking_odd_word(self):
         """test checking a word that is really a number"""
         spell = SpellChecker()
