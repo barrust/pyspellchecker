@@ -117,7 +117,7 @@ class SpellChecker:
         tmp = self._distance
         try:
             if 0 < int(val) <= 2:
-                tmp = val
+                tmp = int(val)
         except (ValueError, TypeError):
             pass
         self._distance = tmp
