@@ -565,6 +565,16 @@ class TestSpellChecker(unittest.TestCase):
             spell.word_frequency.remove("nan")
         self.assertNotEqual(spell.candidates("nan"), {"nan"})
 
+    def test_infinity_correction(self):
+        """Test that inf and infinity do not get skipped because of float('inf')."""
+        spell = SpellChecker(language=None)
+        spell.word_frequency.load_words(["inf", "infinity", "Infinity", "1e5"])
+        self.assertEqual(spell.known(["inf", "infinity", "INFINITY"]), {"inf", "infinity"})
+        self.assertEqual(spell.unknown(["infinty"]), {"infinty"})
+        self.assertEqual(spell.correction("infinty"), "infinity")
+        # numbers are still not checked
+        self.assertEqual(spell.known(["1e5"]), set())
+
     def test_empty_dictionary(self):
         """Test empty dictionary properties"""
         spell = SpellChecker(language=None)

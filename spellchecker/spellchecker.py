@@ -282,7 +282,8 @@ class SpellChecker:
             return False
         if len(word) > self._word_frequency.longest_word_length + 3:  # allow removal of up to 2 letters
             return False
-        if word.lower() == "nan":  # nan passes the float(word) so this will bypass that issue (#125)
+        # these words pass the float(word) check so this will bypass that issue (#125)
+        if word.lower() in ("nan", "inf", "infinity"):
             return True
         try:  # check if it is a number (int, float, etc)
             float(word)
