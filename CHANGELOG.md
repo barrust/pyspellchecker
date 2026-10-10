@@ -1,5 +1,12 @@
 # pyspellchecker
 
+## Version 0.9.1 
+
+* Fix: Store distance as an int in the distance setter; see [PR 208](https://github.com/barrust/pyspellchecker/pull/208); thanks [@raashish1601](https://github.com/raashish1601)
+* Fix: Lowercase words in WordFrequency.load_json when not case sensitive; see [PR 206](https://github.com/barrust/pyspellchecker/pull/206); thanks [@raashish1601](https://github.com/raashish1601)
+* Treat `inf` and `infinity` as words when spell checking; see [PR 207](https://github.com/barrust/pyspellchecker/pull/207); thanks [@raashish1601](https://github.com/raashish1601)
+* Fix: Apply case folding in word_usage_frequency; see [PR 205](https://github.com/barrust/pyspellchecker/pull/205); thanks [@raashish1601](https://github.com/raashish1601)
+
 ## Version 0.9.0
 
 * Raise `ValueError` if user uses `language` and `case_sensitive` or `language` and `local_dictionary` as they are mutually exclusive options
@@ -7,7 +14,7 @@
 
 ## Version 0.8.4
 
-* Support diacritics; see [PR #189](https://github.com/barrust/pyspellchecker/pull/189); thanks [7heo](https://github.com/7heo)
+* Support diacritics; see [PR #189](https://github.com/barrust/pyspellchecker/pull/189); thanks [@7heo](https://github.com/7heo)
 
 ## Version 0.8.3
 
