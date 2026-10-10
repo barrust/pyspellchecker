@@ -218,6 +218,16 @@ class TestSpellChecker(unittest.TestCase):
         spell.distance = "string"
         self.assertEqual(spell.distance, 1)
 
+    def test_edit_distance_numeric_string(self):
+        """check that the distance property is stored as an int."""
+        spell = SpellChecker(distance="2")
+        self.assertEqual(spell.distance, 2)
+        self.assertIsInstance(spell.distance, int)
+        self.assertEqual(spell.candidates("bnanaas"), {"banana's", "bonanzas", "ananias", "bananas", "banaras"})
+        spell.distance = "1"
+        self.assertEqual(spell.distance, 1)
+        self.assertIsInstance(spell.distance, int)
+
     def test_load_text_file(self):
         """test loading a text file"""
         here = os.path.dirname(__file__)
