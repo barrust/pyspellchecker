@@ -56,6 +56,14 @@ class TestSpellChecker(unittest.TestCase):
         num = spell.word_frequency["the"]
         denom = spell.word_frequency.total_words
         self.assertEqual(spell.word_usage_frequency("the"), num / denom)
+        self.assertEqual(spell.word_usage_frequency("The"), num / denom)
+
+    def test_word_usage_frequency_case_sensitive(self):
+        """test the word usage frequency calculation with a case sensitive dictionary."""
+        spell = SpellChecker(language=None, case_sensitive=True)
+        spell.word_frequency.load_words(["Bob", "bob", "bob"])
+        self.assertEqual(spell.word_usage_frequency("Bob"), 1 / 3)
+        self.assertEqual(spell.word_usage_frequency("bob"), 2 / 3)
 
     def test_word_known(self):
         """test if the word is a `known` word or not"""
