@@ -155,8 +155,7 @@ class SpellChecker:
             float: The probability that the word is the correct word"""
         if not total_words:
             total_words = self._word_frequency.total_words
-        word = ensure_unicode(word)
-        return self._word_frequency.dictionary[word] / total_words
+        return self._word_frequency[word] / total_words
 
     def correction(self, word: KeyT) -> str | None:
         """The most probable correct spelling for the word
